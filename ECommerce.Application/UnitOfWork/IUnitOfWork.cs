@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ECommerce.Application.UnitOfWork
 {
-    internal interface IUnitOfWork
+    public interface IUnitOfWork
     {
     }
 }
