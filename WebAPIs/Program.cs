@@ -1,8 +1,15 @@
+using ECommerce.DataAccessLayer;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
+ConfigurationManager cfm = builder.Configuration;
+
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddDbContext<DBContext>(options => options.UseSqlServer(cfm.GetConnectionString("ConnectionDB")));
+
 
 var app = builder.Build();
 
