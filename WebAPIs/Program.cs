@@ -1,3 +1,4 @@
+using ECommerce.Application.UnitOfWork;
 using ECommerce.DataAccessLayer;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,7 +10,7 @@ ConfigurationManager cfm = builder.Configuration;
 
 builder.Services.AddControllers();
 builder.Services.AddDbContext<DBContext>(options => options.UseSqlServer(cfm.GetConnectionString("ConnectionDB")));
-
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 var app = builder.Build();
 
