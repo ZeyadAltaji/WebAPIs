@@ -1,5 +1,6 @@
 ﻿using ECommerce.Application.Abstractions;
 using ECommerce.Application.UnitOfWork;
+using ECommerce.DataAccessLayer.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,6 @@ namespace ECommerce.DataAccessLayer
         {
             this.dc = dc;     
         }
-        public IUserRepository UserRepository => throw new NotImplementedException();
+        public IUserRepository UserRepository => new UserRepository(dc);
     }
 }
