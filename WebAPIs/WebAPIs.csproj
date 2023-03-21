@@ -14,4 +14,8 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.4" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ECommerce.DataAccessLayer\ECommerce.DataAccessLayer.csproj" />
+  </ItemGroup>
+
 </Project>
