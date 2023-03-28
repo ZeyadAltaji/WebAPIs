@@ -9,13 +9,23 @@ using System.Threading.Tasks;
 
 namespace ECommerce.DataAccessLayer
 {
-    public class DBContext :DbContext
+    public class DBContext : DbContext
     {
         public DBContext(DbContextOptions option):base(option)
         {
             
         }
         public DbSet<User>Users { get; set; }
+        public DbSet<Sub_Slider>SubSliders { get; set; }
+        public DbSet<Special> Specials { get; set; }
+        public DbSet<Slider>Sliders { get; set; }
+        public DbSet<Product> Products { get; set; }
+        public DbSet<Order>Orders { get; set; }
+        public DbSet<Coupon> Coupons { get; set; }
+
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<Car> Cars { get; set; }
+        public DbSet<Brands> Brand { get; set; }
         
 
     }
