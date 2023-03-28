@@ -11,7 +11,7 @@ namespace ECommerce.DataAccessLayer
 {
     public class DBContext : DbContext
     {
-        public DBContext(DbContextOptions option):base(option){}
+        public DBContext(DbContextOptions<DBContext> option):base(option){}
         public DbSet<User>Users { get; set; }
         public DbSet<Sub_Slider>SubSliders { get; set; }
         public DbSet<Special> Specials { get; set; }
