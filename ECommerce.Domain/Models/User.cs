@@ -8,7 +8,7 @@ namespace ECommerce.Domain.Models
 {
     public  class User
     {
-        public int ID { get; set; }
+        public int Id { get; set; }
         public string Frist_Name { get; set; } = string.Empty;
         public string Last_Name { get; set; }=string.Empty;
         public string Email { get; set; } = string.Empty;
@@ -19,8 +19,8 @@ namespace ECommerce.Domain.Models
         public string Phone2 { get; set; } = string.Empty;
         public string Address { get; set; } = string.Empty;
         public int Role { get; set; }
-        public string Image { get; set; }=string.Empty
-            //زيد ابطيخة;
+        public string Image { get; set; } = string.Empty;
+           
 
     }
 }
