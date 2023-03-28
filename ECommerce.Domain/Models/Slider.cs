@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ECommerce.Domain.Models
 {
-    internal class Slider
+    public class Slider
     {
 
         public int Id { get; set; }

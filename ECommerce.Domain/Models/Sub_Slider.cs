@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ECommerce.Domain.Models
 {
-    internal class Sub_Slider
+    public class Sub_Slider
     {
         public int Id { get; set; }
         public string Image { get; set; } = string.Empty;

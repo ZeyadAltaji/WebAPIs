@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ECommerce.Domain.Models
 {
-    internal class Brands
+    public class Brands
     {
         public int Id { get; set; }
         public string Image { get; set; } = string.Empty;

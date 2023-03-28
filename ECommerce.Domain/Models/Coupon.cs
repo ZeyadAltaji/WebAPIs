@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ECommerce.Domain.Models
 {
-    internal class Coupon
+    public class Coupon
     {
 
         public int Id { get; set; }

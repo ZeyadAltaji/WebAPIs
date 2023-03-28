@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ECommerce.Domain.Models
 {
-    internal class Order
+    public class Order
     {
         public int Id { get; set; }
         public int Customer_Id { get; set; }

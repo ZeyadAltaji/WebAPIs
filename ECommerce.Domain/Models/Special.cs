@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ECommerce.Domain.Models
 {
-    internal class Special
+    public class Special
     {
         public int Id { get; set; }
         public string Title { get; set; } = string.Empty;

@@ -20,7 +20,6 @@ namespace ECommerce.Domain.Models
         public string Address { get; set; } = string.Empty;
         public int Role { get; set; }
         public string Image { get; set; } = string.Empty;
-           
 
     }
 }
