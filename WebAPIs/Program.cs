@@ -13,9 +13,9 @@ builder.Services.AddControllers();
 // call DB
 builder.Services.AddDbContext<DBContext>(options => options.UseSqlServer(cfm.GetConnectionString("ConnectionDB")));
 // call interface and class Unit of work 
-//builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-// call AutoMapper profile 
-//builder.Services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+//call AutoMapper profile 
+builder.Services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
 
 var app = builder.Build();
 
