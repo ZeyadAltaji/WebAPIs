@@ -1,5 +1,6 @@
 ﻿using ECommerce.Application.Abstractions;
 using ECommerce.Domain.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +21,8 @@ namespace ECommerce.DataAccessLayer.Repositories
 
         public void Create(Car entity)
         {
-            throw new NotImplementedException();
+            Dc.Cars.Add(entity);
+            Dc.SaveChanges();
         }
 
         public void Delete(int Id, Car entity)
@@ -30,17 +32,21 @@ namespace ECommerce.DataAccessLayer.Repositories
 
         public List<Car> GetAll()
         {
-            throw new NotImplementedException();
+            return Dc.Cars.ToList();
+
         }
 
         public Car GetByID(int id)
         {
-            throw new NotImplementedException();
+            var GetbyIdCars = Dc.Cars.Include(Getbyid => Getbyid.Id == id).SingleOrDefault(Getbyid => Getbyid.Id == id);
+            //var GetbyIdBrands = Dc.Brand.Include(Getbyid => Getbyid.Id == id).Where(Getbyid => Getbyid.Id == id).SingleOrDefault();
+            return GetbyIdCars;
         }
 
         public void Update(int Id, Car entity)
         {
-            throw new NotImplementedException();
+            Dc.Cars.Update(entity);
+            Dc.SaveChanges();
         }
     }
 }
