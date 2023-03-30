@@ -1,5 +1,6 @@
 ﻿using ECommerce.Application.Abstractions;
 using ECommerce.Domain.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,11 +17,10 @@ namespace ECommerce.DataAccessLayer.Repositories
         {
             Dc = dc;
         }
-
-
         public void Create(Brands entity)
         {
-            throw new NotImplementedException();
+            Dc.Brand.Add(entity);
+            Dc.SaveChanges();
         }
 
         public void Delete(int Id, Brands entity)
@@ -28,19 +28,23 @@ namespace ECommerce.DataAccessLayer.Repositories
             throw new NotImplementedException();
         }
 
-        public List<Brands> GetAll()
+        public  List<Brands> GetAll()
         {
-            throw new NotImplementedException();
+            return Dc.Brand.ToList();
         }
 
         public Brands GetByID(int id)
         {
-            throw new NotImplementedException();
+            var GetbyIdBrands = Dc.Brand.Include(Getbyid => Getbyid.Id == id).SingleOrDefault(Getbyid => Getbyid.Id == id);
+            //var GetbyIdBrands = Dc.Brand.Include(Getbyid => Getbyid.Id == id).Where(Getbyid => Getbyid.Id == id).SingleOrDefault();
+            return GetbyIdBrands;
         }
 
         public void Update(int Id, Brands entity)
         {
-            throw new NotImplementedException();
+             Dc.Brand.Update(entity);
+             Dc.SaveChanges();
+            
         }
     }
 }

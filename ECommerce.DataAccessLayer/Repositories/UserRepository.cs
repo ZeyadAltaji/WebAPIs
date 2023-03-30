@@ -17,7 +17,7 @@ namespace ECommerce.DataAccessLayer.Repositories
         }
         public async Task<User> Authenticate(string UserName, string password)
         {
-            throw new NotImplementedException();
+            
         }
 
         public void Register(string UserName, string password)
