@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace ECommerce.Application.DTOs
 {
-    internal class BaseClass
+    public class BaseClass
     {
+        public int Id { get; set; }
+
     }
 }
