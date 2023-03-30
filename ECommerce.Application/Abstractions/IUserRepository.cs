@@ -9,9 +9,9 @@ namespace ECommerce.Application.Abstractions
 {
     public interface IUserRepository
     {
-        Task<User> Authenticate(string Email, string password);
-        void Register(string Email, string password);
+        Task<User> Authenticate(string UserName, string password);
+        void Register(string UserName, string password);
 
-        Task<bool> UserAlreadyExists(string Email);
+        Task<bool> UserAlreadyExists(string UserName);
     }
 }

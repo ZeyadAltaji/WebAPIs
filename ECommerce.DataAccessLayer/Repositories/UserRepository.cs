@@ -10,22 +10,22 @@ namespace ECommerce.DataAccessLayer.Repositories
 {
     public class UserRepository : IUserRepository
     {
-        private readonly DBContext dc;
+        private readonly DBContext DC;
         public UserRepository(DBContext dc)
         {
-            this.dc = dc;     
+            DC = dc;     
         }
-        public async Task<User> Authenticate(string Email, string password)
+        public async Task<User> Authenticate(string UserName, string password)
         {
             throw new NotImplementedException();
         }
 
-        public void Register(string Email, string password)
+        public void Register(string UserName, string password)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<bool> UserAlreadyExists(string Email)
+        public async Task<bool> UserAlreadyExists(string UserName)
         {
             throw new NotImplementedException();
         }
