@@ -7,10 +7,9 @@ using System.Threading.Tasks;
 
 namespace ECommerce.Application.DTOs
 {
-    public class Sub_SliderDTOs
+    public class Sub_SliderDTOs : BaseClass
     {
-        public int Id { get; set; }
-        public string Image { get; set; } = string.Empty;
+         public string Image { get; set; } = string.Empty;
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public string Button { get; set; } = string.Empty;
