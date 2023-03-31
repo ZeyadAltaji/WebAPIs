@@ -21,6 +21,8 @@ namespace ECommerce.DataAccessLayer.Repositories
 
         public void Create(Car entity)
         {
+            if (entity == null) throw new ArgumentNullException(nameof(entity));
+
             Dc.Cars.Add(entity);
             Dc.SaveChanges();
         }
