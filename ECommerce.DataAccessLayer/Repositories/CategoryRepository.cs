@@ -21,6 +21,7 @@ namespace ECommerce.DataAccessLayer.Repositories
 
         public void Create(Category entity)
         {
+            if (entity == null) throw new ArgumentNullException(nameof(entity));
             Dc.Categories.Add(entity);
             Dc.SaveChanges();
         }
