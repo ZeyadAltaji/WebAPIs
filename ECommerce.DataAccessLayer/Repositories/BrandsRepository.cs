@@ -20,6 +20,7 @@ namespace ECommerce.DataAccessLayer.Repositories
         public void Create(Brands entity)
         {
             if (entity == null) throw new ArgumentNullException(nameof(entity));
+
             Dc.Brand.Add(entity);
             Dc.SaveChanges();
         }
