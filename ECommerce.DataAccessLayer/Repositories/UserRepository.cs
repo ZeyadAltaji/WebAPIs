@@ -1,8 +1,11 @@
 ﻿using ECommerce.Application.Abstractions;
 using ECommerce.Domain.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,20 +18,55 @@ namespace ECommerce.DataAccessLayer.Repositories
         {
             DC = dc;     
         }
-        public async Task<User> Authenticate(string UserName, string password)
+        public async Task<User> Authenticate(string UserName, string passwordText)
         {
-            throw new NotImplementedException();
+            var user = await DC.Users.FirstOrDefaultAsync(X => X.UserName == UserName);
+            if (user == null || user.Password == null)
+                return null;
+            
+            if(!MatchPasswordHash(passwordText,user.Password, user.PasswordKey))
+                return null;
+            
+            return user;
+            
 
         }
-
         public void Register(string UserName, string password)
         {
-            throw new NotImplementedException();
+            byte[] passwordHash, passwordKey;
+
+            using (var hmac = new HMACSHA512())
+            {
+                passwordKey = hmac.Key;
+                passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+
+            }
+            User user = new User();
+            user.UserName = UserName;
+            user.Password = passwordHash;
+            user.PasswordKey = passwordKey;
         }
 
         public async Task<bool> UserAlreadyExists(string UserName)
         {
-            throw new NotImplementedException();
+            return await DC.Users.AnyAsync(x=>x.UserName == UserName);
+        }
+
+        //Passwordalgorithm
+        private bool MatchPasswordHash(string passwordText, byte[] password, byte[] passwordKey)
+        {
+            using (var hmac = new HMACSHA512(passwordKey))
+            {
+                var passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(passwordText));
+
+                for (int i = 0; i < passwordHash.Length; i++)
+                {
+                    if (passwordHash[i] != password[i])
+                        return false;
+                }
+
+                return true;
+            }
         }
     }
 }
