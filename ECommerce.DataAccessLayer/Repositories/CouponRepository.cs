@@ -21,6 +21,8 @@ namespace ECommerce.DataAccessLayer.Repositories
 
         public void Create(Coupon entity)
         {
+            if (entity == null) throw new ArgumentNullException(nameof(entity));
+
             Dc.Coupons.Add(entity);
             Dc.SaveChanges();
         }
