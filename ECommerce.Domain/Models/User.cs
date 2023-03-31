@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace ECommerce.Domain.Models
 {
-    public  class User: BaseEntity
+    public  class User
     {
-       
+        public int Id { get; set; }
         [Required]
         public string UserName { get; set; } = string.Empty;
         [Required]
@@ -19,11 +19,11 @@ namespace ECommerce.Domain.Models
         [Required]
         public string Email { get; set; } = string.Empty;
         [Required]
-        public string Password { get; set; } = string.Empty;
+        public byte[] Password { get; set; } 
         [Required]
-        public string ComfirmPassword { get; set; } = string.Empty;
+        public byte[] ComfirmPassword { get; set; }
         
-        public string PasswordKey { get; set; } = string.Empty;
+        public byte[] PasswordKey { get; set; }
         [Required]
         public string Phone1 { get; set; } = string.Empty;
         [Required]
