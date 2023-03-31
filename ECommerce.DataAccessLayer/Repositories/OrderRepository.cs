@@ -21,6 +21,8 @@ namespace ECommerce.DataAccessLayer.Repositories
 
         public void Create(Order entity)
         {
+            if (entity == null) throw new ArgumentNullException(nameof(entity));
+
             Dc.Orders.Add(entity);
             Dc.SaveChanges();
         }
