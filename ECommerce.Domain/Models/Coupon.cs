@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace ECommerce.Domain.Models
 {
-    public class Coupon
+    public class Coupon: BaseEntity
     {
 
-        public int Id { get; set; }
+        
         public int Admin_Id { get; set; }
         public int Seller_Id{ get; set; }
         public string no_Coupon { get; set; } = string.Empty;

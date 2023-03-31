@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace ECommerce.Domain.Models
 {
-    public class Car
+    public class Car: BaseEntity
     {
-        public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Class { get; set; } = string.Empty;
         public DateTime Production_Date { get; set; }

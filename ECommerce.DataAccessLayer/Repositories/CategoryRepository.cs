@@ -1,5 +1,6 @@
 ﻿using ECommerce.Application.Abstractions;
 using ECommerce.Domain.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,27 +21,52 @@ namespace ECommerce.DataAccessLayer.Repositories
 
         public void Create(Category entity)
         {
-            throw new NotImplementedException();
+            Dc.Categories.Add(entity);
+            Dc.SaveChanges();
         }
 
         public void Delete(int Id, Category entity)
         {
-            throw new NotImplementedException();
+            entity.IsDelete = true;
+            Dc.Categories.Update(entity);
+            Dc.SaveChanges();
         }
 
         public List<Category> GetAll()
         {
-            throw new NotImplementedException();
+            return Dc.Categories.Include(Getbyid => Getbyid.User).Where(x => x.IsDelete == false).ToList();
         }
 
         public Category GetByID(int id)
         {
-            throw new NotImplementedException();
+            var GetbyIdCategory = Dc.Categories.Include(Getbyid => Getbyid.User).SingleOrDefault(Getbyid => Getbyid.Id == id);
+            //var GetbyIdBrands = Dc.Brand.Include(Getbyid => Getbyid.Id == id).Where(Getbyid => Getbyid.Id == id).SingleOrDefault();
+            return GetbyIdCategory;
         }
 
         public void Update(int Id, Category entity)
         {
-            throw new NotImplementedException();
+            Dc.Categories.Update(entity);
+            Dc.SaveChanges();
+        }
+
+        public void Active(int Id, Category entity)
+        {
+            if (entity.IsActive == false)
+            {
+                entity.IsActive = true;
+            }
+            else if (entity.IsActive == true)
+            {
+                entity.IsActive = false;
+            }
+            Dc.Categories.Update(entity);
+            Dc.SaveChanges();
+        }
+
+        public IList<Category> GetAllViewFrontClinet()
+        {
+            return Dc.Categories.Include(Getbyid => Getbyid.User).Where(x => x.IsActive == true && x.IsDelete == false).ToList();
         }
     }
 }

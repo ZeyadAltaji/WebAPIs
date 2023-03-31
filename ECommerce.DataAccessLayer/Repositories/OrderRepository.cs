@@ -1,5 +1,6 @@
 ﻿using ECommerce.Application.Abstractions;
 using ECommerce.Domain.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,27 +21,52 @@ namespace ECommerce.DataAccessLayer.Repositories
 
         public void Create(Order entity)
         {
-            throw new NotImplementedException();
+            Dc.Orders.Add(entity);
+            Dc.SaveChanges();
         }
 
         public void Delete(int Id, Order entity)
         {
-            throw new NotImplementedException();
+            entity.IsDelete = true;
+            Dc.Orders.Update(entity);
+            Dc.SaveChanges();
         }
 
         public List<Order> GetAll()
         {
-            throw new NotImplementedException();
+            return Dc.Orders.Include(Getbyid => Getbyid.User).Include(x=>x.Product).Where(x => x.IsDelete == false).ToList();
         }
 
         public Order GetByID(int id)
         {
-            throw new NotImplementedException();
+            var GetbyIdOrders = Dc.Orders.Include(Getbyid => Getbyid.User).Include(x => x.Product).SingleOrDefault(Getbyid => Getbyid.Id == id);
+            //var GetbyIdBrands = Dc.Brand.Include(Getbyid => Getbyid.Id == id).Where(Getbyid => Getbyid.Id == id).SingleOrDefault();
+            return GetbyIdOrders;
         }
 
         public void Update(int Id, Order entity)
         {
-            throw new NotImplementedException();
+            Dc.Orders.Update(entity);
+            Dc.SaveChanges();
+        }
+
+        public void Active(int Id, Order entity)
+        {
+            if (entity.IsActive == false)
+            {
+                entity.IsActive = true;
+            }
+            else if (entity.IsActive == true)
+            {
+                entity.IsActive = false;
+            }
+            Dc.Orders.Update(entity);
+            Dc.SaveChanges();
+        }
+
+        public IList<Order> GetAllViewFrontClinet()
+        {
+            return Dc.Orders.Include(Getbyid => Getbyid.User).Include(x => x.Product).Where(x => x.IsActive == true && x.IsDelete == false).ToList();
         }
     }
 }

@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace ECommerce.Domain.Models
 {
-    public class Product
+    public class Product:BaseEntity
     {
-        public int Id { get; set; }
+        
         public string Title { get; set; }=string.Empty;
         public string Description { get; set; } = string.Empty;
         public string main_Image { get; set; } = string.Empty;

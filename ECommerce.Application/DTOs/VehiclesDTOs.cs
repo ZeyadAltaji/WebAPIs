@@ -10,6 +10,7 @@ namespace ECommerce.Application.DTOs
     public class VehiclesDTOs : BaseClass
     {
         public string Image { get; set; } = string.Empty;
+        public string link { get; set; } = string.Empty;
         public int Admin_Id { get; set; }
         public User? User { get; set; }
     }

@@ -25,26 +25,46 @@ namespace ECommerce.DataAccessLayer.Repositories
 
         public void Delete(int Id, Brands entity)
         {
-            throw new NotImplementedException();
+            entity.IsDelete = true;
+            Dc.Brand.Update(entity);
+            Dc.SaveChanges();
         }
 
-        public  List<Brands> GetAll()
+        public List<Brands> GetAll()
         {
-            return Dc.Brand.ToList();
+            return Dc.Brand.Include(Getbyid => Getbyid.User).Where(x => x.IsDelete == false).ToList();
         }
 
         public Brands GetByID(int id)
         {
-            var GetbyIdBrands = Dc.Brand.Include(Getbyid => Getbyid.Id == id).SingleOrDefault(Getbyid => Getbyid.Id == id);
+            var GetbyIdBrands = Dc.Brand.Include(Getbyid => Getbyid.User).SingleOrDefault(Getbyid => Getbyid.Id == id);
             //var GetbyIdBrands = Dc.Brand.Include(Getbyid => Getbyid.Id == id).Where(Getbyid => Getbyid.Id == id).SingleOrDefault();
             return GetbyIdBrands;
         }
 
         public void Update(int Id, Brands entity)
         {
-             Dc.Brand.Update(entity);
-             Dc.SaveChanges();
-            
+            Dc.Brand.Update(entity);
+            Dc.SaveChanges();
+
+        }
+
+        public void Active(int Id, Brands entity)
+        {
+            if (entity.IsActive == false)
+            {
+                entity.IsActive= true;
+            }else if(entity.IsActive == true)
+            {
+                entity.IsActive= false;
+            }
+            Dc.Brand.Update(entity);
+            Dc.SaveChanges();
+        }
+
+        public IList<Brands> GetAllViewFrontClinet()
+        {
+            return Dc.Brand.Include(Getbyid => Getbyid.User).Where(x => x.IsActive == true && x.IsDelete == false).ToList();
         }
     }
 }

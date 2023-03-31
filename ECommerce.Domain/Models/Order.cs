@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace ECommerce.Domain.Models
 {
-    public class Order
+    public class Order: BaseEntity
     {
-        public int Id { get; set; }
+        
         public int Customer_Id { get; set; }
         public DateTime Order_Date { get; set; }
         public int Quantity { get; set; }
