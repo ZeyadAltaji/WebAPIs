@@ -21,6 +21,8 @@ namespace ECommerce.DataAccessLayer.Repositories
 
         public void Create(Slider entity)
         {
+            if (entity == null) throw new ArgumentNullException(nameof(entity));
+
             Dc.Sliders.Add(entity);
             Dc.SaveChanges();
         }
