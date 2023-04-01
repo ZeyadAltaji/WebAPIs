@@ -7,8 +7,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
-var sectertkey = builder.Configuration.GetSection("AppSettings:key").Value;
-var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(sectertkey));
+var secretKey = builder.Configuration.GetSection("AppSettings:key").Value;
+var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
 ConfigurationManager cfm = builder.Configuration;
 
 

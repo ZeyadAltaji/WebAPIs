@@ -1,7 +1,13 @@
 ﻿using ECommerce.Application.DTOs;
 using ECommerce.Application.UnitOfWork;
+using ECommerce.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace WebAPIs.Controllers
 {
@@ -9,50 +15,76 @@ namespace WebAPIs.Controllers
     [ApiController]
     public class AccountsController : ControllerBase
     {
-        private readonly IConfiguration Configuration;
-        private readonly IUnitOfWork Uow;
-        public AccountsController(IConfiguration configuration, IUnitOfWork uow)
-        {
-            Uow = uow;
-            Configuration = configuration;
-            
-        }
-        // Post: api/<AccountsController>
+        private readonly IConfiguration configuration;
+        private readonly IUnitOfWork uow;
+         public AccountsController(
+            IConfiguration configuration,
+            IUnitOfWork uow
+           )
+         {
+            this.configuration = configuration;
+            this.uow = uow;
+ 
+         }
+        // Post: api/Accounts/register
         [HttpPost("register")]
         public async Task<IActionResult> Register(LoginReqDto loginReq)
         {
-            if (loginReq.Username==null ||  loginReq.Password==null) return BadRequest("There is empty value in User Name Or Password !");
+            if (await uow.UserRepository.UserAlreadyExists(loginReq.Username)) return BadRequest("User already exists, please try different user name");
+            if(ModelState.IsValid)
+            {
+                uow.UserRepository.Register(loginReq.Username, loginReq.Password, loginReq.ComfirmPassword);
+                await uow.SaveChanges();
+                return StatusCode(200);
+            }
+            else
+            {
+                if (loginReq.Username == null || loginReq.Password == null) return BadRequest("There is empty value in User Name Or Password !");
+                //if (loginReq.Password != loginReq.ComfirmPassword) return BadRequest("Some Errors");
 
-            if (await Uow.UserRepository.UserAlreadyExists(loginReq.Username)) return StatusCode(401);
-
-              Uow.UserRepository.Register(loginReq.Username, loginReq.Password);
-            await Uow.SaveChanges();
+            }
             return StatusCode(200);
         }
+        // Post: api/Accounts/Login
 
-        // GET api/<AccountsController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpPost("Login")]
+        public async Task<IActionResult> Login(LoginReqDto LoginReq)
         {
-            return "value";
+            var user = await uow.UserRepository.Authenticate(LoginReq.Username, LoginReq.Password);
+            if (user == null) return Unauthorized(401);
+            var LoginRes = new LoginResDto();
+            LoginRes.UserName = user.UserName;
+            LoginRes.Token =CreateJWT(user);
+            return Ok(LoginRes);
+
+        }
+        private string CreateJWT(User user)
+        {
+
+            var secretKey = configuration.GetSection("AppSettings:key").Value;
+            var key = new SymmetricSecurityKey(Encoding.UTF8
+                .GetBytes(secretKey));
+
+            var claims = new Claim[] {
+                new Claim(ClaimTypes.Name,user.UserName),
+                new Claim(ClaimTypes.NameIdentifier,user.Id.ToString())
+            };
+
+            var signingCredentials = new SigningCredentials(
+                    key, SecurityAlgorithms.HmacSha256Signature);
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims),
+                Expires = DateTime.UtcNow.AddMinutes(1),
+                SigningCredentials = signingCredentials
+            };
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
         }
 
-        // POST api/<AccountsController>
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
 
-        // PUT api/<AccountsController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/<AccountsController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
     }
 }
