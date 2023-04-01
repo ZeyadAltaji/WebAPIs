@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ namespace ECommerce.Domain.Models
 {
     public class BaseEntity
     {
+        [Column(Order = 0)]
         public int Id { get; set; }
 
         public string UserCreate { get; set; } = string.Empty;

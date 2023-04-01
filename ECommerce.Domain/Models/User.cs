@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace ECommerce.Domain.Models
 {
-    public  class User
+    public  class User :BaseEntity
     {
-        public int Id { get; set; }
+ 
         [Required]
         public string UserName { get; set; } = string.Empty;
         [Required]
