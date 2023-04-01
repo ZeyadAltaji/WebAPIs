@@ -38,5 +38,10 @@ namespace ECommerce.DataAccessLayer
         public IRepository<Sub_Slider> repositorySub_Slider => new Sub_SliderRepository(DC);
 
         public IRepository<Vehicles> repositoryVehicles => new VehiclesRepository(DC);
+
+        public async Task<bool> SaveChanges()
+        {
+            return await DC.SaveChangesAsync()>0;
+        }
     }
 }

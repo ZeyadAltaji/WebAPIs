@@ -9,7 +9,7 @@ namespace ECommerce.Application.DTOs
     public class UserDTOs : BaseClass
     {
          public string Name { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
+        public string Username { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
         public string PasswordKey { get; set; } = string.Empty;
     }

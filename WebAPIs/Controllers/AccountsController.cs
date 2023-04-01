@@ -1,15 +1,33 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ECommerce.Application.DTOs;
+using ECommerce.Application.UnitOfWork;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+
 namespace WebAPIs.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class AccountsController : ControllerBase
     {
-        // GET: api/<AccountsController>
-        [HttpGet]
-        public IEnumerable<string> Get()
+        private readonly IConfiguration Configuration;
+        private readonly IUnitOfWork Uow;
+        public AccountsController(IConfiguration configuration, IUnitOfWork uow)
         {
-            return new string[] { "value1", "value2" };
+            Uow = uow;
+            Configuration = configuration;
+            
+        }
+        // Post: api/<AccountsController>
+        [HttpPost("register")]
+        public async Task<IActionResult> Register(LoginReqDto loginReq)
+        {
+            if (loginReq.Username==null ||  loginReq.Password==null) return BadRequest("There is empty value in User Name Or Password !");
+
+            if (await Uow.UserRepository.UserAlreadyExists(loginReq.Username)) return StatusCode(401);
+
+              Uow.UserRepository.Register(loginReq.Username, loginReq.Password);
+            await Uow.SaveChanges();
+            return StatusCode(200);
         }
 
         // GET api/<AccountsController>/5

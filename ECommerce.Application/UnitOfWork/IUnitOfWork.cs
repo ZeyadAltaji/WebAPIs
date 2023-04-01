@@ -22,6 +22,8 @@ namespace ECommerce.Application.UnitOfWork
         IRepository<Sub_Slider> repositorySub_Slider { get; }
         IRepository<Vehicles> repositoryVehicles { get; }
 
+        Task<bool> SaveChanges();
+
     }
 
 }
