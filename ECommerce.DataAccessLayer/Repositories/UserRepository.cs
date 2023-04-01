@@ -31,7 +31,7 @@ namespace ECommerce.DataAccessLayer.Repositories
             
 
         }
-        public void Register(string UserName, string password)
+        public void Register(string UserName, string password, string ComfirmPassword)
         {
             byte[] passwordHash, passwordKey;
 
@@ -41,10 +41,19 @@ namespace ECommerce.DataAccessLayer.Repositories
                 passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
 
             }
-            User user = new User();
-            user.UserName = UserName;
-            user.Password = passwordHash;
-            user.PasswordKey = passwordKey;
+            if (password != ComfirmPassword)
+            {
+                Console.WriteLine("plz error");
+            }
+            else
+            {
+                User user = new User();
+                user.UserName = UserName;
+                user.Password = passwordHash;
+                user.ComfirmPassword = passwordHash;
+                user.PasswordKey = passwordKey;
+                DC.Users.Add(user);
+            }
         }
 
         public async Task<bool> UserAlreadyExists(string UserName)
