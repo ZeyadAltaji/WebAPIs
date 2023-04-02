@@ -24,15 +24,14 @@ namespace WebAPIs.Controllers
         }
         // GET: api/Category/categorise
         [HttpGet("categorise")]
-        public async Task<IActionResult> GetCategorise()
+        public string GetCategorise()
         {
-            var categorise = await uow.repositoryCategory.GetAllAsync();
-            var categoriseDTOs = mapper.Map<IEnumerable<CategoryDTOs>>(categorise);
-            return Ok(categoriseDTOs);
+            return "value";
+
         }
 
-       
-        // GET api/<CategoryController>/5
+
+        // GET: api/Category/categorise/id
         [HttpGet("categorise/{id}")]
         public string Get(int id)
         {
