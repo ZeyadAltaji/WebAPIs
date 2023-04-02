@@ -1,4 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using ECommerce.Application.DTOs;
+using ECommerce.Application.UnitOfWork;
+using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -8,15 +13,27 @@ namespace WebAPIs.Controllers
     [ApiController]
     public class CategoryController : ControllerBase
     {
-        // GET: api/<CategoryController>
-        [HttpGet]
-        public IEnumerable<string> Get()
+        private readonly IUnitOfWork uow;
+        private readonly IMapper mapper;
+
+        public CategoryController(IUnitOfWork uow, IMapper mapper)
         {
-            return new string[] { "value1", "value2" };
+            this.uow = uow;
+            this.mapper = mapper;
+
+        }
+        // GET: api/Category/categorise
+        [HttpGet("categorise")]
+        public async Task<IActionResult> GetCategorise()
+        {
+            var categorise = await uow.repositoryCategory.GetAllAsync();
+            var categoriseDTOs = mapper.Map<IEnumerable<CategoryDTOs>>(categorise);
+            return Ok(categoriseDTOs);
         }
 
+       
         // GET api/<CategoryController>/5
-        [HttpGet("{id}")]
+        [HttpGet("categorise/{id}")]
         public string Get(int id)
         {
             return "value";

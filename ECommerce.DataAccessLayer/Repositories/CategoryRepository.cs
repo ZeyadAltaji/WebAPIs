@@ -35,7 +35,7 @@ namespace ECommerce.DataAccessLayer.Repositories
 
         public List<Category> GetAll()
         {
-            return Dc.Categories.Include(Getbyid => Getbyid.User).Where(x => x.IsDelete == false).ToList();
+            return  Dc.Categories.Include(Getbyid => Getbyid.User).Where(x => x.IsDelete == false).ToList();
         }
 
         public Category GetByID(int id)
