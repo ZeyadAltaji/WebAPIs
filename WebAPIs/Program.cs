@@ -2,6 +2,7 @@ using ECommerce.Application.Helpers;
 using ECommerce.Application.UnitOfWork;
 using ECommerce.DataAccessLayer;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -22,6 +23,15 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 //call AutoMapper profile 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
 
+//Enable Cors
+builder.Services.AddCors(x =>
+{
+    x.AddPolicy("MyPolicy", builder =>
+    {
+        builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+    });
+});
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
     options.TokenValidationParameters = new TokenValidationParameters
@@ -38,7 +48,9 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 
 app.UseHttpsRedirection();
+app.UseCors("MyPolicy");
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
