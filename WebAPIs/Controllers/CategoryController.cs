@@ -45,6 +45,7 @@ namespace WebAPIs.Controllers
         public async Task<IActionResult> Createcategorise(CategoryDTOs categoryDTOs)
         {
             var CreateNewcategorise = mapper.Map<Category>(categoryDTOs);
+            categoryDTOs.CreateDate = DateTime.Now;
             uow.repositoryCategory.Create(CreateNewcategorise);
             await uow.SaveChanges();
             return StatusCode(201);
