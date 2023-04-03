@@ -8,14 +8,14 @@ namespace ECommerce.Application.Abstractions
 {
     public interface IRepository<TEntity>
     {
-        public void Create(TEntity entity);
-        public void Update(int Id, TEntity entity);
-        public void Delete(int Id, TEntity entity);
+        void Create(TEntity entity);
+        void Update(int Id, TEntity entity);
+        void Delete(int Id, TEntity entity);
         void Active(int Id, TEntity entity);
         IList<TEntity> GetAllViewFrontClinet();
 
-        TEntity GetByID(int id);
+        Task<TEntity> GetByID(int id);
 
-        List<TEntity> GetAll();
+         Task<IEnumerable<TEntity>> GetAll();
     }
 }
