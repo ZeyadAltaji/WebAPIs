@@ -68,7 +68,7 @@ namespace WebAPIs.Controllers
         }
 
         // DELETE api/<CategoryController>/5
-        [HttpDelete("categorise/Delete/{id}")]
+        [HttpPut("categorise/Delete/{id}")]
         public async Task<IActionResult> DeleteCity(int id)
         {
             var categoriseDelete = await uow.repositoryCategory.GetByID(id);
