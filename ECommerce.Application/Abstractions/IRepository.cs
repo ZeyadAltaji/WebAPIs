@@ -14,8 +14,8 @@ namespace ECommerce.Application.Abstractions
         void Active(int Id, TEntity entity);
         IList<TEntity> GetAllViewFrontClinet();
 
-        Task<TEntity> GetByID(int id);
+        Task<TEntity>GetByID(int id);
 
-         Task<IEnumerable<TEntity>> GetAll();
+        Task<IEnumerable<TEntity>> GetAll();
     }
 }

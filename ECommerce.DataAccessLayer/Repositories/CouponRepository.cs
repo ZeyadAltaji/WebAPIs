@@ -33,19 +33,18 @@ namespace ECommerce.DataAccessLayer.Repositories
             Dc.Coupons.Update(entity);
             Dc.SaveChanges();
         }
-
-        public List<Coupon> GetAll()
+        public async Task<IEnumerable<Coupon>> GetAll()
         {
-            return Dc.Coupons.Include(Getbyid => Getbyid.User).Where(x => x.IsDelete == false).ToList();
+            return await Dc.Coupons.Include(Getbyid => Getbyid.User).Where(x => x.IsDelete == false).ToListAsync();
+
         }
 
-        public Coupon GetByID(int id)
+        public async Task<Coupon> GetByID(int id)
         {
-            var GetbyIdCoupons = Dc.Coupons.Include(Getbyid => Getbyid.User).SingleOrDefault(Getbyid => Getbyid.Id == id);
-            //var GetbyIdBrands = Dc.Brand.Include(Getbyid => Getbyid.Id == id).Where(Getbyid => Getbyid.Id == id).SingleOrDefault();
-            return GetbyIdCoupons;
-        }
+            return await Dc.Coupons.Include(Getbyid => Getbyid.User).SingleOrDefaultAsync(Getbyid => Getbyid.Id == id);
 
+        }
+        
         public void Update(int Id, Coupon entity)
         {
             Dc.Coupons.Update(entity);
@@ -70,5 +69,7 @@ namespace ECommerce.DataAccessLayer.Repositories
         {
             return Dc.Coupons.Include(Getbyid => Getbyid.User).Where(x => x.IsActive == true && x.IsDelete == false).ToList();
         }
+
+      
     }
 }

@@ -31,17 +31,16 @@ namespace ECommerce.DataAccessLayer.Repositories
             Dc.Brand.Update(entity);
             Dc.SaveChanges();
         }
-
-        public List<Brands> GetAll()
+        public async Task<IEnumerable<Brands>> GetAll()
         {
-            return Dc.Brand.Include(Getbyid => Getbyid.User).Where(x => x.IsDelete == false).ToList();
+            return await Dc.Brand.Include(Getbyid => Getbyid.User).Where(x => x.IsDelete == false).ToListAsync();
+
         }
 
-        public Brands GetByID(int id)
+        public async Task<Brands> GetByID(int id)
         {
-            var GetbyIdBrands = Dc.Brand.Include(Getbyid => Getbyid.User).SingleOrDefault(Getbyid => Getbyid.Id == id);
-            //var GetbyIdBrands = Dc.Brand.Include(Getbyid => Getbyid.Id == id).Where(Getbyid => Getbyid.Id == id).SingleOrDefault();
-            return GetbyIdBrands;
+            return await Dc.Brand.Include(Getbyid => Getbyid.User).SingleOrDefaultAsync(Getbyid => Getbyid.Id == id);
+
         }
 
         public void Update(int Id, Brands entity)
@@ -68,5 +67,7 @@ namespace ECommerce.DataAccessLayer.Repositories
         {
             return Dc.Brand.Include(Getbyid => Getbyid.User).Where(x => x.IsActive == true && x.IsDelete == false).ToList();
         }
+
+     
     }
 }

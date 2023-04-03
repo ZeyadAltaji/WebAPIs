@@ -33,18 +33,14 @@ namespace ECommerce.DataAccessLayer.Repositories
             Dc.Vehicle.Update(entity);
             Dc.SaveChanges();
         }
-
-        public List<Vehicles> GetAll()
+        public async Task<IEnumerable<Vehicles>> GetAll()
         {
-            return Dc.Vehicle.Include(Getbyid => Getbyid.User).Where(x => x.IsDelete == false).ToList();
+            return await Dc.Vehicle.Include(Getbyid => Getbyid.User).Where(x => x.IsDelete == false).ToListAsync();
 
         }
-
-        public Vehicles GetByID(int id)
+        public async Task<Vehicles> GetByID(int id)
         {
-            var GetbyIdVehicle = Dc.Vehicle.Include(Getbyid => Getbyid.User).SingleOrDefault(Getbyid => Getbyid.Id == id);
-            //var GetbyIdBrands = Dc.Brand.Include(Getbyid => Getbyid.Id == id).Where(Getbyid => Getbyid.Id == id).SingleOrDefault();
-            return GetbyIdVehicle;
+            return await Dc.Vehicle.Include(Getbyid => Getbyid.User).SingleOrDefaultAsync(Getbyid => Getbyid.Id == id);
         }
 
         public void Update(int Id, Vehicles entity)
@@ -72,5 +68,6 @@ namespace ECommerce.DataAccessLayer.Repositories
         {
             return Dc.Vehicle.Include(Getbyid => Getbyid.User).Where(x => x.IsActive == true && x.IsDelete == false).ToList();
         }
+ 
     }
 }

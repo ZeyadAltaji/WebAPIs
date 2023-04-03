@@ -43,7 +43,7 @@ namespace ECommerce.DataAccessLayer.Repositories
             }
             if (password != ComfirmPassword)
             {
-                Console.WriteLine("plz error");
+                Console.WriteLine("Password In Valid ConfirmPassword ");
             }
             else
             {
@@ -52,6 +52,8 @@ namespace ECommerce.DataAccessLayer.Repositories
                 user.Password = passwordHash;
                 user.ComfirmPassword = passwordHash;
                 user.PasswordKey = passwordKey;
+                user.CreateDate = DateTime.Now;
+                
                 DC.Users.Add(user);
             }
         }

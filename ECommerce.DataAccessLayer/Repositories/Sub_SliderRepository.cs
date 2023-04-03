@@ -33,17 +33,14 @@ namespace ECommerce.DataAccessLayer.Repositories
             Dc.SubSliders.Update(entity);
             Dc.SaveChanges();
         }
-
-        public List<Sub_Slider> GetAll()
+        public async Task<IEnumerable<Sub_Slider>> GetAll()
         {
-            return Dc.SubSliders.Include(Getbyid => Getbyid.User).Where(x => x.IsDelete == false).ToList();
+            return await Dc.SubSliders.Include(Getbyid => Getbyid.User).Where(x => x.IsDelete == false).ToListAsync();
+
         }
-
-        public Sub_Slider GetByID(int id)
+        public async Task<Sub_Slider> GetByID(int id)
         {
-            var GetbyIdSubSliders = Dc.SubSliders.Include(Getbyid => Getbyid.User).SingleOrDefault(Getbyid => Getbyid.Id == id);
-            //var GetbyIdBrands = Dc.Brand.Include(Getbyid => Getbyid.Id == id).Where(Getbyid => Getbyid.Id == id).SingleOrDefault();
-            return GetbyIdSubSliders;
+            return await Dc.SubSliders.Include(Getbyid => Getbyid.User).SingleOrDefaultAsync(Getbyid => Getbyid.Id == id);
         }
 
         public void Update(int Id, Sub_Slider entity)
@@ -70,5 +67,7 @@ namespace ECommerce.DataAccessLayer.Repositories
         {
             return Dc.SubSliders.Include(Getbyid => Getbyid.User).Where(x => x.IsActive == true && x.IsDelete == false).ToList();
         }
+
+       
     }
 }

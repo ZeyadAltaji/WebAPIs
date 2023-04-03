@@ -35,16 +35,15 @@ namespace ECommerce.DataAccessLayer.Repositories
             Dc.SaveChanges();
         }
 
-        public List<Special> GetAll()
+        public async Task<IEnumerable<Special>> GetAll()
         {
-            return Dc.Specials.Include(Getbyid => Getbyid.User).Where(x => x.IsDelete == false).ToList();
+            return await Dc.Specials.Include(Getbyid => Getbyid.User).Where(x => x.IsDelete == false).ToListAsync();
         }
 
-        public Special GetByID(int id)
+        public async Task<Special> GetByID(int id)
         {
-            var GetbyIdSpecials = Dc.Specials.Include(Getbyid => Getbyid.User).SingleOrDefault(Getbyid => Getbyid.Id == id);
-            //var GetbyIdBrands = Dc.Brand.Include(Getbyid => Getbyid.Id == id).Where(Getbyid => Getbyid.Id == id).SingleOrDefault();
-            return GetbyIdSpecials;
+            return await Dc.Specials.Include(Getbyid => Getbyid.User).SingleOrDefaultAsync(Getbyid => Getbyid.Id == id);
+
         }
 
         public void Update(int Id, Special entity)
@@ -71,5 +70,7 @@ namespace ECommerce.DataAccessLayer.Repositories
         {
             return Dc.Specials.Include(Getbyid => Getbyid.User).Where(x => x.IsActive == true && x.IsDelete == false).ToList();
         }
+
+     
     }
 }

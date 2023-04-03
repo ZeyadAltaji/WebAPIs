@@ -33,19 +33,18 @@ namespace ECommerce.DataAccessLayer.Repositories
             Dc.Orders.Update(entity);
             Dc.SaveChanges();
         }
-
-        public List<Order> GetAll()
+        public async Task<IEnumerable<Order>> GetAll()
         {
-            return Dc.Orders.Include(Getbyid => Getbyid.User).Include(x=>x.Product).Where(x => x.IsDelete == false).ToList();
+            return await Dc.Orders.Include(Getbyid => Getbyid.User).Where(x => x.IsDelete == false).ToListAsync();
+
         }
 
-        public Order GetByID(int id)
+        public async Task<Order> GetByID(int id)
         {
-            var GetbyIdOrders = Dc.Orders.Include(Getbyid => Getbyid.User).Include(x => x.Product).SingleOrDefault(Getbyid => Getbyid.Id == id);
-            //var GetbyIdBrands = Dc.Brand.Include(Getbyid => Getbyid.Id == id).Where(Getbyid => Getbyid.Id == id).SingleOrDefault();
-            return GetbyIdOrders;
-        }
+            return await Dc.Orders.Include(Getbyid => Getbyid.User).SingleOrDefaultAsync(Getbyid => Getbyid.Id == id);
 
+        }
+        
         public void Update(int Id, Order entity)
         {
             Dc.Orders.Update(entity);
@@ -70,5 +69,7 @@ namespace ECommerce.DataAccessLayer.Repositories
         {
             return Dc.Orders.Include(Getbyid => Getbyid.User).Include(x => x.Product).Where(x => x.IsActive == true && x.IsDelete == false).ToList();
         }
+
+    
     }
 }
