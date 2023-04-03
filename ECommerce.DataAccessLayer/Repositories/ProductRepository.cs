@@ -17,8 +17,6 @@ namespace ECommerce.DataAccessLayer.Repositories
         {
             Dc = dc;
         }
-
-
         public void Create(Product entity)
         {
             if (entity == null) throw new ArgumentNullException(nameof(entity));
@@ -33,17 +31,16 @@ namespace ECommerce.DataAccessLayer.Repositories
             Dc.Products.Update(entity);
             Dc.SaveChanges();
         }
-
-        public List<Product> GetAll()
+        public async Task<IEnumerable<Product>> GetAll()
         {
-            return Dc.Products.Include(Getbyid => Getbyid.User).Include(Getbyid => Getbyid.Category).Include(Getbyid => Getbyid.Brands).Include(Getbyid => Getbyid.Car).Where(x => x.IsDelete == false).ToList();
+             return await Dc.Products.Include(Getbyid => Getbyid.User).Where(x => x.IsDelete == false).ToListAsync();
+
         }
 
-        public Product GetByID(int id)
+        public async Task<Product> GetByID(int id)
         {
-            var GetbyIdProducts = Dc.Products.Include(Getbyid => Getbyid.User).Include(Getbyid => Getbyid.Category).Include(Getbyid => Getbyid.Brands).Include(Getbyid => Getbyid.Car).SingleOrDefault(Getbyid => Getbyid.Id == id);
-            //var GetbyIdBrands = Dc.Brand.Include(Getbyid => Getbyid.Id == id).Where(Getbyid => Getbyid.Id == id).SingleOrDefault();
-            return GetbyIdProducts;
+            return await Dc.Products.Include(Getbyid => Getbyid.User).SingleOrDefaultAsync(Getbyid => Getbyid.Id == id);
+ 
         }
 
         public void Update(int Id, Product entity)
@@ -70,5 +67,7 @@ namespace ECommerce.DataAccessLayer.Repositories
         {
             return Dc.Products.Include(Getbyid => Getbyid.User).Include(Getbyid => Getbyid.Category).Include(Getbyid => Getbyid.Brands).Include(Getbyid => Getbyid.Car).Where(x => x.IsActive == true && x.IsDelete == false).ToList();
         }
+
+       
     }
 }
