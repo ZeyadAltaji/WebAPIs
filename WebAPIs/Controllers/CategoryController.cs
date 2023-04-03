@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ECommerce.Application.DTOs;
 using ECommerce.Application.UnitOfWork;
+using ECommerce.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 
@@ -24,36 +25,56 @@ namespace WebAPIs.Controllers
         }
         // GET: api/Category/categorise
         [HttpGet("categorise")]
-        public string GetCategorise()
+       public async Task<IActionResult> GetALlCategory()
         {
-            return "value";
+            var categorise = await uow.repositoryCategory.GetAll();
+            var categoriseDTOs= mapper.Map<IEnumerable<CategoryDTOs>>(categorise);
+            return Ok(categoriseDTOs);
 
         }
-
-
         // GET: api/Category/categorise/id
         [HttpGet("categorise/{id}")]
-        public string Get(int id)
+        public async Task<IActionResult> GetById(int id)
         {
-            return "value";
+            var categoriseByID = await uow.repositoryCategory.GetByID(id);
+            return Ok(categoriseByID);
         }
 
-        // POST api/<CategoryController>
+        // POST api/Category/categorise
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<IActionResult> Createcategorise(CategoryDTOs categoryDTOs)
         {
+            var CreateNewcategorise = mapper.Map<Category>(categoryDTOs);
+            uow.repositoryCategory.Create(CreateNewcategorise);
+            await uow.SaveChanges();
+            return StatusCode(201);
         }
 
-        // PUT api/<CategoryController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        // PUT api/categorise/update/5
+        [HttpPut("categorise/update/{id}")]
+        public async Task<IActionResult> Updatecategorise(int id, CategoryDTOs categoryDTOs)
         {
+            if (id != categoryDTOs.Id)
+                return BadRequest("Update not allowed");
+            var categoriseFromDb = await uow.repositoryCategory.GetByID(id);
+
+            if (categoriseFromDb == null)
+                return BadRequest("Update not allowed");
+            mapper.Map(categoryDTOs, categoriseFromDb);
+
+            await uow.SaveChanges();
+            return StatusCode(200);
         }
 
         // DELETE api/<CategoryController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpDelete("categorise/Delete/{id}")]
+        public async Task<IActionResult> DeleteCity(int id)
         {
+            var categoriseDelete = await uow.repositoryCategory.GetByID(id);
+
+            uow.repositoryCategory.Delete(id,categoriseDelete);
+            await uow.SaveChanges();
+            return Ok(id);
         }
     }
 }
