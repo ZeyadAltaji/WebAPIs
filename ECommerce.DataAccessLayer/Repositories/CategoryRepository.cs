@@ -19,30 +19,32 @@ namespace ECommerce.DataAccessLayer.Repositories
         }
 
 
-        public void Create(Category entity)
+        public  void Create(Category category)
         {
-            if (entity == null) throw new ArgumentNullException(nameof(entity));
-            Dc.Categories.Add(entity);
+            if (category == null) throw new ArgumentNullException(nameof(category));
+             Dc.Categories.Add(category);
             Dc.SaveChanges();
         }
 
-        public void Delete(int Id, Category entity)
+        public void Delete(int Id,Category category)
         {
-            entity.IsDelete = true;
-            Dc.Categories.Update(entity);
+            category.IsDelete = true;
+            Dc.Categories.Update(category);
             Dc.SaveChanges();
         }
 
-        public List<Category> GetAll()
+        public async Task<IEnumerable<Category>> GetAll()
         {
-            return Dc.Categories.Include(Getbyid => Getbyid.User).Where(x => x.IsDelete == false).ToList();
+            //return Dc.Categories.Include(Getbyid => Getbyid.User).Where(x => x.IsDelete == false).ToList();
+            return await Dc.Categories.Include(Getbyid => Getbyid.User).Where(x => x.IsDelete == false).ToListAsync();
+
         }
 
-        public Category GetByID(int id)
+        public async Task<Category> GetByID(int id)
         {
-            var GetbyIdCategory = Dc.Categories.Include(Getbyid => Getbyid.User).SingleOrDefault(Getbyid => Getbyid.Id == id);
+            return await Dc.Categories.Include(Getbyid => Getbyid.User).SingleOrDefaultAsync(Getbyid => Getbyid.Id == id);
             //var GetbyIdBrands = Dc.Brand.Include(Getbyid => Getbyid.Id == id).Where(Getbyid => Getbyid.Id == id).SingleOrDefault();
-            return GetbyIdCategory;
+            
         }
 
         public void Update(int Id, Category entity)
@@ -69,5 +71,7 @@ namespace ECommerce.DataAccessLayer.Repositories
         {
             return Dc.Categories.Include(Getbyid => Getbyid.User).Where(x => x.IsActive == true && x.IsDelete == false).ToList();
         }
+
+        
     }
 }
