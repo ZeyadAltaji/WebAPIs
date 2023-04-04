@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ECommerce.DataAccessLayer.Migrations
 {
     /// <inheritdoc />
-    public partial class initalnewDBContext : Migration
+    public partial class initalDataBase : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -286,11 +286,8 @@ namespace ECommerce.DataAccessLayer.Migrations
                     Quantity = table.Column<int>(type: "int", nullable: false),
                     Link = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Button = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Id_Brands = table.Column<int>(type: "int", nullable: false),
                     BrandsId = table.Column<int>(type: "int", nullable: true),
-                    Id_Car = table.Column<int>(type: "int", nullable: false),
                     CarId = table.Column<int>(type: "int", nullable: true),
-                    Category_Id = table.Column<int>(type: "int", nullable: false),
                     CategoryId = table.Column<int>(type: "int", nullable: true),
                     Customer_Id = table.Column<int>(type: "int", nullable: false),
                     Admin_Id = table.Column<int>(type: "int", nullable: false),
@@ -338,7 +335,6 @@ namespace ECommerce.DataAccessLayer.Migrations
                     Quantity = table.Column<int>(type: "int", nullable: false),
                     Price = table.Column<double>(type: "float", nullable: false),
                     Payment_Info = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Product_Id = table.Column<int>(type: "int", nullable: false),
                     ProductId = table.Column<int>(type: "int", nullable: true),
                     UserId = table.Column<int>(type: "int", nullable: true),
                     UserCreate = table.Column<string>(type: "nvarchar(max)", nullable: false),
