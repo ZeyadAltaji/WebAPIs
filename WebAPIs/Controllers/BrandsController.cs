@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using ECommerce.Application.DTOs;
+using ECommerce.Application.UnitOfWork;
+using ECommerce.Domain.Models;
+using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -8,36 +12,67 @@ namespace WebAPIs.Controllers
     [ApiController]
     public class BrandsController : ControllerBase
     {
-        // GET: api/<BrandsController>
-        [HttpGet]
-        public IEnumerable<string> Get()
+        private readonly IUnitOfWork uow;
+        private readonly IMapper mapper;
+        public BrandsController(IUnitOfWork uow, IMapper mapper)
         {
-            return new string[] { "value1", "value2" };
+            this.uow = uow;
+            this.mapper = mapper;
+
+        }
+        // GET: api/Brands/GetAllBrand
+        [HttpGet("GetAllBrand")]
+        public async Task<IActionResult> GetALlBrands()
+        {
+            var AllBrand = await uow.repositoryBrands.GetAll();
+            var BrandDTOs = mapper.Map<IEnumerable<BrandsDTOs>>(AllBrand);
+            return Ok(BrandDTOs);
+
+        }
+        // GET: api/Brands/Brand/id
+        [HttpGet("Brand/{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var BrandsByID = await uow.repositoryBrands.GetByID(id);
+            return Ok(BrandsByID);
         }
 
-        // GET api/<BrandsController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/<BrandsController>
+        // POST api/Brands
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<IActionResult> CreateBrands(BrandsDTOs brandsDTOs)
         {
+            var CreateNewBrands = mapper.Map<Brands>(brandsDTOs);
+            brandsDTOs.CreateDate = DateTime.Now;
+            uow.repositoryBrands.Create(CreateNewBrands);
+            await uow.SaveChanges();
+            return StatusCode(201);
         }
 
-        // PUT api/<BrandsController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        // PUT api/Brand/update/5
+        [HttpPut("Brand/update/{id}")]
+        public async Task<IActionResult> UpdateBrands(int id, BrandsDTOs brandsDTOs)
         {
+            if (id != brandsDTOs.Id)
+                return BadRequest("Update not allowed");
+            var BrandFromDb = await uow.repositoryBrands.GetByID(id);
+
+            if (BrandFromDb == null)
+                return BadRequest("Update not allowed");
+            mapper.Map(brandsDTOs, BrandFromDb);
+
+            await uow.SaveChanges();
+            return StatusCode(200);
         }
 
-        // DELETE api/<BrandsController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        // DELETE api/<BrandsDeleteController>/5
+        [HttpPut("Brands/Delete/{id}")]
+        public async Task<IActionResult> DeleteBrands(int id)
         {
+            var BrandsDelete = await uow.repositoryBrands.GetByID(id);
+
+            uow.repositoryBrands.Delete(id, BrandsDelete);
+            await uow.SaveChanges();
+            return Ok(id);
         }
     }
 }

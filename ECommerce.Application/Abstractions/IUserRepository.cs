@@ -13,5 +13,6 @@ namespace ECommerce.Application.Abstractions
         void Register(string UserName, string password,string ComfirmPassword);
 
         Task<bool> UserAlreadyExists(string UserName);
+        Task<User> FindByEmailAsync(string Email);
     }
 }

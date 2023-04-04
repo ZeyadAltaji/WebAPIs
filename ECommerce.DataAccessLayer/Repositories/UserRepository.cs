@@ -31,6 +31,23 @@ namespace ECommerce.DataAccessLayer.Repositories
             
 
         }
+
+        public async Task<User> FindByEmailAsync(string Email)
+        {
+            var user = await DC.Users.FirstOrDefaultAsync(u => u.Email == Email);
+            if (user == null)
+            {
+                Console.WriteLine("User not found.");
+                return null; // or throw an exception if appropriate
+            }
+
+             DC.Users.Update(user);
+            await DC.SaveChangesAsync();
+
+            return user;
+
+        }
+
         public void Register(string UserName, string password, string ComfirmPassword)
         {
             byte[] passwordHash, passwordKey;

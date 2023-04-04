@@ -58,6 +58,29 @@ namespace WebAPIs.Controllers
             return Ok(LoginRes);
 
         }
+        [HttpPost("ForGet-Password")]
+        public async Task<IActionResult> ForGetPassword(LoginReqDto LoginReq)
+        {
+            var user = await uow.UserRepository.FindByEmailAsync(LoginReq.Email);
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (user == null)
+            {
+                BadRequest("User not found with the provided email address");
+            }
+
+            // Update user's password
+            LoginReq.Password = CreateJWT(user); // set to the new hashed password value
+ 
+            await uow.SaveChanges();
+
+            return Ok(user);
+
+        }
         private string CreateJWT(User user)
         {
 
