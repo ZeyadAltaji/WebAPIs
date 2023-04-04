@@ -10,7 +10,7 @@ namespace ECommerce.Domain.Models
     {
         
         public int Customer_Id { get; set; }
-        public DateTime Order_Date { get; set; }
+        public DateTime? Order_Date { get; set; }
         public int Quantity { get; set; }
         public double Price { get; set; }
         public string Payment_Info { get; set; } = string.Empty;

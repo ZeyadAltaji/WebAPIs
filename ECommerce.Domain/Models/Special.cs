@@ -16,7 +16,7 @@ namespace ECommerce.Domain.Models
         [Required]
         public string Image { get; set; } = string.Empty;
         [Required]
-        public DateTime remaining_time { get; set; }
+        public DateTime? remaining_time { get; set; }
         [Required]
         public int Price { get; set; }
         public int seller_Id { get; set; }
