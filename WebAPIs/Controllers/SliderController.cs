@@ -29,7 +29,7 @@ namespace WebAPIs.Controllers
         }
 
         // GET api/<SliderController>/5
-        [HttpGet("Slider/{id}")]
+        [HttpGet("Sliders/{id}")]
         public async Task<IActionResult> GetById(int id)
         {
             var SliderGetByID = await uow.repositorySlider.GetByID(id);
@@ -49,7 +49,7 @@ namespace WebAPIs.Controllers
         }
 
         // PUT api/<SliderController>/5
-        [HttpPut("Slider/update/{id}")]
+        [HttpPut("Sliders/update/{id}")]
         public async Task<IActionResult> UpdateSlider(int id, SliderDTOs sliderDTOs)
         {
             if (id != sliderDTOs.Id)

@@ -30,7 +30,7 @@ namespace WebAPIs.Controllers
         }
 
         // GET api/<VehiclesController>/5
-        [HttpGet("Vehicles/{id}")]
+        [HttpGet("Vehicle/{id}")]
         public async Task<IActionResult> GetById(int id)
         {
             var VehiclesGetByID = await uow.repositoryVehicles.GetByID(id);
@@ -49,7 +49,7 @@ namespace WebAPIs.Controllers
         }
 
         // PUT api/<VehiclesController>/5
-        [HttpPut("Vehicles/update/{id}")]
+        [HttpPut("Vehicle/update/{id}")]
         public async Task<IActionResult> UpdateVehicles(int id, VehiclesDTOs vehiclesDTOs)
         {
             if (id != vehiclesDTOs.Id)
@@ -66,7 +66,7 @@ namespace WebAPIs.Controllers
 
 
         // DELETE api/<VehiclesController>/5
-        [HttpDelete("Vehicles/Delete/{id}")]
+        [HttpDelete("Vehicle/Delete/{id}")]
         public async Task<IActionResult> DeleteVehicles(int id)
         {
             var VehiclesDelete = await uow.repositoryVehicles.GetByID(id);

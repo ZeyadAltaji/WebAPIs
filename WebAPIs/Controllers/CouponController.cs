@@ -50,7 +50,7 @@ namespace WebAPIs.Controllers
         }
 
         // PUT api/Coupon/update/5
-        [HttpPut("Coupon/update/{id}")]
+        [HttpPut("Coupons/update/{id}")]
         public async Task<IActionResult> UpdateCoupon(int id, CouponDTOs couponDTOs)
         {
             if (id != couponDTOs.Id)
@@ -66,7 +66,7 @@ namespace WebAPIs.Controllers
         }
 
         // DELETE api/Coupon/delete/1
-        [HttpPut("Coupon/Delete/{id}")]
+        [HttpPut("Coupons/Delete/{id}")]
         public async Task<IActionResult> DeleteCoupon(int id)
         {
             var CouponDelete = await uow.repositoryCoupon.GetByID(id);

@@ -65,7 +65,7 @@ namespace WebAPIs.Controllers
         }
 
         // DELETE api/<BrandsDeleteController>/5
-        [HttpPut("Brands/Delete/{id}")]
+        [HttpPut("Brand/Delete/{id}")]
         public async Task<IActionResult> DeleteBrands(int id)
         {
             var BrandsDelete = await uow.repositoryBrands.GetByID(id);

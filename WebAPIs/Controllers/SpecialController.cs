@@ -30,7 +30,7 @@ namespace WebAPIs.Controllers
         }
 
         // GET api/<SpecialController>/5
-        [HttpGet("Special/{id}")]
+        [HttpGet("Specials/{id}")]
         public async Task<IActionResult> GetById(int id)
         {
             var SpecialGetByID = await uow.repositorySpecial.GetByID(id);
@@ -49,7 +49,7 @@ namespace WebAPIs.Controllers
         }
 
         // PUT api/<SpecialController>/5
-        [HttpPut("Special/update/{id}")]
+        [HttpPut("Specials/update/{id}")]
         public async Task<IActionResult> UpdateSpecial(int id, SpecialDTOs specialDTOs)
         {
             if (id != specialDTOs.Id)
@@ -65,7 +65,7 @@ namespace WebAPIs.Controllers
         }
 
         // DELETE api/<SpecialController>/5
-        [HttpDelete("Special/Delete/{id}")]
+        [HttpDelete("Specials/Delete/{id}")]
         public async Task<IActionResult> DeleteSpecial(int id)
         {
             var SpecialDelete = await uow.repositorySpecial.GetByID(id);

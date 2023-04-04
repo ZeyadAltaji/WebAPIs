@@ -30,7 +30,7 @@ namespace WebAPIs.Controllers
         }
 
         // GET api/<Sub_SliderController>/5
-        [HttpGet("Sub_Slider/{id}")]
+        [HttpGet("Sub_Sliders/{id}")]
         public async Task<IActionResult> GetById(int id)
         {
             var Sub_SliderGetByID = await uow.repositorySub_Slider.GetByID(id);
@@ -49,7 +49,7 @@ namespace WebAPIs.Controllers
         }
 
         // PUT api/<Sub_SliderController>/5
-        [HttpPut("Sub_Slider/update/{id}")]
+        [HttpPut("Sub_Sliders/update/{id}")]
         public async Task<IActionResult> UpdateSub_Slider(int id, Sub_SliderDTOs sub_SliderDTOs)
         {
             if (id != sub_SliderDTOs.Id)
@@ -65,7 +65,7 @@ namespace WebAPIs.Controllers
         }
 
         // DELETE api/<Sub_SliderController>/5
-        [HttpDelete("Sub_Slider/Delete/{id}")]
+        [HttpDelete("Sub_Sliders/Delete/{id}")]
         public async Task<IActionResult> DeleteSub_Slider(int id)
         {
             var Sub_SliderDelete = await uow.repositorySub_Slider.GetByID(id);
