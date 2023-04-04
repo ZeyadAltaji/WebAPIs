@@ -17,10 +17,14 @@ namespace ECommerce.Domain.Models
         [Required]
         public string Last_Name { get; set; }=string.Empty;
         [Required]
+        [EmailAddress]
+
         public string Email { get; set; } = string.Empty;
         [Required]
+        [MinLength(6)]
         public byte[] Password { get; set; } 
         [Required]
+        [Compare("Password")]
         public byte[] ComfirmPassword { get; set; }
         
         public byte[] PasswordKey { get; set; }

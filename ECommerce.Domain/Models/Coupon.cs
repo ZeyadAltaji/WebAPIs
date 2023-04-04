@@ -17,6 +17,7 @@ namespace ECommerce.Domain.Models
         public DateTime Start_Date { get; set; }
         public DateTime End_Date { get; set; }
         public User? User { get; set; }
+        public Product? product { get; set; }
 
     }
 }

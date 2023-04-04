@@ -14,7 +14,6 @@ namespace ECommerce.Domain.Models
         public int Quantity { get; set; }
         public double Price { get; set; }
         public string Payment_Info { get; set; } = string.Empty;
-        public int Product_Id { get; set; }
         public Product? Product { get; set; }
         public User? User { get; set; }
     }
