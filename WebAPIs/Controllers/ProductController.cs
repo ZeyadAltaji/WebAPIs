@@ -36,7 +36,7 @@ namespace WebAPIs.Controllers
 
         // POST api/Product
         [HttpPost]
-        public async Task<IActionResult> Createcategorise(ProductDTOs productDTOs)
+        public async Task<IActionResult> CreateProducts(ProductDTOs productDTOs)
         {
             var CreateNewProduct = mapper.Map<Product>(productDTOs);
             productDTOs.CreateDate= DateTime.Now;
@@ -47,7 +47,7 @@ namespace WebAPIs.Controllers
 
         // PUT api/Products/update/5
         [HttpPut("Products/update/{id}")]
-        public async Task<IActionResult> Updatecategorise(int id, ProductDTOs productDTOs)
+        public async Task<IActionResult> UpdateProducts(int id, ProductDTOs productDTOs)
         {
             if (id != productDTOs.Id)
                 return BadRequest("Update not allowed");
@@ -63,7 +63,7 @@ namespace WebAPIs.Controllers
 
         // DELETE api/Product/5
         [HttpDelete("Products/Delete/{id}")]
-        public async Task<IActionResult> DeleteCity(int id)
+        public async Task<IActionResult> DeleteProducts(int id)
         {
             var ProductsDelete = await uow.repositoryProduct.GetByID(id);
 
