@@ -27,6 +27,7 @@ namespace WebAPIs.Controllers
         [HttpGet("categorise")]
        public async Task<IActionResult> GetALlCategory()
         {
+            throw new UnauthorizedAccessException();
             var categorise = await uow.repositoryCategory.GetAll();
             var categoriseDTOs= mapper.Map<IEnumerable<CategoryDTOs>>(categorise);
             return Ok(categoriseDTOs);
