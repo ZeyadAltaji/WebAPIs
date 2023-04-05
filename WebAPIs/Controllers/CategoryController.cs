@@ -2,6 +2,7 @@
 using ECommerce.Application.DTOs;
 using ECommerce.Application.UnitOfWork;
 using ECommerce.Domain.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 
@@ -10,6 +11,7 @@ using System.Collections.Generic;
 
 namespace WebAPIs.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class CategoryController : ControllerBase
@@ -27,7 +29,6 @@ namespace WebAPIs.Controllers
         [HttpGet("categorise")]
        public async Task<IActionResult> GetALlCategory()
         {
-            throw new UnauthorizedAccessException();
             var categorise = await uow.repositoryCategory.GetAll();
             var categoriseDTOs= mapper.Map<IEnumerable<CategoryDTOs>>(categorise);
             return Ok(categoriseDTOs);

@@ -9,42 +9,52 @@ namespace WebAPIs.Middlewares
     public  class ExceptionMiddleware
     {
         //authorized
-        private readonly RequestDelegate request;
+        private readonly RequestDelegate next;
         private readonly ILogger<ExceptionMiddleware> logger;
-        private readonly IHostEnvironment environment;
+        private readonly IHostEnvironment env;
 
-
-        public ExceptionMiddleware(
-            RequestDelegate request,
-            ILogger<ExceptionMiddleware> logger,
-            IHostEnvironment environment
-
-
-            )
+        public ExceptionMiddleware(RequestDelegate next,
+                                    ILogger<ExceptionMiddleware> logger,
+                                    IHostEnvironment env)
         {
-            this.request = request;
+            this.env = env;
+            this.next = next;
             this.logger = logger;
-            this.environment = environment;
-
         }
+
         public async Task Invoke(HttpContext context)
         {
             try
             {
-                await request(context);
+                await next(context);
             }
             catch (Exception ex)
             {
                 ErrorsAPIs response;
                 HttpStatusCode statusCode = HttpStatusCode.InternalServerError;
-                if (environment.IsDevelopment())
+                String message;
+                var exceptionType = ex.GetType();
+
+                if (exceptionType == typeof(UnauthorizedAccessException))
+                {
+                    statusCode = HttpStatusCode.Forbidden;
+                    message = "You are not authorized";
+                }
+                else
+                {
+                    statusCode = HttpStatusCode.InternalServerError;
+                    message = "Some unknown error occoured";
+                }
+
+                if (env.IsDevelopment())
                 {
                     response = new ErrorsAPIs((int)statusCode, ex.Message, ex.StackTrace.ToString());
                 }
                 else
                 {
-                    response = new ErrorsAPIs((int)statusCode, ex.Message);
+                    response = new ErrorsAPIs((int)statusCode, message);
                 }
+
                 logger.LogError(ex, ex.Message);
                 context.Response.StatusCode = (int)statusCode;
                 context.Response.ContentType = "application/json";

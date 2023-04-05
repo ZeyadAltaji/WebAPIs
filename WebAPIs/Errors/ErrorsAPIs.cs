@@ -4,6 +4,8 @@ namespace WebAPIs.Errors
 {
     public class ErrorsAPIs
     {
+        public ErrorsAPIs() { }
+
         public ErrorsAPIs(int Error_Code, string Error_Messages, string Errors_Details = null)
         {
             this.Errors_Details = Errors_Details;

@@ -8,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using WebAPIs.Errors;
 
 namespace WebAPIs.Controllers
 {
@@ -51,7 +52,14 @@ namespace WebAPIs.Controllers
         public async Task<IActionResult> Login(LoginReqDto LoginReq)
         {
             var user = await uow.UserRepository.Authenticate(LoginReq.Username, LoginReq.Password);
-            if (user == null) return Unauthorized(401);
+            ErrorsAPIs apiError = new ErrorsAPIs();
+            if (user == null)
+            {
+                apiError.Error_Code = Unauthorized().StatusCode;
+                apiError.Error_Messages = "Invalid user name or password";
+                apiError.Errors_Details = "This error appear when provided user id or password does not exists";
+                return Unauthorized(apiError);
+            }
             var LoginRes = new LoginResDto();
             LoginRes.UserName = user.UserName;
             LoginRes.Token =CreateJWT(user);

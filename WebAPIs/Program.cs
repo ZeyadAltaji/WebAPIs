@@ -53,8 +53,9 @@ var app = builder.Build();
 IConfiguration configuration = app.Configuration;
 IWebHostEnvironment environment = app.Environment;
 
-//app.ConfigureExceptionHandler(environment);
-app.UseMiddleware<ExceptionMiddleware>();
+app.ConfigureExceptionHandler(environment);
+//app.ConfigureBuiltinExceptionHandler;
+
 // Configure the HTTP request pipeline.
 
 app.UseHttpsRedirection();
