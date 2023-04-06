@@ -11,7 +11,7 @@ namespace ECommerce.DataAccessLayer.Repositories
 {
     public class BrandsRepository : IRepository<Brands>
     {
-        public DBContext Dc { get; }
+        private readonly DBContext Dc;
 
         public BrandsRepository(DBContext dc)
         {

@@ -11,7 +11,7 @@ namespace ECommerce.DataAccessLayer.Repositories
 {
     public class CouponRepository : IRepository<Coupon>
     {
-        public DBContext Dc { get; }
+        private readonly DBContext Dc;
 
         public CouponRepository(DBContext dc)
         {

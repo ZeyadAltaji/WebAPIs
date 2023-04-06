@@ -11,7 +11,7 @@ namespace ECommerce.DataAccessLayer.Repositories
 {
     public class CategoryRepository : IRepository<Category>
     {
-        public DBContext Dc { get; }
+        private readonly DBContext Dc;
 
         public CategoryRepository(DBContext dc)
         {

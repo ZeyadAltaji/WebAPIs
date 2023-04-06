@@ -11,7 +11,7 @@ namespace ECommerce.DataAccessLayer.Repositories
 {
     public class SliderRepository : IRepository<Slider>
     {
-        public DBContext Dc { get; }
+        private readonly DBContext Dc;
 
         public SliderRepository(DBContext dc)
         {

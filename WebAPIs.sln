@@ -5,11 +5,11 @@ VisualStudioVersion = 17.5.33424.131
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebAPIs", "WebAPIs\WebAPIs.csproj", "{B0B5BA5C-362B-4410-8A96-0F2B7F8CD0C1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ECommerce.Domain", "ECommerce.Domain\ECommerce.Domain.csproj", "{BF7C1841-F7B7-49AC-9969-C7995B5A5293}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ECommerce.Domain", "ECommerce.Domain\ECommerce.Domain.csproj", "{BF7C1841-F7B7-49AC-9969-C7995B5A5293}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ECommerce.Application", "ECommerce.Application\ECommerce.Application.csproj", "{7E09E6C6-0840-497B-9B28-FB723B6655F6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ECommerce.Application", "ECommerce.Application\ECommerce.Application.csproj", "{7E09E6C6-0840-497B-9B28-FB723B6655F6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ECommerce.DataAccessLayer", "ECommerce.DataAccessLayer\ECommerce.DataAccessLayer.csproj", "{23ECBDEF-FED9-4216-9ADD-C54542C702B1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ECommerce.DataAccessLayer", "ECommerce.DataAccessLayer\ECommerce.DataAccessLayer.csproj", "{23ECBDEF-FED9-4216-9ADD-C54542C702B1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

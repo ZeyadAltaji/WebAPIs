@@ -1,4 +1,5 @@
-﻿using ECommerce.Application.Abstractions;
+﻿using CloudinaryDotNet;
+using ECommerce.Application.Abstractions;
 using ECommerce.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -11,7 +12,8 @@ namespace ECommerce.DataAccessLayer.Repositories
 {
     public class ProductRepository : IRepository<Product>
     {
-        public DBContext Dc { get; }
+        private readonly DBContext Dc;
+
 
         public ProductRepository(DBContext dc)
         {

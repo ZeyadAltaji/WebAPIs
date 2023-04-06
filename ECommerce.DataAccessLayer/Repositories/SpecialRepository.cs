@@ -12,7 +12,7 @@ namespace ECommerce.DataAccessLayer.Repositories
 {
     public class SpecialRepository : IRepository<Special>
     {
-        public DBContext Dc { get; }
+        private readonly DBContext Dc;
 
         public SpecialRepository(DBContext dc)
         {
