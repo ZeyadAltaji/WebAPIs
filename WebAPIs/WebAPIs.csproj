@@ -23,4 +23,9 @@
     <ProjectReference Include="..\ECommerce.DataAccessLayer\ECommerce.DataAccessLayer.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\Uploads\common\" />
+    <Folder Include="wwwroot\Uploads\Product\" />
+  </ItemGroup>
+
 </Project>
