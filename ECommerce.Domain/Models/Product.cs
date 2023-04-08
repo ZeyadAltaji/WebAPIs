@@ -13,13 +13,15 @@ namespace ECommerce.Domain.Models
         public string Title { get; set; }=string.Empty;
         [Required]
         public string Description { get; set; } = string.Empty;
-        [Required]
-        public string main_Image { get; set; } = string.Empty;
-        [Required]
-        public string sub_Image1 { get; set; } = string.Empty;
-        [Required]
-        public string sub_Image2 { get; set; } = string.Empty;
-        [Required]
+        public ICollection<Photo> Image { get; set; }
+
+        //[Required]
+        //public string main_Image { get; set; } = string.Empty;
+        //[Required]
+        //public string sub_Image1 { get; set; } = string.Empty;
+        //[Required]
+        //public string sub_Image2 { get; set; } = string.Empty;
+        //[Required]
         public double Price { get; set; }
         [Required]
         public double offers { get; set; }
