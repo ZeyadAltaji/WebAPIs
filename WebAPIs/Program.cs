@@ -1,3 +1,4 @@
+using ECommerce.Application.Abstractions;
 using ECommerce.Application.Helpers;
 using ECommerce.Application.UnitOfWork;
 using ECommerce.DataAccessLayer;
@@ -10,6 +11,7 @@ using System.Net;
 using System.Text;
 using WebAPIs.Extensions;
 using WebAPIs.Middlewares;
+using WebAPIs.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +29,8 @@ builder.Services.AddDbContext<DBContext>(options => options.UseSqlServer(cfm.Get
 // call interface and class Unit of work 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 //call AutoMapper profile 
+builder.Services.AddScoped<IPhotoService, PhotoService>();
+
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
 
 //Enable Cors
@@ -63,6 +67,9 @@ app.UseCors("MyPolicy");
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseDefaultFiles();
+app.UseStaticFiles();
 
 app.MapControllers();
 
