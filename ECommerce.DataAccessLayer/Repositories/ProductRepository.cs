@@ -41,7 +41,7 @@ namespace ECommerce.DataAccessLayer.Repositories
 
         public async Task<Product> GetByID(int id)
         {
-            return await Dc.Products.Include(Getbyid => Getbyid.User).SingleOrDefaultAsync(Getbyid => Getbyid.Id == id);
+            return await Dc.Products.Include(Getbyid => Getbyid.User).Include(Getbyid=> Getbyid.Image).SingleOrDefaultAsync(Getbyid => Getbyid.Id == id);
  
         }
 
