@@ -26,29 +26,6 @@ namespace WebAPIs.Services
             return result;
 
         }
-
-        //public async Task<List<ImageUploadResult>> UploadPhotosAsync(List<IFormFile> photos)
-        //{
-        //    var uploadResults = new List<ImageUploadResult>();
-        //    foreach (var photo in photos)
-        //    {
-        //        var uploadResult = new ImageUploadResult();
-        //        if (photo.Length > 0)
-        //        {
-        //            using var stream = photo.OpenReadStream();
-        //            var uploadParams = new ImageUploadParams
-        //            {
-        //                File = new FileDescription(photo.FileName, stream),
-        //                Transformation = new Transformation()
-        //                    .Height(500).Width(800)
-        //            };
-        //            uploadResult = await cloudinary.UploadAsync(uploadParams);
-        //        }
-        //        uploadResults.Add(uploadResult);
-        //    }
-        //    return uploadResults;
-        //}
-
         public async Task<ImageUploadResult> UploadPhotoAsync(IFormFile photo)
         {
             var uploadResult = new ImageUploadResult();
