@@ -42,7 +42,8 @@ namespace WebAPIs.Controllers
         public async Task<IActionResult> GetById(int id)
         {
             var ProductGetByID = await uow.repositoryProduct.GetByID(id);
-            return Ok(ProductGetByID);
+            var ProductDTO = mapper.Map<PorductsListDto>(ProductGetByID);
+            return Ok(ProductDTO);
         }
 
         // POST api/Product
