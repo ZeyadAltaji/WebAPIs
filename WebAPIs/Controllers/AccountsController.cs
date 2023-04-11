@@ -49,7 +49,7 @@ namespace WebAPIs.Controllers
             return StatusCode(200);
         }
         // Post: api/Accounts/BusinessAccount
-        [HttpPost("BusinessAccount")]
+       [HttpPost("BusinessAccount")]
         public async Task<IActionResult> BusinessAccount(LoginReqDto loginReq)
         {
             ErrorsAPIs apiError = new ErrorsAPIs();
@@ -65,7 +65,7 @@ namespace WebAPIs.Controllers
                 apiError.Error_Messages = "User already exists, please try different user name";
                 return BadRequest(apiError);
             }
-            uow.UserRepository.BusinessAccountRegister(loginReq.Username,loginReq.Email, loginReq.Password, loginReq.ComfirmPassword, loginReq.Role);
+            uow.UserRepository.BusinessAccountRegister(loginReq.Username, loginReq.Email, loginReq.Password, loginReq.ComfirmPassword, loginReq.Role);
             await uow.SaveChanges();
             return StatusCode(200);
         }
