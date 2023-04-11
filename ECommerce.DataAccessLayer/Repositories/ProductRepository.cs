@@ -35,13 +35,13 @@ namespace ECommerce.DataAccessLayer.Repositories
         }
         public async Task<IEnumerable<Product>> GetAll()
         {
-             return await Dc.Products.Include(Getbyid => Getbyid.User).Where(x => x.IsDelete == false).ToListAsync();
+             return await Dc.Products.Include(Getbyid => Getbyid.User).Include(Getbyid => Getbyid.Image).Where(x => x.IsDelete == false).ToListAsync();
 
         }
 
         public async Task<Product> GetByID(int id)
         {
-            return await Dc.Products.Include(Getbyid => Getbyid.User).Include(Getbyid=> Getbyid.Image).SingleOrDefaultAsync(Getbyid => Getbyid.Id == id);
+            return await Dc.Products.Include(Getbyid => Getbyid.User).Include(Getbyid=> Getbyid.Image).Include(Getbyid => Getbyid.Brands).Include(Getbyid => Getbyid.Category).Include(Getbyid => Getbyid.Car).SingleOrDefaultAsync(Getbyid => Getbyid.Id == id);
  
         }
 
