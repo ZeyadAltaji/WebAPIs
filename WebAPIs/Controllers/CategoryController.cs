@@ -11,7 +11,7 @@ using System.Collections.Generic;
 
 namespace WebAPIs.Controllers
 {
-    [Authorize]
+   
     [Route("api/[controller]")]
     [ApiController]
     public class CategoryController : ControllerBase

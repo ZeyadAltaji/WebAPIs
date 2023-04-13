@@ -74,7 +74,7 @@ namespace WebAPIs.Controllers
         }
 
         // DELETE api/Product/5
-        [HttpDelete("Products/Delete/{id}")]
+        [HttpPut("Products/Delete/{id}")]
         public async Task<IActionResult> DeleteProducts(int id)
         {
             var ProductsDelete = await uow.repositoryProduct.GetByID(id);
