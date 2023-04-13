@@ -156,33 +156,6 @@ namespace WebAPIs.Controllers
 
             return StatusCode(201);
         }
-        //public async Task<IActionResult> AddPropertyPhoto(List<IFormFile> Products_files, int propId)
-        //{
-        //    var results = await photoService.UploadPhotosAsync(Products_files);
-        //    if (results.Any(r => r.Error != null))
-        //        return BadRequest("Error uploading one or more photos.");
-
-        //    var product = await uow.repositoryProduct.GetByID(propId);
-        //    foreach (var result in results)
-        //    {
-        //        var photo = new Photo
-        //        {
-        //            main_ImageUrl = result.SecureUri.AbsoluteUri,
-        //            sub_Image1Url = result.SecureUri.AbsoluteUri,
-        //            sub_Image2Url = result.SecureUri.AbsoluteUri,
-        //            publicID = result.PublicId,
-        //        };
-        //        if(product.Image.Count == 0)
-        //        {
-        //            photo.main_Image = true;
-        //            photo.sub_Image1 = false;
-        //            photo.sub_Image2 = false;
-        //        }
-        //        product.Image.Add(photo);
-        //    }
-        //    await uow.SaveChanges();
-        //    return Ok(201);
-        //}
 
     }
 }
