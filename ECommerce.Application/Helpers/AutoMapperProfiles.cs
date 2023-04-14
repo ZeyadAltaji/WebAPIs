@@ -33,12 +33,14 @@ namespace ECommerce.Application.Helpers
             CreateMap<Product, ProductDTOs>()
             .ForMember(dest => dest.Brands_Id, opt => opt.MapFrom(src => src.BrandsId))
             .ForMember(dest => dest.Car_Id, opt => opt.MapFrom(src => src.CarId))
-            .ForMember(dest => dest.Category_Id, opt => opt.MapFrom(src => src.CategoryId));
+            .ForMember(dest => dest.Category_Id, opt => opt.MapFrom(src => src.CategoryId))
+            ;
 
             CreateMap<ProductDTOs, Product>()
                 .ForMember(dest => dest.BrandsId, opt => opt.MapFrom(src => src.Brands_Id))
                 .ForMember(dest => dest.CarId, opt => opt.MapFrom(src => src.Car_Id))
-                .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.Category_Id));
+                .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.Category_Id))
+            ;
         }
     }
 }

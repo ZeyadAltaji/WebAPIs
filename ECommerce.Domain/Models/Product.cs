@@ -26,12 +26,12 @@ namespace ECommerce.Domain.Models
         //public string sub_Image1 { get; set; } = string.Empty;
         //[Required]
         //public string sub_Image2 { get; set; } = string.Empty;
-        //[Required]
+        [Required]
         public double Price { get; set; }
-        [Required]
-        public double offers { get; set; }
-        [Required]
-        public double New_price { get; set; }
+
+        public double? offers { get; set; }
+     
+        public double? New_price { get; set; }
         [Required]
         public int Quantity { get; set; }
         [Required]

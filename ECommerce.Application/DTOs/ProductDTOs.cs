@@ -17,8 +17,8 @@ namespace ECommerce.Application.DTOs
         public string sub_Image1 { get; set; } = string.Empty;
         public string sub_Image2 { get; set; } = string.Empty;
         public double Price { get; set; }
-        public double offers { get; set; }
-        public double New_price { get; set; }
+        public double? offers { get; set; }
+        public double? New_price { get; set; }
         public int Quantity { get; set; }
         public string Link { get; set; } = string.Empty;
         public string Button { get; set; } = string.Empty;
