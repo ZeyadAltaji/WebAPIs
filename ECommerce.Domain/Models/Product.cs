@@ -10,11 +10,16 @@ namespace ECommerce.Domain.Models
     public class Product:BaseEntity
     {
         [Required]
+        public string Serial_Id { get; set; }
+
+        [Required]
         public string Title { get; set; }=string.Empty;
         [Required]
         public string Description { get; set; } = string.Empty;
         public ICollection<Photo> Image { get; set; }
-
+        public int? BrandsId { get; set; }
+        public int? CarId { get; set; }
+        public int? CategoryId { get; set; }
         //[Required]
         //public string main_Image { get; set; } = string.Empty;
         //[Required]
