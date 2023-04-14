@@ -407,7 +407,7 @@ namespace ECommerce.DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("New_price")
+                    b.Property<double?>("New_price")
                         .HasColumnType("float");
 
                     b.Property<double>("Price")
@@ -438,7 +438,7 @@ namespace ECommerce.DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("offers")
+                    b.Property<double?>("offers")
                         .HasColumnType("float");
 
                     b.HasKey("Id");

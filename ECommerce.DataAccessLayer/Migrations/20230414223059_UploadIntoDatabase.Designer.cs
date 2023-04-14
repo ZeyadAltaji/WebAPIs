@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ECommerce.DataAccessLayer.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20230413185003_initalNew_testing")]
-    partial class initalNew_testing
+    [Migration("20230414223059_UploadIntoDatabase")]
+    partial class UploadIntoDatabase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -410,7 +410,7 @@ namespace ECommerce.DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("New_price")
+                    b.Property<double?>("New_price")
                         .HasColumnType("float");
 
                     b.Property<double>("Price")
@@ -441,7 +441,7 @@ namespace ECommerce.DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("offers")
+                    b.Property<double?>("offers")
                         .HasColumnType("float");
 
                     b.HasKey("Id");
