@@ -18,7 +18,6 @@ namespace ECommerce.Domain.Models
         public string Last_Name { get; set; }=string.Empty;
         [Required]
         [EmailAddress]
-
         public string Email { get; set; } = string.Empty;
         [Required]
         [MinLength(6)]
@@ -26,7 +25,6 @@ namespace ECommerce.Domain.Models
         [Required]
         [Compare("Password")]
         public byte[] ComfirmPassword { get; set; }
-        
         public byte[] PasswordKey { get; set; }
         [Required]
         public string Phone1 { get; set; } = string.Empty;
@@ -34,7 +32,6 @@ namespace ECommerce.Domain.Models
         public string Phone2 { get; set; } = string.Empty;
         [Required]
         public string Address { get; set; } = string.Empty;
-
         public int Role { get; set; }
         [Required]
         public string Image { get; set; } = string.Empty;

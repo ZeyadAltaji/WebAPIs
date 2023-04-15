@@ -14,5 +14,9 @@ namespace ECommerce.Application.Abstractions
         void BusinessAccountRegister(string UserName, string Email, string password, string ComfirmPassword, int Role);
         Task<bool> UserAlreadyExists(string UserName);
         Task<User> FindByEmailAsync(string Email);
+        Task<IEnumerable<User>> GetAllUserAsync();
+        Task<User> FindByIdAsync(int id);
+        void DeleteAsync(int id,User user);
+        void UpdateAsync(int id, User user);
     }
 }

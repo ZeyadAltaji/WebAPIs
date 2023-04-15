@@ -16,22 +16,21 @@ namespace ECommerce.DataAccessLayer.Repositories
         private readonly DBContext DC;
         public UserRepository(DBContext dc)
         {
-            DC = dc;     
+            DC = dc;
         }
         public async Task<User> Authenticate(string UserName, string passwordText)
         {
             var user = await DC.Users.FirstOrDefaultAsync(X => X.UserName == UserName);
             if (user == null || user.Password == null)
                 return null;
-            
-            if(!MatchPasswordHash(passwordText,user.Password, user.PasswordKey))
+
+            if (!MatchPasswordHash(passwordText, user.Password, user.PasswordKey))
                 return null;
-            
+
             return user;
-            
+
 
         }
-
         public void BusinessAccountRegister(string UserName, string Email, string password, string ComfirmPassword, int Role)
         {
             byte[] passwordHash, passwordKey;
@@ -60,7 +59,6 @@ namespace ECommerce.DataAccessLayer.Repositories
                 DC.Users.Add(user);
             }
         }
-
         public async Task<User> FindByEmailAsync(string Email)
         {
             var user = await DC.Users.FirstOrDefaultAsync(u => u.Email == Email);
@@ -69,14 +67,21 @@ namespace ECommerce.DataAccessLayer.Repositories
                 Console.WriteLine("User not found.");
                 return null; // or throw an exception if appropriate
             }
-
-             DC.Users.Update(user);
+            DC.Users.Update(user);
             await DC.SaveChangesAsync();
-
             return user;
-
+        }
+        public async Task<User> FindByIdAsync(int id)
+        {
+            return await DC.Users.FindAsync(id);
         }
 
+
+        public async Task<bool> UserAlreadyExists(string UserName)
+        {
+            return await DC.Users.AnyAsync(x => x.UserName == UserName);
+
+        }
         public void Register(string UserName, string Frist_Name, string Last_Name, string Email, string password, string ComfirmPassword, int Role)
         {
             byte[] passwordHash, passwordKey;
@@ -97,23 +102,16 @@ namespace ECommerce.DataAccessLayer.Repositories
                 user.UserName = UserName;
                 user.Frist_Name = Frist_Name;
                 user.Last_Name = Last_Name;
-                user.Email= Email;
+                user.Email = Email;
                 user.Password = passwordHash;
                 user.ComfirmPassword = passwordHash;
                 user.PasswordKey = passwordKey;
                 user.CreateDate = DateTime.Now;
                 user.Role = 3;
-                
+
                 DC.Users.Add(user);
             }
         }
-
-        public async Task<bool> UserAlreadyExists(string UserName )
-        {
-            return await DC.Users.AnyAsync(x => x.UserName == UserName);
-
-        }
-
         //Passwordalgorithm
         private bool MatchPasswordHash(string passwordText, byte[] password, byte[] passwordKey)
         {
@@ -129,6 +127,29 @@ namespace ECommerce.DataAccessLayer.Repositories
 
                 return true;
             }
+        }
+
+        public async Task<IEnumerable<User>> GetAllUserAsync()
+        {
+            return await DC.Users.ToListAsync();
+        }
+
+        public void DeleteAsync(int id, User user)
+        {
+            user.IsDelete = true;
+            user.IsActive = false;
+            DC.Users.Update(user);
+            DC.SaveChangesAsync();
+        }
+
+        public void UpdateAsync(int id, User user)
+        {
+            if (id == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+            DC.Users.Update(user);
+            DC.SaveChanges();
         }
     }
 }
