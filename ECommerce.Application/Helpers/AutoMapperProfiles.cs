@@ -14,6 +14,7 @@ namespace ECommerce.Application.Helpers
         public AutoMapperProfiles()
         {
             CreateMap<User, UserDTOs>().ReverseMap();
+            CreateMap<User,FullUserDTOs>().ReverseMap();
             CreateMap<Category, CategoryDTOs>().ReverseMap();
              CreateMap<Brands,BrandsDTOs>().ReverseMap();
             CreateMap<Car, CarDTOs>().ReverseMap();

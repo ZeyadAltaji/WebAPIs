@@ -1,4 +1,5 @@
-﻿using ECommerce.Application.DTOs;
+﻿using AutoMapper;
+using ECommerce.Application.DTOs;
 using ECommerce.Application.UnitOfWork;
 using ECommerce.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -18,13 +19,17 @@ namespace WebAPIs.Controllers
     {
         private readonly IConfiguration configuration;
         private readonly IUnitOfWork uow;
-         public AccountsController(
+        private readonly IMapper mapper;
+
+        public AccountsController(
             IConfiguration configuration,
-            IUnitOfWork uow
-           )
+            IUnitOfWork uow,
+             IMapper mapper
+         )
          {
             this.configuration = configuration;
             this.uow = uow;
+            this.mapper =mapper;
  
          }
         // Post: api/Accounts/register
@@ -87,6 +92,47 @@ namespace WebAPIs.Controllers
             LoginRes.Token =CreateJWT(user);
             return Ok(LoginRes);
 
+        }
+        [HttpGet("AllUsers")]
+        public async Task<IActionResult>GetAllUsers()
+        {
+            var Users = await uow.UserRepository.GetAllUserAsync();
+            if (Users == null) BadRequest("Users Not Found");
+
+            var UserDTO = mapper.Map<IEnumerable<FullUserDTOs>>(Users);
+            return Ok(UserDTO);
+
+        }
+        [HttpGet("AllUsers/{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var GetUser = await uow.UserRepository.FindByIdAsync(id);
+            if (id == null) BadRequest("User Not Found ! OR User Is Deleted");
+            var GetByIdDtos = mapper.Map<FullUserDTOs>(GetUser);
+            return Ok(GetByIdDtos);
+
+        }
+        [HttpPut("Users/update/{id}")]
+        public async Task<IActionResult> UpdateUsers(int id, FullUserDTOs userDto)
+        {
+            if (id != userDto.Id) return BadRequest("Update not allowed");
+
+             var user = await uow.UserRepository.FindByIdAsync(id);
+
+            if (user == null) return BadRequest("User Not Found !");
+
+            mapper.Map(userDto,user);
+            await uow.SaveChanges();
+            return StatusCode(200);
+        }
+        [HttpPut("Users/Delete/{id}")]
+        public async Task<IActionResult> DeleteUsers(int id)
+        {
+            var UsersDelete = await uow.UserRepository.FindByIdAsync(id);
+
+            uow.UserRepository.DeleteAsync(id, UsersDelete);
+            await uow.SaveChanges();
+            return Ok(id);
         }
         [HttpPost("ForGet-Password")]
         public async Task<IActionResult> ForGetPassword(LoginReqDto LoginReq)

@@ -21,14 +21,11 @@ namespace ECommerce.DataAccessLayer.Repositories
         public async Task<User> Authenticate(string UserName, string passwordText)
         {
             var user = await DC.Users.FirstOrDefaultAsync(X => X.UserName == UserName);
-            if (user == null || user.Password == null)
-                return null;
-
-            if (!MatchPasswordHash(passwordText, user.Password, user.PasswordKey))
-                return null;
-
+            if (user == null || user.Password == null) return null;
+            if (!MatchPasswordHash(passwordText, user.Password, user.PasswordKey)) return null;
+            if (user.IsDelete) throw new Exception("User has been deleted.");
+            else if (!user.IsActive) throw new Exception("User is inactive.");
             return user;
-
 
         }
         public void BusinessAccountRegister(string UserName, string Email, string password, string ComfirmPassword, int Role)
@@ -75,8 +72,6 @@ namespace ECommerce.DataAccessLayer.Repositories
         {
             return await DC.Users.FindAsync(id);
         }
-
-
         public async Task<bool> UserAlreadyExists(string UserName)
         {
             return await DC.Users.AnyAsync(x => x.UserName == UserName);
