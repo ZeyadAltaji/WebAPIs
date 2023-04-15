@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ECommerce.DataAccessLayer.Migrations
 {
     /// <inheritdoc />
-    public partial class UploadIntoDatabase : Migration
+    public partial class newTesting : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -28,7 +28,6 @@ namespace ECommerce.DataAccessLayer.Migrations
                     Phone2 = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Role = table.Column<int>(type: "int", nullable: false),
-                    Image = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserCreate = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UserUpdate = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -347,6 +346,10 @@ namespace ECommerce.DataAccessLayer.Migrations
                     sub_Image1 = table.Column<bool>(type: "bit", nullable: false),
                     sub_Image2 = table.Column<bool>(type: "bit", nullable: false),
                     ProductId = table.Column<int>(type: "int", nullable: true),
+                    userId = table.Column<int>(type: "int", nullable: true),
+                    user_Id = table.Column<int>(type: "int", nullable: false),
+                    Image_userUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Public_id = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserCreate = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UserUpdate = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -361,6 +364,11 @@ namespace ECommerce.DataAccessLayer.Migrations
                         name: "FK_Photos_Products_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Products",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Photos_Users_userId",
+                        column: x => x.userId,
+                        principalTable: "Users",
                         principalColumn: "Id");
                 });
 
@@ -439,6 +447,11 @@ namespace ECommerce.DataAccessLayer.Migrations
                 name: "IX_Photos_ProductId",
                 table: "Photos",
                 column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Photos_userId",
+                table: "Photos",
+                column: "userId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Products_BrandsId",

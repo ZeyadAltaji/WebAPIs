@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ECommerce.DataAccessLayer.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20230414223059_UploadIntoDatabase")]
-    partial class UploadIntoDatabase
+    [Migration("20230415173908_newTesting")]
+    partial class newTesting
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -313,6 +313,10 @@ namespace ECommerce.DataAccessLayer.Migrations
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Image_userUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -321,6 +325,10 @@ namespace ECommerce.DataAccessLayer.Migrations
 
                     b.Property<int?>("ProductId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Public_id")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("UpdateDate")
                         .HasColumnType("datetime2");
@@ -358,9 +366,17 @@ namespace ECommerce.DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("userId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("user_Id")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ProductId");
+
+                    b.HasIndex("userId");
 
                     b.ToTable("Photos");
                 });
@@ -675,10 +691,6 @@ namespace ECommerce.DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Image")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -841,7 +853,13 @@ namespace ECommerce.DataAccessLayer.Migrations
                         .WithMany("Image")
                         .HasForeignKey("ProductId");
 
+                    b.HasOne("ECommerce.Domain.Models.User", "user")
+                        .WithMany()
+                        .HasForeignKey("userId");
+
                     b.Navigation("Product");
+
+                    b.Navigation("user");
                 });
 
             modelBuilder.Entity("ECommerce.Domain.Models.Product", b =>

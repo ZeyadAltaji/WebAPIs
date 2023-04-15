@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ECommerce.Application.Abstractions;
 using ECommerce.Application.DTOs;
 using ECommerce.Application.UnitOfWork;
 using ECommerce.Domain.Models;
@@ -10,6 +11,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using WebAPIs.Errors;
+using WebAPIs.Services;
 
 namespace WebAPIs.Controllers
 {
@@ -20,17 +22,19 @@ namespace WebAPIs.Controllers
         private readonly IConfiguration configuration;
         private readonly IUnitOfWork uow;
         private readonly IMapper mapper;
+        private readonly IPhotoService photoService;
 
         public AccountsController(
             IConfiguration configuration,
             IUnitOfWork uow,
-             IMapper mapper
+             IMapper mapper,
+            IPhotoService photoService
          )
          {
             this.configuration = configuration;
             this.uow = uow;
             this.mapper =mapper;
- 
+            this.photoService = photoService;
          }
         // Post: api/Accounts/register
         [HttpPost("register")]
@@ -183,7 +187,33 @@ namespace WebAPIs.Controllers
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
+        [HttpPost("UserProfile/UploadImages/{userId}")]
+        public async Task<ActionResult<UserPhotoDtos>> UploadPhotoUser(int userId, IFormFile user_files)
+        {
+            var user = await uow.UserRepository.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound();
+            }
 
+            var uploadResult = await photoService.UploadPhotoAsync(user_files);
+
+            if (uploadResult == null || string.IsNullOrEmpty(uploadResult.PublicId) || uploadResult.SecureUrl == null)
+            {
+                return BadRequest("Invalid upload result");
+            }
+
+            user.Image_userUrl = uploadResult.SecureUrl.AbsoluteUri;
+            user.Public_id = uploadResult.PublicId;
+
+            uow.UserRepository.UpdateAsync(userId, user);
+
+
+            await uow.SaveChanges();
+
+            return Ok(user);
+        }
+       
 
     }
 }

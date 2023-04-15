@@ -33,8 +33,7 @@ namespace ECommerce.Domain.Models
         [Required]
         public string Address { get; set; } = string.Empty;
         public int Role { get; set; }
-        [Required]
-        public string Image { get; set; } = string.Empty;
-
+        public string Image_userUrl { get; set; }
+        public string Public_id { get; set; }
     }
 }
