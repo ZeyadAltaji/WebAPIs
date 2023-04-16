@@ -20,7 +20,7 @@ namespace ECommerce.Application.DTOs
         public string Phone2 { get; set; } = string.Empty;
         public string Address { get; set; } = string.Empty;
         public int Role { get; set; }
-        public string Image { get; set; } = string.Empty;
+        public string Image_userUrl { get; set; } = string.Empty;
 
     }
 }
