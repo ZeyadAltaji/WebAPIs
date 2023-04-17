@@ -10,7 +10,7 @@ namespace ECommerce.Application.Abstractions
     public interface IUserRepository
     {
         Task<User> Authenticate(string UserName, string password);
-        void Register(string UserName, string Frist_Name, string Last_Name, string Email, string password,string ComfirmPassword, int Role);
+        void Register(string UserName, string Frist_Name, string Last_Name, string Email, string password, string ComfirmPassword, int Role);
         void BusinessAccountRegister(string UserName, string Email, string password, string ComfirmPassword, int Role);
         Task<bool> UserAlreadyExists(string UserName);
         Task<User> FindByEmailAsync(string Email);
@@ -18,5 +18,6 @@ namespace ECommerce.Application.Abstractions
         Task<User> FindByIdAsync(int id);
         void DeleteAsync(int id,User user);
         void UpdateAsync(int id, User user);
+
     }
 }

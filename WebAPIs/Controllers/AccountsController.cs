@@ -2,6 +2,8 @@
 using ECommerce.Application.Abstractions;
 using ECommerce.Application.DTOs;
 using ECommerce.Application.UnitOfWork;
+using ECommerce.DataAccessLayer;
+using ECommerce.DataAccessLayer.Repositories;
 using ECommerce.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -9,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using WebAPIs.Errors;
 using WebAPIs.Services;
@@ -23,6 +26,8 @@ namespace WebAPIs.Controllers
         private readonly IUnitOfWork uow;
         private readonly IMapper mapper;
         private readonly IPhotoService photoService;
+        public static ErrorsAPIs apiError = new ErrorsAPIs();
+
 
         public AccountsController(
             IConfiguration configuration,
@@ -36,53 +41,48 @@ namespace WebAPIs.Controllers
             this.mapper =mapper;
             this.photoService = photoService;
          }
-        // Post: api/Accounts/register
         [HttpPost("register")]
         public async Task<IActionResult> Register(LoginReqDto loginReq)
         {
-            ErrorsAPIs apiError = new ErrorsAPIs();
-            if (loginReq.Username == null || loginReq.Password == null)
+            if (loginReq.UserName == null || loginReq.Password == null)
             {
                 apiError.Error_Code = BadRequest().StatusCode;
                 apiError.Error_Messages = "User name or password can not be blank";
                 return BadRequest(apiError);
             }
-            if (await uow.UserRepository.UserAlreadyExists(loginReq.Username))
+            if (await uow.UserRepository.UserAlreadyExists(loginReq.UserName))
             {
                 apiError.Error_Code = BadRequest().StatusCode;
                 apiError.Error_Messages = "User already exists, please try different user name";
                 return BadRequest(apiError);
             }
-            uow.UserRepository.Register(loginReq.Username, loginReq.Frist_Name, loginReq.Last_Name, loginReq.Email, loginReq.Password,loginReq.ComfirmPassword,loginReq.Role);
-            await uow.SaveChanges();
+            uow.UserRepository.Register(loginReq.UserName, loginReq.Frist_Name, loginReq.Last_Name, loginReq.Email, loginReq.Password, loginReq.ComfirmPassword, loginReq.Role);
             return StatusCode(200);
         }
         // Post: api/Accounts/BusinessAccount
-       [HttpPost("BusinessAccount")]
+        [HttpPost("BusinessAccount")]
         public async Task<IActionResult> BusinessAccount(LoginReqDto loginReq)
         {
-            ErrorsAPIs apiError = new ErrorsAPIs();
-            if (loginReq.Username == null || loginReq.Password == null)
+            if (loginReq.UserName == null || loginReq.Password == null)
             {
                 apiError.Error_Code = BadRequest().StatusCode;
                 apiError.Error_Messages = "User name or password can not be blank";
                 return BadRequest(apiError);
             }
-            if (await uow.UserRepository.UserAlreadyExists(loginReq.Username))
+            if (await uow.UserRepository.UserAlreadyExists(loginReq.UserName))
             {
                 apiError.Error_Code = BadRequest().StatusCode;
                 apiError.Error_Messages = "User already exists, please try different user name";
                 return BadRequest(apiError);
             }
-            uow.UserRepository.BusinessAccountRegister(loginReq.Username, loginReq.Email, loginReq.Password, loginReq.ComfirmPassword, loginReq.Role);
-            await uow.SaveChanges();
+            uow.UserRepository.BusinessAccountRegister(loginReq.UserName, loginReq.Email, loginReq.Password, loginReq.ComfirmPassword, loginReq.Role);
             return StatusCode(200);
         }
         // Post: api/Accounts/Login
         [HttpPost("Login")]
         public async Task<IActionResult> Login(LoginReqDto LoginReq)
         {
-            var user = await uow.UserRepository.Authenticate(LoginReq.Username, LoginReq.Password);
+            var user = await uow.UserRepository.Authenticate(LoginReq.UserName, LoginReq.Password);
             ErrorsAPIs apiError = new ErrorsAPIs();
             if (user == null)
             {
@@ -214,6 +214,7 @@ namespace WebAPIs.Controllers
             return Ok(user);
         }
        
+      
 
     }
 }

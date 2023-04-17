@@ -11,7 +11,7 @@ namespace ECommerce.Application.DTOs
     {
         public string Frist_Name { get; set; } = string.Empty;
         public string Last_Name { get; set; } = string.Empty;
-        public string Username { get; set; } = string.Empty;
+        public string UserName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
         public string ComfirmPassword { get; set; } = string.Empty;

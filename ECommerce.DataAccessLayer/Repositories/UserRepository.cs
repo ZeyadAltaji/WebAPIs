@@ -1,4 +1,5 @@
-﻿using ECommerce.Application.Abstractions;
+﻿using CloudinaryDotNet.Actions;
+using ECommerce.Application.Abstractions;
 using ECommerce.Domain.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -28,19 +29,43 @@ namespace ECommerce.DataAccessLayer.Repositories
             return user;
 
         }
-        public void BusinessAccountRegister(string UserName, string Email, string password, string ComfirmPassword, int Role)
+        public void Register(string UserName, string Frist_Name, string Last_Name, string Email, string password, string ComfirmPassword, int Role)
         {
-            byte[] passwordHash, passwordKey;
-
-            using (var hmac = new HMACSHA512())
-            {
-                passwordKey = hmac.Key;
-                passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-
-            }
+            byte[] passwordHash, passwordSalt;
+            createpasswordHash(password, out passwordHash, out passwordSalt);
             if (password != ComfirmPassword)
             {
-                Console.WriteLine("Password In Valid ConfirmPassword ");
+                throw new ArgumentException("Password and Confirm Password do not match.");
+            }
+            else
+            {
+                User user = new User
+                {
+                    UserName = UserName,
+                    Last_Name = Last_Name,
+                    Frist_Name = Frist_Name,
+                    Email = Email,
+                    Password = passwordHash,
+                    ComfirmPassword = passwordHash,
+                    PasswordKey = passwordSalt,
+                    CreateDate = DateTime.Now,
+                    Role = 3
+                };
+                DC.Users.Add(user);
+            }
+            DC.SaveChanges();
+
+        }
+
+        public void BusinessAccountRegister(string UserName, string Email, string password, string ComfirmPassword, int Role)
+        {
+            byte[] passwordHash, passwordSalt;
+
+            createpasswordHash(password, out passwordHash, out passwordSalt);
+
+            if (password != ComfirmPassword)
+            {
+                throw new ArgumentException("Password and Confirm Password do not match.");
             }
             else
             {
@@ -49,12 +74,14 @@ namespace ECommerce.DataAccessLayer.Repositories
                 user.Email = Email;
                 user.Password = passwordHash;
                 user.ComfirmPassword = passwordHash;
-                user.PasswordKey = passwordKey;
+                user.PasswordKey = passwordSalt;
                 user.CreateDate = DateTime.Now;
                 user.Role = 2;
 
                 DC.Users.Add(user);
             }
+            DC.SaveChanges();
+
         }
         public async Task<User> FindByEmailAsync(string Email)
         {
@@ -77,39 +104,19 @@ namespace ECommerce.DataAccessLayer.Repositories
             return await DC.Users.AnyAsync(x => x.UserName == UserName);
 
         }
-        public void Register(string UserName, string Frist_Name, string Last_Name, string Email, string password, string ComfirmPassword, int Role)
-        {
-            byte[] passwordHash, passwordKey;
 
+        private void createpasswordHash(string password, out byte[] passwordHash, out byte[] passwordsalt)
+        {
             using (var hmac = new HMACSHA512())
             {
-                passwordKey = hmac.Key;
+                passwordsalt = hmac.Key;
                 passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-
-            }
-            if (password != ComfirmPassword)
-            {
-                Console.WriteLine("Password In Valid ConfirmPassword ");
-            }
-            else
-            {
-                User user = new User();
-                user.UserName = UserName;
-                user.Frist_Name = Frist_Name;
-                user.Last_Name = Last_Name;
-                user.Email = Email;
-                user.Password = passwordHash;
-                user.ComfirmPassword = passwordHash;
-                user.PasswordKey = passwordKey;
-                user.CreateDate = DateTime.Now;
-                user.Role = 3;
-
-                DC.Users.Add(user);
             }
         }
-        //Passwordalgorithm
-        private bool MatchPasswordHash(string passwordText, byte[] password, byte[] passwordKey)
-        {
+    
+          //Passwordalgorithm
+         private bool MatchPasswordHash(string passwordText, byte[] password, byte[] passwordKey)
+         {
             using (var hmac = new HMACSHA512(passwordKey))
             {
                 var passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(passwordText));
@@ -122,29 +129,30 @@ namespace ECommerce.DataAccessLayer.Repositories
 
                 return true;
             }
-        }
+         }
 
-        public async Task<IEnumerable<User>> GetAllUserAsync()
-        {
-            return await DC.Users.ToListAsync();
-        }
-
-        public void DeleteAsync(int id, User user)
-        {
-            user.IsDelete = true;
-            user.IsActive = false;
-            DC.Users.Update(user);
-            DC.SaveChangesAsync();
-        }
-
-        public void UpdateAsync(int id, User user)
-        {
-            if (id == null)
+            public async Task<IEnumerable<User>> GetAllUserAsync()
             {
-                throw new ArgumentNullException(nameof(user));
+                return await DC.Users.ToListAsync();
             }
-            DC.Users.Update(user);
-            DC.SaveChanges();
-        }
+
+            public void DeleteAsync(int id, User user)
+            {
+                user.IsDelete = true;
+                user.IsActive = false;
+                DC.Users.Update(user);
+                DC.SaveChangesAsync();
+            }
+
+            public void UpdateAsync(int id, User user)
+            {
+                if (id == null)
+                {
+                    throw new ArgumentNullException(nameof(user));
+                }
+                DC.Users.Update(user);
+                DC.SaveChanges();
+            }
+
     }
 }
