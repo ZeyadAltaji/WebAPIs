@@ -11,7 +11,7 @@ namespace ECommerce.Application.DTOs
     {
         public string Name { get; set; } = string.Empty;
         public string Class { get; set; } = string.Empty;
-        public DateTime Production_Date { get; set; }
+        public int? Production_Date { get; set; }
         public int Admin_Id { get; set; }
         public User? User { get; set; }
     }
