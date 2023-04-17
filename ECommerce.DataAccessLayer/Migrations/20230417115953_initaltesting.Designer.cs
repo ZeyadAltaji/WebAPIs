@@ -12,15 +12,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ECommerce.DataAccessLayer.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20230415173908_newTesting")]
-    partial class newTesting
+    [Migration("20230417115953_initaltesting")]
+    partial class initaltesting
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.4")
+                .HasAnnotation("ProductVersion", "7.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -40,7 +40,7 @@ namespace ECommerce.DataAccessLayer.Migrations
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Image")
+                    b.Property<string>("Image_BrandUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -50,11 +50,11 @@ namespace ECommerce.DataAccessLayer.Migrations
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Link")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("Public_id")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -98,6 +98,10 @@ namespace ECommerce.DataAccessLayer.Migrations
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Image_CarUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -108,9 +112,13 @@ namespace ECommerce.DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("Production_Date")
+                    b.Property<int?>("Production_Date")
                         .IsRequired()
-                        .HasColumnType("datetime2");
+                        .HasColumnType("int");
+
+                    b.Property<string>("Public_id")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("UpdateDate")
                         .HasColumnType("datetime2");
@@ -691,6 +699,10 @@ namespace ECommerce.DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Image_userUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -714,6 +726,10 @@ namespace ECommerce.DataAccessLayer.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Phone2")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Public_id")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

@@ -37,7 +37,7 @@ namespace ECommerce.DataAccessLayer.Migrations
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Image")
+                    b.Property<string>("Image_BrandUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -47,11 +47,11 @@ namespace ECommerce.DataAccessLayer.Migrations
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Link")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("Public_id")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -95,6 +95,10 @@ namespace ECommerce.DataAccessLayer.Migrations
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Image_CarUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -105,9 +109,13 @@ namespace ECommerce.DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("Production_Date")
+                    b.Property<int?>("Production_Date")
                         .IsRequired()
-                        .HasColumnType("datetime2");
+                        .HasColumnType("int");
+
+                    b.Property<string>("Public_id")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("UpdateDate")
                         .HasColumnType("datetime2");

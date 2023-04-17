@@ -115,7 +115,7 @@ namespace ECommerce.DataAccessLayer.Repositories
         }
     
           //Passwordalgorithm
-         private bool MatchPasswordHash(string passwordText, byte[] password, byte[] passwordKey)
+        private bool MatchPasswordHash(string passwordText, byte[] password, byte[] passwordKey)
          {
             using (var hmac = new HMACSHA512(passwordKey))
             {
@@ -131,12 +131,12 @@ namespace ECommerce.DataAccessLayer.Repositories
             }
          }
 
-            public async Task<IEnumerable<User>> GetAllUserAsync()
+        public async Task<IEnumerable<User>> GetAllUserAsync()
             {
                 return await DC.Users.ToListAsync();
             }
 
-            public void DeleteAsync(int id, User user)
+        public void DeleteAsync(int id, User user)
             {
                 user.IsDelete = true;
                 user.IsActive = false;
@@ -144,7 +144,7 @@ namespace ECommerce.DataAccessLayer.Repositories
                 DC.SaveChangesAsync();
             }
 
-            public void UpdateAsync(int id, User user)
+        public void UpdateAsync(int id, User user)
             {
                 if (id == null)
                 {

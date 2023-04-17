@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ECommerce.DataAccessLayer.Migrations
 {
     /// <inheritdoc />
-    public partial class newTesting : Migration
+    public partial class initaltesting : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -28,6 +28,8 @@ namespace ECommerce.DataAccessLayer.Migrations
                     Phone2 = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Role = table.Column<int>(type: "int", nullable: false),
+                    Image_userUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Public_id = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserCreate = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UserUpdate = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -46,11 +48,11 @@ namespace ECommerce.DataAccessLayer.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Image = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Link = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Admin_Id = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: true),
+                    Image_BrandUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Public_id = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserCreate = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UserUpdate = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -76,9 +78,11 @@ namespace ECommerce.DataAccessLayer.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Class = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Production_Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Production_Date = table.Column<int>(type: "int", nullable: false),
                     Admin_Id = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: true),
+                    Image_CarUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Public_id = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserCreate = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UserUpdate = table.Column<string>(type: "nvarchar(max)", nullable: false),
