@@ -14,8 +14,10 @@ namespace ECommerce.Domain.Models
         [Required]
         public string Class { get; set; } = string.Empty;
         [Required]
-        public DateTime? Production_Date { get; set; }
+        public int? Production_Date { get; set; }
         public int Admin_Id { get; set; }
         public User? User { get; set; }
+        public string Image_CarUrl { get; set; } = string.Empty;
+        public string Public_id { get; set; } = string.Empty;
     }
 }
