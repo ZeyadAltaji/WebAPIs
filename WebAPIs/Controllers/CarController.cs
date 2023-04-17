@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
+using ECommerce.Application.Abstractions;
 using ECommerce.Application.DTOs;
+using ECommerce.Application.ImageDTOs;
 using ECommerce.Application.UnitOfWork;
 using ECommerce.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
+using WebAPIs.Services;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -14,10 +17,13 @@ namespace WebAPIs.Controllers
     {
         private readonly IUnitOfWork uow;
         private readonly IMapper mapper;
-        public CarController(IUnitOfWork uow, IMapper mapper)
+        private readonly IPhotoService photoService;
+
+        public CarController(IUnitOfWork uow, IMapper mapper, IPhotoService photoService)
         {
             this.uow = uow;
             this.mapper = mapper;
+            this.photoService = photoService;
 
         }
         // GET: api/Car/GetAllCar
@@ -73,6 +79,26 @@ namespace WebAPIs.Controllers
             uow.repositoryCar.Delete(id, CarsDelete);
             await uow.SaveChanges();
             return Ok(id);
+        }
+
+        [HttpPost("Cars/UploadIamge/{CarsID}")]
+        public async Task<ActionResult<CarsImageDtos>> UploadImageCars(int CarsID, IFormFile BrandFiles)
+        {
+            var Cars = await uow.repositoryCar.GetByID(CarsID);
+            if (Cars == null)
+            {
+                return NotFound();
+            }
+            var CarsRes = await photoService.UploadPhotoAsync(BrandFiles);
+            if (CarsRes == null || string.IsNullOrEmpty(CarsRes.PublicId) || CarsRes.SecureUri == null)
+            {
+                return BadRequest("Invalid upload Result");
+            }
+            Cars.Image_CarUrl = CarsRes.SecureUri.AbsoluteUri;
+            Cars.Public_id = CarsRes.PublicId;
+            uow.repositoryCar.Update(CarsID, Cars);
+            await uow.SaveChanges();
+            return Ok(Cars);
         }
     }
 }

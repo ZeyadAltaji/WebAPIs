@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
+using ECommerce.Application.Abstractions;
 using ECommerce.Application.DTOs;
+using ECommerce.Application.ImageDTOs;
 using ECommerce.Application.UnitOfWork;
 using ECommerce.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -14,10 +17,14 @@ namespace WebAPIs.Controllers
     {
         private readonly IUnitOfWork uow;
         private readonly IMapper mapper;
-        public BrandsController(IUnitOfWork uow, IMapper mapper)
+        private readonly IPhotoService photoService;
+
+        public BrandsController(IUnitOfWork uow, IMapper mapper, IPhotoService photoService)
         {
             this.uow = uow;
             this.mapper = mapper;
+            this.photoService = photoService;
+
 
         }
         // GET: api/Brands/GetAllBrand
@@ -73,6 +80,25 @@ namespace WebAPIs.Controllers
             uow.repositoryBrands.Delete(id, BrandsDelete);
             await uow.SaveChanges();
             return Ok(id);
+        }
+        [HttpPost("Brand/UploadIamge/{BrandID}")]
+        public async Task<ActionResult<BrandsImageDtos>>UploadImageBrands(int BrandID,IFormFile BrandFiles)
+        {
+            var Brand = await uow.repositoryBrands.GetByID(BrandID);
+            if (Brand == null)
+            {
+                return NotFound();
+            }
+            var BrandRes = await photoService.UploadPhotoAsync(BrandFiles);
+            if (BrandRes == null || string.IsNullOrEmpty(BrandRes.PublicId) || BrandRes.SecureUri == null)
+            {
+                return BadRequest("Invalid upload Result");
+            }
+            Brand.Image_BrandUrl = BrandRes.SecureUri.AbsoluteUri;
+            Brand.Public_id = BrandRes.PublicId;
+            uow.repositoryBrands.Update(BrandID, Brand);
+            await uow.SaveChanges();
+            return Ok(Brand);
         }
     }
 }
