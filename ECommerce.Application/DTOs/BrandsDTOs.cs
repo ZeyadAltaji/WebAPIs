@@ -1,4 +1,5 @@
 ﻿using ECommerce.Domain.Models;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace ECommerce.Application.DTOs
 {
     public class BrandsDTOs : BaseClass
     {
-        public string Image { get; set; } = string.Empty;
+        public IFormFile Image { get; set; }
         public string Name { get; set; } = string.Empty;
         public int Admin_Id { get; set; }
         public User? User { get; set; }

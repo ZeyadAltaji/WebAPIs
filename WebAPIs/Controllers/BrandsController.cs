@@ -4,6 +4,7 @@ using ECommerce.Application.DTOs;
 using ECommerce.Application.ImageDTOs;
 using ECommerce.Application.UnitOfWork;
 using ECommerce.Domain.Models;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
@@ -18,13 +19,14 @@ namespace WebAPIs.Controllers
         private readonly IUnitOfWork uow;
         private readonly IMapper mapper;
         private readonly IPhotoService photoService;
+        private readonly IWebHostEnvironment webHostEnvironment;
 
-        public BrandsController(IUnitOfWork uow, IMapper mapper, IPhotoService photoService)
+        public BrandsController(IUnitOfWork uow, IMapper mapper, IPhotoService photoService, IWebHostEnvironment webHostEnvironment)
         {
             this.uow = uow;
             this.mapper = mapper;
             this.photoService = photoService;
-
+            this.webHostEnvironment = webHostEnvironment;
 
         }
         // GET: api/Brands/GetAllBrand
@@ -43,14 +45,29 @@ namespace WebAPIs.Controllers
             var BrandsByID = await uow.repositoryBrands.GetByID(id);
             return Ok(BrandsByID);
         }
-
-        // POST api/Brands
         [HttpPost]
-        public async Task<IActionResult> CreateBrands(BrandsDTOs brandsDTOs)
+        public async Task<IActionResult> CreateBrands([FromForm] BrandsDTOs brandsDTOs)
         {
-            var CreateNewBrands = mapper.Map<Brands>(brandsDTOs);
-            brandsDTOs.CreateDate = DateTime.Now;
-            uow.repositoryBrands.Create(CreateNewBrands);
+            var newBrand = mapper.Map<Brands>(brandsDTOs);
+
+            // Handle image upload
+            if (brandsDTOs.Image != null)
+            {
+                string fileName = $"{Guid.NewGuid()}{Path.GetExtension(brandsDTOs.Image.FileName)}";
+                // Create a subfolder under wwwroot
+                string subfolder = Path.Combine(webHostEnvironment.WebRootPath, "Uploads", "brands", "images");
+                Directory.CreateDirectory(subfolder);
+                // Save the file in the subfolder
+                string filePath = Path.Combine(subfolder, fileName);
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await brandsDTOs.Image.CopyToAsync(fileStream);
+                }
+                newBrand.Image_BrandUrl = $"Uploads/brands/images{fileName}";
+            }
+
+            newBrand.CreateDate = DateTime.Now;
+            uow.repositoryBrands.Create(newBrand);
             await uow.SaveChanges();
             return StatusCode(201);
         }
