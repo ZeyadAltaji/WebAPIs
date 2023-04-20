@@ -1,23 +1,34 @@
 ﻿using CloudinaryDotNet.Actions;
 using ECommerce.Application.Abstractions;
+using ECommerce.Application.DTOs;
 using ECommerce.Domain.Models;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Runtime.InteropServices.JavaScript;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ECommerce.DataAccessLayer.Repositories
 {
     public class UserRepository : IUserRepository
     {
         private readonly DBContext DC;
-        public UserRepository(DBContext dc)
+        [Obsolete]
+        private readonly IWebHostEnvironment _environment;
+        public UserRepository(DBContext dc , IWebHostEnvironment host)
         {
             DC = dc;
+            _environment = host;
+
         }
         public async Task<User> Authenticate(string UserName, string passwordText)
         {
@@ -153,6 +164,38 @@ namespace ECommerce.DataAccessLayer.Repositories
                 DC.Users.Update(user);
                 DC.SaveChanges();
             }
+          
+        public async Task<User> Create(FullUserDTOs userDtos, User user)
+        {
+            byte[] passwordHash, passwordSalt;
+            createpasswordHash(userDtos.password, out passwordHash, out passwordSalt);
+            // Set the password hash and salt
+            var data = new User
+            {
+                UserName = userDtos.UserName,
+                Last_Name = userDtos.Last_Name,
+                Frist_Name = userDtos.Frist_Name,
+                Email = userDtos.Email,
+                Password = passwordHash,
+                ComfirmPassword = passwordHash,
+                PasswordKey = passwordSalt,
+              
+                CreateDate = DateTime.Now,
+                Role = userDtos.Role,
+                Phone1 = userDtos.Phone1,
+                Phone2 = userDtos.Phone2,
+                Address = userDtos.Address,
+                Image_userUrl = userDtos.Image.FileName,
 
+
+
+
+            };
+            // Add user to the database and save changes
+            DC.Users.Add(data);
+            await DC.SaveChangesAsync();
+
+            return data;
+        }
     }
 }

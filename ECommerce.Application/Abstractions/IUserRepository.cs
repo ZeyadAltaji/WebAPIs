@@ -1,4 +1,6 @@
-﻿using ECommerce.Domain.Models;
+﻿using ECommerce.Application.DTOs;
+using ECommerce.Domain.Models;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +20,6 @@ namespace ECommerce.Application.Abstractions
         Task<User> FindByIdAsync(int id);
         void DeleteAsync(int id,User user);
         void UpdateAsync(int id, User user);
-
+        Task<User> Create(FullUserDTOs userDtos,User user);
     }
 }

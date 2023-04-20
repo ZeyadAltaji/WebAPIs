@@ -15,7 +15,6 @@ namespace ECommerce.Application.Helpers
         public AutoMapperProfiles()
         {
             CreateMap<User, UserDTOs>().ReverseMap();
-            CreateMap<User, FullUserDTOs>().ReverseMap();
             CreateMap<Category, CategoryDTOs>().ReverseMap();
             CreateMap<Brands, BrandsDTOs>().ReverseMap();
             CreateMap<Car, CarDTOs>().ReverseMap();
@@ -57,6 +56,13 @@ namespace ECommerce.Application.Helpers
             CreateMap<BrandsImageDtos, Brands>()
                 .ForMember(d => d.Image_BrandUrl, opt => opt.MapFrom(src => src.Image_BrandUrl))
                 .ForMember(d => d.Image_BrandUrl, opt => opt.MapFrom(src => src.Public_id));
+
+            CreateMap<User, FullUserDTOs>()
+                .ForMember(dest => dest.password, opt => opt.MapFrom(src => Encoding.UTF8.GetString(src.Password)))
+                .ForMember(dest => dest.comfirmPassword, opt => opt.MapFrom(src => Encoding.UTF8.GetString(src.ComfirmPassword)))
+                .ReverseMap()
+                .ForMember(dest => dest.Password, opt => opt.MapFrom(src => Encoding.UTF8.GetBytes(src.password)))
+                .ForMember(dest => dest.ComfirmPassword, opt => opt.MapFrom(src => Encoding.UTF8.GetBytes(src.comfirmPassword)));
         }
     }
 }

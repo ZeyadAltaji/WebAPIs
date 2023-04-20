@@ -2,6 +2,7 @@
 using ECommerce.Application.UnitOfWork;
 using ECommerce.DataAccessLayer.Repositories;
 using ECommerce.Domain.Models;
+using Microsoft.AspNetCore.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,11 +14,16 @@ namespace ECommerce.DataAccessLayer
     public class UnitOfWork : IUnitOfWork
     {
         private readonly DBContext DC;
-        public UnitOfWork(DBContext dc)
+        private readonly IWebHostEnvironment _en;
+
+        public UnitOfWork(DBContext dc, IWebHostEnvironment _environment)
         {
-            DC = dc;     
+            DC = dc;
+            _en = _environment;
+
+
         }
-        public IUserRepository UserRepository => new UserRepository(DC);
+        public IUserRepository UserRepository => new UserRepository(DC, _en);
 
         public IRepository<Brands> repositoryBrands => new BrandsRepository(DC);
 

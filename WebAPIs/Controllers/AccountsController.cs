@@ -5,6 +5,7 @@ using ECommerce.Application.UnitOfWork;
 using ECommerce.DataAccessLayer;
 using ECommerce.DataAccessLayer.Repositories;
 using ECommerce.Domain.Models;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
@@ -26,6 +27,8 @@ namespace WebAPIs.Controllers
         private readonly IUnitOfWork uow;
         private readonly IMapper mapper;
         private readonly IPhotoService photoService;
+        private readonly IWebHostEnvironment webHostEnvironment;
+
         public static ErrorsAPIs apiError = new ErrorsAPIs();
 
 
@@ -33,13 +36,15 @@ namespace WebAPIs.Controllers
             IConfiguration configuration,
             IUnitOfWork uow,
              IMapper mapper,
-            IPhotoService photoService
+            IPhotoService photoService,
+            IWebHostEnvironment webHostEnvironment
          )
          {
             this.configuration = configuration;
             this.uow = uow;
             this.mapper =mapper;
             this.photoService = photoService;
+            this.webHostEnvironment= webHostEnvironment;
          }
         [HttpPost("register")]
         public async Task<IActionResult> Register(LoginReqDto loginReq)
@@ -205,16 +210,48 @@ namespace WebAPIs.Controllers
 
             user.Image_userUrl = uploadResult.SecureUrl.AbsoluteUri;
             user.Public_id = uploadResult.PublicId;
-
             uow.UserRepository.UpdateAsync(userId, user);
-
-
             await uow.SaveChanges();
-
             return Ok(user);
         }
-       
-      
+        [HttpPost("NewUser")]
+        public async Task<IActionResult> NewUser([FromForm] FullUserDTOs userDTOs)
+        {
+            var user = mapper.Map<User>(userDTOs);
+
+            // Validate the model state
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Invalid model state");
+            }
+
+            // Check if the user already exists
+            if (await uow.UserRepository.UserAlreadyExists(user.UserName))
+            {
+                return BadRequest("User already exists, please try different user name");
+            }
+
+            // Save user's image (if provided)
+            if (userDTOs.Image != null)
+            {
+                string fileName = $"{Guid.NewGuid()}{Path.GetExtension(userDTOs.Image.FileName)}";
+                string subfolder = Path.Combine(webHostEnvironment.WebRootPath, "Uploads", "UsersImage");
+                Directory.CreateDirectory(subfolder);
+                string filePath = Path.Combine(subfolder, fileName);
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await userDTOs.Image.CopyToAsync(fileStream);
+                }
+                user.Image_userUrl = $"Uploads/UsersImage{fileName}";
+            }
+
+            // Create the user and return the result
+            await uow.UserRepository.Create(userDTOs,user);
+            await uow.SaveChanges();
+            return Ok(user);
+
+        }
+
 
     }
 }
