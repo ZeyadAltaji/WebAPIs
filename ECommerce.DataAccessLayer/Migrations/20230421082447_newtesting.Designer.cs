@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ECommerce.DataAccessLayer.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20230417115953_initaltesting")]
-    partial class initaltesting
+    [Migration("20230421082447_newtesting")]
+    partial class newtesting
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -39,10 +39,6 @@ namespace ECommerce.DataAccessLayer.Migrations
 
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("Image_BrandUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");

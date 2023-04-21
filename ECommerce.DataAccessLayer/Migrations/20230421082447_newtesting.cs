@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ECommerce.DataAccessLayer.Migrations
 {
     /// <inheritdoc />
-    public partial class initaltesting : Migration
+    public partial class newtesting : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -51,7 +51,6 @@ namespace ECommerce.DataAccessLayer.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Admin_Id = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: true),
-                    Image_BrandUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Public_id = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserCreate = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
