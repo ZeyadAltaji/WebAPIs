@@ -39,8 +39,8 @@ namespace ECommerce.DataAccessLayer.Repositories
 
         public async Task<Brands> GetByID(int id)
         {
-            return await Dc.Brand.Include(Getbyid => Getbyid.User).SingleOrDefaultAsync(Getbyid => Getbyid.Id == id);
-
+            var Brand = await Dc.Brand.Include(Getbyid => Getbyid.User).SingleOrDefaultAsync(Getbyid => Getbyid.Id == id);
+            return Brand;
         }
 
         public void Update(int Id, Brands entity)
