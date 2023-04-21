@@ -60,9 +60,12 @@ namespace ECommerce.Application.Helpers
             CreateMap<User, FullUserDTOs>()
                 .ForMember(dest => dest.password, opt => opt.MapFrom(src => Encoding.UTF8.GetString(src.Password)))
                 .ForMember(dest => dest.comfirmPassword, opt => opt.MapFrom(src => Encoding.UTF8.GetString(src.ComfirmPassword)))
+                .ForMember(d => d.Image, opt => opt.MapFrom(src => src.Image_userUrl))
                 .ReverseMap()
                 .ForMember(dest => dest.Password, opt => opt.MapFrom(src => Encoding.UTF8.GetBytes(src.password)))
-                .ForMember(dest => dest.ComfirmPassword, opt => opt.MapFrom(src => Encoding.UTF8.GetBytes(src.comfirmPassword)));
+                .ForMember(dest => dest.ComfirmPassword, opt => opt.MapFrom(src => Encoding.UTF8.GetBytes(src.comfirmPassword)))
+                .ForMember(d => d.Image_userUrl, opt => opt.MapFrom(src => src.Image))
+;
         }
     }
 }
