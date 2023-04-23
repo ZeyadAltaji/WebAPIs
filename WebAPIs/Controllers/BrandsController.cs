@@ -69,21 +69,23 @@ namespace WebAPIs.Controllers
         {
             try
             {
-                var Name = HttpContext.Request.Form["Name"].ToString();
                 int id = int.Parse(HttpContext.Request.Form["id"].ToString());
                 var img = HttpContext.Request.Form.Files["Image_BrandUrl"];
-                if (!string.IsNullOrEmpty(Name))
+                var brandDTO = new BrandsDTOs();
+                brandDTO.Name = HttpContext.Request.Form["Name"].ToString();
+
+                if (!string.IsNullOrEmpty(brandDTO.Name))
                 {
                     if (img != null && img.Length > 0)
                     {
                         // A new image is selected
-                        var Update = await uow.repositoryBrand.EditAsync(id, Name, img);
+                        var Update = await uow.repositoryBrand.EditAsyncTest(id, brandDTO, img);
                         if (Update != null) return Ok();
                     }
                     else
                     {
                         // Preserve the existing image
-                        var Update = await uow.repositoryBrand.EditAsync(id, Name, null);
+                        var Update = await uow.repositoryBrand.EditAsyncTest(id, brandDTO, null);
                         if (Update != null) return Ok();
                     }
                 }

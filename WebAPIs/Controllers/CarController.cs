@@ -45,15 +45,52 @@ namespace WebAPIs.Controllers
 
         // POST api/Car
         [HttpPost]
-        public async Task<IActionResult> CreateCar(CarDTOs carDTOs)
+        public async Task<IActionResult> CreateCar([FromForm] CarDTOs carDTOs)
         {
             var CreateNewCar = mapper.Map<Car>(carDTOs);
+            CreateNewCar.Public_id = await SaveImage(carDTOs.Image_CarUrl);
+            CreateNewCar.Production_Date = carDTOs.Production_Date ;
+
             carDTOs.CreateDate = DateTime.Now;
             uow.repositoryCar.Create(CreateNewCar);
             await uow.SaveChanges();
             return StatusCode(201);
         }
+        [HttpPut("update")]
+        public async Task<IActionResult> UpdateCar()
+        {
+            try
+            {
 
+                //var Name = HttpContext.Request.Form["Name"].ToString();
+                int id = int.Parse(HttpContext.Request.Form["id"].ToString());
+                var img = HttpContext.Request.Form.Files["Image_CarUrl"];
+                var carDTOs = new CarDTOs();
+                carDTOs.Name = HttpContext.Request.Form["Name"].ToString();
+                carDTOs.Production_Date =int.Parse(HttpContext.Request.Form["Production_Date"].ToString());
+                carDTOs.Class = HttpContext.Request.Form["Class"].ToString();
+                if (!string.IsNullOrEmpty(carDTOs.Name))
+                {
+                    if (img != null && img.Length > 0)
+                    {
+                        // A new image is selected
+                        var Update = await uow.repositoryCars.EditAsyncTest(id, carDTOs, img);
+                        if (Update != null) return Ok();
+                    }
+                    else
+                    {
+                        // Preserve the existing image
+                        var Update = await uow.repositoryCars.EditAsyncTest(id, carDTOs, null);
+                        if (Update != null) return Ok();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            return BadRequest();
+        }
         // PUT api/Car/update/5
         [HttpPut("Cars/update/{id}")]
         public async Task<IActionResult> UpdateCar(int id, CarDTOs carDTOs)
@@ -80,25 +117,17 @@ namespace WebAPIs.Controllers
             await uow.SaveChanges();
             return Ok(id);
         }
-
-        [HttpPost("Cars/UploadIamge/{CarsID}")]
-        public async Task<ActionResult<CarsImageDtos>> UploadImageCars(int CarsID, IFormFile BrandFiles)
+        [NonAction]
+        public async Task<string> SaveImage(IFormFile imageFile)
         {
-            var Cars = await uow.repositoryCar.GetByID(CarsID);
-            if (Cars == null)
+            string imagename = new String(Path.GetFileNameWithoutExtension(imageFile.FileName).Take(10).ToArray()).Replace(' ', ' ');
+            imagename = Guid.NewGuid() + Path.GetExtension(imageFile.FileName);
+            string imagePath = Path.Combine(@"D:\project fianal\E-commerce\projects\dashboard\src\assets\image\Cars", imagename);
+            using (var fileStream = new FileStream(imagePath, FileMode.Create))
             {
-                return NotFound();
+                await imageFile.CopyToAsync(fileStream);
             }
-            var CarsRes = await photoService.UploadPhotoAsync(BrandFiles);
-            if (CarsRes == null || string.IsNullOrEmpty(CarsRes.PublicId) || CarsRes.SecureUri == null)
-            {
-                return BadRequest("Invalid upload Result");
-            }
-            Cars.Image_CarUrl = CarsRes.SecureUri.AbsoluteUri;
-            Cars.Public_id = CarsRes.PublicId;
-            uow.repositoryCar.Update(CarsID, Cars);
-            await uow.SaveChanges();
-            return Ok(Cars);
+            return imagename;
         }
     }
 }

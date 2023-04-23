@@ -1,4 +1,5 @@
 ﻿using ECommerce.Application.Abstractions;
+using ECommerce.Application.DTOs;
 using ECommerce.Domain.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -69,16 +70,18 @@ namespace ECommerce.DataAccessLayer.Repositories
         {
             return Dc.Brand.Include(Getbyid => Getbyid.User).Where(x => x.IsActive == true && x.IsDelete == false).ToList();
         }
-        public async Task<Brands> EditAsync(int id, string Name, IFormFile img)
+        public async Task<Brands> EditAsyncTest(int id, object entity, IFormFile img)
         {
-            var BrandEdit = await Dc.Brand.FirstOrDefaultAsync(x => x.Id == id);
-            if (BrandEdit == null)
+            var Query = await Dc.Brand.FirstOrDefaultAsync(x => x.Id == id);
+            if (Query == null)
             {
                 return null;
             }
 
-            Dc.Attach(BrandEdit);
-            BrandEdit.Name = Name;
+            Dc.Attach(Query);
+            var brandsDTOs = entity as BrandsDTOs;
+            Query.Name = brandsDTOs.Name;
+            
             if (img != null)
             {
                 // Save the new image
@@ -87,13 +90,12 @@ namespace ECommerce.DataAccessLayer.Repositories
                 {
                     await img.CopyToAsync(fileStream);
                 }
-                BrandEdit.Public_id = img.FileName;
-                Dc.Entry(BrandEdit).Property(x => x.Public_id).IsModified = true;
+                Query.Public_id = img.FileName;
+                Dc.Entry(Query).Property(x => x.Public_id).IsModified = true;
             }
-            Dc.Entry(BrandEdit).Property(x => x.Name).IsModified = true;
+            Dc.Entry(Query).Property(x => x.Name).IsModified = true;
             await Dc.SaveChangesAsync();
-            return BrandEdit;
+            return Query;
         }
-
     }
 }

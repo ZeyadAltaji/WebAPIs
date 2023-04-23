@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,7 +19,9 @@ namespace ECommerce.Domain.Models
         public int? Production_Date { get; set; }
         public int Admin_Id { get; set; }
         public User? User { get; set; }
-        public string Image_CarUrl { get; set; } = string.Empty;
+
+        [NotMapped]
+        public IFormFile Image_CarUrl { get; set; }
         public string Public_id { get; set; } = string.Empty;
     }
 }

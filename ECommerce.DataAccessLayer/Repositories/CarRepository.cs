@@ -1,5 +1,7 @@
 ﻿using ECommerce.Application.Abstractions;
+using ECommerce.Application.DTOs;
 using ECommerce.Domain.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -9,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace ECommerce.DataAccessLayer.Repositories
 {
-    public class CarRepository : IRepository<Car>
+    public class CarRepository : ITesting<Car>,IRepository<Car>
     {
         private readonly DBContext Dc;
 
@@ -70,7 +72,33 @@ namespace ECommerce.DataAccessLayer.Repositories
         {
             return Dc.Cars.Include(Getbyid => Getbyid.User).Where(x => x.IsActive == true && x.IsDelete == false).ToList();
         }
+        public async Task<Car> EditAsyncTest(int id, object entity, IFormFile img)
+        {
+            var Query = await Dc.Cars.FirstOrDefaultAsync(x => x.Id == id);
+            if (Query == null)
+            {
+                return null;
+            }
 
-        
+            Dc.Attach(Query);
+            var carDTOs = entity as CarDTOs;
+            Query.Name = carDTOs.Name;
+            Query.Production_Date=carDTOs.Production_Date;
+            Query.Class= carDTOs.Class;
+             if (img != null)
+            {
+                // Save the new image
+                var filePath = Path.Combine(@"D:\project fianal\E-commerce\projects\dashboard\src\assets\image\Cars", img.FileName);
+                using (FileStream fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await img.CopyToAsync(fileStream);
+                }
+                Query.Public_id = img.FileName;
+                Dc.Entry(Query).Property(x => x.Public_id).IsModified = true;
+            }
+            Dc.Entry(Query).Property(x => x.Name).IsModified = true;
+            await Dc.SaveChangesAsync();
+            return Query;
+        }
     }
 }

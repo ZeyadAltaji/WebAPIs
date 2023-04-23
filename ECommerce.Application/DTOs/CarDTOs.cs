@@ -1,4 +1,5 @@
 ﻿using ECommerce.Domain.Models;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,5 +15,8 @@ namespace ECommerce.Application.DTOs
         public int? Production_Date { get; set; }
         public int Admin_Id { get; set; }
         public User? User { get; set; }
+        public string Public_id { get; set; } = string.Empty;
+        public IFormFile Image_CarUrl { get; set; }
+
     }
 }
