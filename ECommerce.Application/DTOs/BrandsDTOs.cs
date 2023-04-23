@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ECommerce.Application.DTOs
 {
-    public class BrandsDTOs : BaseClass
+    public class BrandsDTOs :BaseClass
     {
         public IFormFile Image_BrandUrl { get; set; }
         public string Name { get; set; } = string.Empty;

@@ -16,7 +16,8 @@ namespace ECommerce.Application.Helpers
         {
             CreateMap<User, UserDTOs>().ReverseMap();
             CreateMap<Category, CategoryDTOs>().ReverseMap();
-            CreateMap<Brands, BrandsDTOs>().ReverseMap();
+            CreateMap<Brands, BrandsDTOs>()
+                .ReverseMap();
             CreateMap<Car, CarDTOs>().ReverseMap();
             CreateMap<Coupon, CouponDTOs>().ReverseMap();
             CreateMap<Order, OrderDTOs>().ReverseMap();

@@ -1,5 +1,7 @@
 ﻿using ECommerce.Application.Abstractions;
 using ECommerce.Domain.Models;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -9,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace ECommerce.DataAccessLayer.Repositories
 {
-    public class BrandsRepository : IRepository<Brands>
+    public class BrandsRepository : ITesting<Brands>, IRepository<Brands> 
     {
         private readonly DBContext Dc;
 
@@ -39,11 +41,11 @@ namespace ECommerce.DataAccessLayer.Repositories
 
         public async Task<Brands> GetByID(int id)
         {
-            var Brand = await Dc.Brand.Include(Getbyid => Getbyid.User).SingleOrDefaultAsync(Getbyid => Getbyid.Id == id);
-            return Brand;
+            return await Dc.Brand.Include(Getbyid => Getbyid.User).SingleOrDefaultAsync(Getbyid => Getbyid.Id == id);
+            
         }
 
-        public void Update(int Id, Brands entity)
+        public void Update(int id, Brands entity)
         {
             Dc.Brand.Update(entity);
             Dc.SaveChanges();
@@ -67,7 +69,31 @@ namespace ECommerce.DataAccessLayer.Repositories
         {
             return Dc.Brand.Include(Getbyid => Getbyid.User).Where(x => x.IsActive == true && x.IsDelete == false).ToList();
         }
+        public async Task<Brands> EditAsync(int id, string Name, IFormFile img)
+        {
+            var BrandEdit = await Dc.Brand.FirstOrDefaultAsync(x => x.Id == id);
+            if (BrandEdit == null)
+            {
+                return null;
+            }
 
-     
+            Dc.Attach(BrandEdit);
+            BrandEdit.Name = Name;
+            if (img != null)
+            {
+                // Save the new image
+                var filePath = Path.Combine(@"D:\project fianal\E-commerce\projects\dashboard\src\assets\image\Brands", img.FileName);
+                using (FileStream fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await img.CopyToAsync(fileStream);
+                }
+                BrandEdit.Public_id = img.FileName;
+                Dc.Entry(BrandEdit).Property(x => x.Public_id).IsModified = true;
+            }
+            Dc.Entry(BrandEdit).Property(x => x.Name).IsModified = true;
+            await Dc.SaveChangesAsync();
+            return BrandEdit;
+        }
+
     }
 }

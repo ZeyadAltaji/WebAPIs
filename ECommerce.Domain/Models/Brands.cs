@@ -11,7 +11,8 @@ namespace ECommerce.Domain.Models
 {
     public class Brands: BaseEntity
     {
-        [Required]
+        //[Required]
+        [StringLength(300)]
         public string Name { get; set; }= string.Empty;
         public int Admin_Id { get; set; }
         public User? User { get; set; }

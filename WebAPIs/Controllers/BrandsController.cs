@@ -3,9 +3,12 @@ using ECommerce.Application.Abstractions;
 using ECommerce.Application.DTOs;
 using ECommerce.Application.ImageDTOs;
 using ECommerce.Application.UnitOfWork;
+using ECommerce.DataAccessLayer;
 using ECommerce.Domain.Models;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System;
 
@@ -22,13 +25,16 @@ namespace WebAPIs.Controllers
         private readonly IPhotoService photoService;
         private readonly IWebHostEnvironment webHostEnvironment;
 
-        public BrandsController(IUnitOfWork uow, IMapper mapper, IPhotoService photoService, IWebHostEnvironment webHostEnvironment)
+        private readonly DBContext _context;
+
+
+        public BrandsController(IUnitOfWork uow, IMapper mapper, IPhotoService photoService, IWebHostEnvironment webHostEnvironment, DBContext context)
         {
             this.uow = uow;
             this.mapper = mapper;
             this.photoService = photoService;
             this.webHostEnvironment = webHostEnvironment;
-
+            _context = context;
         }
         // GET: api/Brands/GetAllBrand
         [HttpGet("GetAllBrand")]
@@ -56,32 +62,37 @@ namespace WebAPIs.Controllers
             await uow.SaveChanges();
             return StatusCode(201);
         }
-        [NonAction]
-        public async Task<string> SaveImage(IFormFile imageFile)
+        
+        // PUT api/Brand/update
+        [HttpPut("update")]
+        public async Task<IActionResult> UpdateBrand()
         {
-            string imagename= new String(Path.GetFileNameWithoutExtension(imageFile.FileName).Take(10).ToArray()).Replace(' ',' ');
-            imagename = imagename + DateTime.Now.ToString("yymmssfff") + Path.GetExtension(imageFile.FileName);
-            string imagePath = Path.Combine(@"D:\project fianal\E-commerce\projects\dashboard\src\assets\image\Brands", imagename);
-            using (var fileStream = new FileStream(imagePath, FileMode.Create))
+            try
             {
-                await imageFile.CopyToAsync(fileStream);
+                var Name = HttpContext.Request.Form["Name"].ToString();
+                int id = int.Parse(HttpContext.Request.Form["id"].ToString());
+                var img = HttpContext.Request.Form.Files["Image_BrandUrl"];
+                if (!string.IsNullOrEmpty(Name))
+                {
+                    if (img != null && img.Length > 0)
+                    {
+                        // A new image is selected
+                        var Update = await uow.repositoryBrand.EditAsync(id, Name, img);
+                        if (Update != null) return Ok();
+                    }
+                    else
+                    {
+                        // Preserve the existing image
+                        var Update = await uow.repositoryBrand.EditAsync(id, Name, null);
+                        if (Update != null) return Ok();
+                    }
+                }
             }
-            return imagename;
-        }
-        // PUT api/Brand/update/5
-        [HttpPut("Brand/update/{id}")]
-        public async Task<IActionResult> UpdateBrands(int id, BrandsDTOs brandsDTOs)
-        {
-            if (id != brandsDTOs.Id)
-                return BadRequest("Update not allowed");
-            var BrandFromDb = await uow.repositoryBrands.GetByID(id);
-
-            if (BrandFromDb == null)
-                return BadRequest("Update not allowed");
-            mapper.Map(brandsDTOs, BrandFromDb);
-
-            await uow.SaveChanges();
-            return StatusCode(200);
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            return BadRequest();
         }
 
         // DELETE api/<BrandsDeleteController>/5
@@ -94,6 +105,7 @@ namespace WebAPIs.Controllers
             await uow.SaveChanges();
             return Ok(id);
         }
+
         [HttpPost("Brand/UploadIamge/{BrandID}")]
         public async Task<ActionResult<BrandsImageDtos>>UploadImageBrands(int BrandID,IFormFile BrandFiles)
         {
@@ -107,11 +119,22 @@ namespace WebAPIs.Controllers
             {
                 return BadRequest("Invalid upload Result");
             }
-            //Brand.Image_BrandUrl = BrandRes.SecureUri.AbsoluteUri;
             Brand.Public_id = BrandRes.PublicId;
             uow.repositoryBrands.Update(BrandID, Brand);
             await uow.SaveChanges();
             return Ok(Brand);
+        }
+        [NonAction]
+        public async Task<string> SaveImage(IFormFile imageFile)
+        {
+            string imagename = new String(Path.GetFileNameWithoutExtension(imageFile.FileName).Take(10).ToArray()).Replace(' ', ' ');
+            imagename = Guid.NewGuid() + Path.GetExtension(imageFile.FileName);
+            string imagePath = Path.Combine(@"D:\project fianal\E-commerce\projects\dashboard\src\assets\image\Brands", imagename);
+            using (var fileStream = new FileStream(imagePath, FileMode.Create))
+            {
+                await imageFile.CopyToAsync(fileStream);
+            }
+            return imagename;
         }
     }
 }
