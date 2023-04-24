@@ -91,22 +91,7 @@ namespace WebAPIs.Controllers
             }
             return BadRequest();
         }
-        // PUT api/Car/update/5
-        [HttpPut("Cars/update/{id}")]
-        public async Task<IActionResult> UpdateCar(int id, CarDTOs carDTOs)
-        {
-            if (id != carDTOs.Id)
-                return BadRequest("Update not allowed");
-            var carFromDb = await uow.repositoryCar.GetByID(id);
-
-            if (carFromDb == null)
-                return BadRequest("Update not allowed");
-            mapper.Map(carDTOs, carFromDb);
-
-            await uow.SaveChanges();
-            return StatusCode(200);
-        }
-
+        
         // DELETE api/Car/delete/5
         [HttpPut("Cars/Delete/{id}")]
         public async Task<IActionResult> Deletedelete(int id)

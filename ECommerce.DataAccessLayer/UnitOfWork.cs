@@ -44,7 +44,11 @@ namespace ECommerce.DataAccessLayer
         public IRepository<Sub_Slider> repositorySub_Slider => new Sub_SliderRepository(DC);
 
         public IRepository<Vehicles> repositoryVehicles => new VehiclesRepository(DC);
+
+        //delete after testing
+
         public ITesting<Brands> repositoryBrand => new BrandsRepository(DC);
+        public ITesting<Car> repositoryCars => new CarRepository(DC);
 
         public async Task<bool> SaveChanges()
         {

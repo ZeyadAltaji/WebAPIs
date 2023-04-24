@@ -21,8 +21,9 @@ namespace ECommerce.Application.DTOs
         public string Phone1 { get; set; } = string.Empty;
         public string Phone2 { get; set; } = string.Empty;
         public string Address { get; set; } = string.Empty;
-        [Ignore] 
-        public IFormFile Image { get; set; }
+        public string Public_id { get; set; } = string.Empty;
+
+        public IFormFile Image_userUrl { get; set; }
 
     }
 }

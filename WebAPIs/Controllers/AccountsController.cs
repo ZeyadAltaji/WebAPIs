@@ -6,9 +6,11 @@ using ECommerce.DataAccessLayer;
 using ECommerce.DataAccessLayer.Repositories;
 using ECommerce.Domain.Models;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Primitives;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -28,7 +30,7 @@ namespace WebAPIs.Controllers
         private readonly IMapper mapper;
         private readonly IPhotoService photoService;
         private readonly IWebHostEnvironment webHostEnvironment;
-
+ 
         public static ErrorsAPIs apiError = new ErrorsAPIs();
 
 
@@ -38,14 +40,15 @@ namespace WebAPIs.Controllers
              IMapper mapper,
             IPhotoService photoService,
             IWebHostEnvironment webHostEnvironment
-         )
+          )
          {
             this.configuration = configuration;
             this.uow = uow;
             this.mapper =mapper;
             this.photoService = photoService;
             this.webHostEnvironment= webHostEnvironment;
-         }
+ 
+        }
         [HttpPost("register")]
         public async Task<IActionResult> Register(LoginReqDto loginReq)
         {
@@ -55,7 +58,7 @@ namespace WebAPIs.Controllers
                 apiError.Error_Messages = "User name or password can not be blank";
                 return BadRequest(apiError);
             }
-            if (await uow.UserRepository.UserAlreadyExists(loginReq.UserName))
+            if (await uow.UserRepository.UserAlreadyExists(loginReq.UserName,loginReq.Email))
             {
                 apiError.Error_Code = BadRequest().StatusCode;
                 apiError.Error_Messages = "User already exists, please try different user name";
@@ -74,7 +77,7 @@ namespace WebAPIs.Controllers
                 apiError.Error_Messages = "User name or password can not be blank";
                 return BadRequest(apiError);
             }
-            if (await uow.UserRepository.UserAlreadyExists(loginReq.UserName))
+            if (await uow.UserRepository.UserAlreadyExists(loginReq.UserName, loginReq.Email))
             {
                 apiError.Error_Code = BadRequest().StatusCode;
                 apiError.Error_Messages = "User already exists, please try different user name";
@@ -121,19 +124,138 @@ namespace WebAPIs.Controllers
             return Ok(GetByIdDtos);
 
         }
-        [HttpPut("Users/update/{id}")]
-        public async Task<IActionResult> UpdateUsers(int id, FullUserDTOs userDto)
-        {
-            if (id != userDto.Id) return BadRequest("Update not allowed");
+        //[HttpPut("Users/update")]
+        //public async Task<IActionResult> UpdateUsers()
+        //{
+        //    try
+        //    {
+        //        var userDTOs = new FullUserDTOs();
+        //        var id = int.Parse(HttpContext.Request.Form["id"].ToString());
+        //        var img = HttpContext.Request.Form.Files["Image_userUrl"];
 
-             var user = await uow.UserRepository.FindByIdAsync(id);
+        //        var user = await uow.UserRepository.FindByIdAsync(id);
 
-            if (user == null) return BadRequest("User Not Found !");
+        //        if (user == null)
+        //        {
+        //            apiError.Error_Code = BadRequest().StatusCode;
+        //            apiError.Error_Messages = "User not found";
+        //            return BadRequest(apiError);
+        //        }
 
-            mapper.Map(userDto,user);
-            await uow.SaveChanges();
-            return StatusCode(200);
-        }
+        //        if (await uow.UserRepository.UserAlreadyExists(userDTOs.UserName, userDTOs.Email))
+        //        {
+        //            apiError.Error_Code = BadRequest().StatusCode;
+        //            apiError.Error_Messages = "User already exists, please try different user name";
+        //            return BadRequest(apiError);
+        //        }
+
+        //        // Update the user with the new data
+        //        await uow.UserRepository.UpdateAsync(id, userDTOs, img);
+
+        //        return Ok();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest(ex.Message);
+        //    }
+        //}
+
+
+        
+        //[HttpPut("Users/update")]
+        //public async Task<IActionResult> UpdateUsers(int id)
+        //{
+        //    try
+        //    {
+        //        var userDTOs = new FullUserDTOs();
+        //        userDTOs.Id = id = int.Parse(HttpContext.Request.Form["id"].ToString());
+        //        if (await uow.UserRepository.UserAlreadyExists(userDTOs.UserName, userDTOs.Email))
+        //        {
+        //            apiError.Error_Code = BadRequest().StatusCode;
+        //            apiError.Error_Messages = "User already exists, please try different user name";
+        //            return BadRequest(apiError);
+        //        }
+
+        //        var img = HttpContext.Request.Form.Files["Image_userUrl"];
+
+        //        //if (Convert.ToInt32(id) == userDTOs.Id)
+        //        if (userDTOs.Id == Convert.ToInt32(id))
+        //        {
+        //            if (img != null && img.Length > 0)
+        //            {
+        //                // A new image is selected
+        //                var Update = await uow.UserRepository.UpdateAsync(id, userDTOs, img);
+        //                if (Update != null) return Ok();
+        //            }
+        //            else
+        //            {
+        //                // Preserve the existing image
+        //                var Update = await uow.UserRepository.UpdateAsync(id, userDTOs, null);
+        //                if (Update != null) return Ok();
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest(ex.Message);
+        //    }
+        //    return BadRequest();
+
+
+        //}
+        //[HttpPut("Users/update")]
+        //public async Task<IActionResult> UpdateUser(int id)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
+
+        //    try
+        //    {
+        //        var userDTOs = new FullUserDTOs();
+        //         userDTOs.Id = id = int.Parse(HttpContext.Request.Form["id"].ToString());
+        //        if (await uow.UserRepository.UserAlreadyExists(userDTOs.UserName, userDTOs.Email))
+        //        {
+        //            apiError.Error_Code = BadRequest().StatusCode;
+        //            apiError.Error_Messages = "User already exists, please try different user name";
+        //            return BadRequest(apiError);
+        //        }
+        //        var img = HttpContext.Request.Form.Files["Image_userUrl"];
+        //        //if (userDTOs.Id == Convert.ToInt32(id))
+        //        //{
+        //        //    var Update = await uow.UserRepository.UpdateAsync(id, userDTOs, img);
+        //        //    return Ok(Update);
+        //        //}
+        //        if (userDTOs.Id == Convert.ToInt32(id))
+        //        {
+        //            if (img != null && img.Length > 0)
+        //            {
+        //                // A new image is selected
+        //                var Update = await uow.UserRepository.UpdateAsync(id, userDTOs, img);
+        //                if (Update != null) return Ok();
+        //            }
+        //            else
+        //            {
+        //                // Preserve the existing image
+        //                var Update = await uow.UserRepository.UpdateAsync(id, userDTOs, null);
+        //                if (Update != null) return Ok();
+        //            }
+        //        }
+
+        //    }
+        //    catch (ArgumentException ex)
+        //    {
+        //        return NotFound(ex.Message);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // Log the exception
+        //        return StatusCode(500, "An error occurred while updating the user.");
+        //    }
+        //    return BadRequest(401);
+        //}
+
         [HttpPut("Users/Delete/{id}")]
         public async Task<IActionResult> DeleteUsers(int id)
         {
@@ -192,28 +314,6 @@ namespace WebAPIs.Controllers
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
-        [HttpPost("UserProfile/UploadImages/{userId}")]
-        public async Task<ActionResult<UserPhotoDtos>> UploadPhotoUser(int userId, IFormFile user_files)
-        {
-            var user = await uow.UserRepository.FindByIdAsync(userId);
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            var uploadResult = await photoService.UploadPhotoAsync(user_files);
-
-            if (uploadResult == null || string.IsNullOrEmpty(uploadResult.PublicId) || uploadResult.SecureUrl == null)
-            {
-                return BadRequest("Invalid upload result");
-            }
-
-            user.Image_userUrl = uploadResult.SecureUrl.AbsoluteUri;
-            user.Public_id = uploadResult.PublicId;
-            uow.UserRepository.UpdateAsync(userId, user);
-            await uow.SaveChanges();
-            return Ok(user);
-        }
         [HttpPost("NewUser")]
         public async Task<IActionResult> NewUser([FromForm] FullUserDTOs userDTOs)
         {
@@ -226,32 +326,74 @@ namespace WebAPIs.Controllers
             }
 
             // Check if the user already exists
-            if (await uow.UserRepository.UserAlreadyExists(user.UserName))
+            if (await uow.UserRepository.UserAlreadyExists(user.UserName,user.Email))
             {
                 return BadRequest("User already exists, please try different user name");
             }
-
-            // Save user's image (if provided)
-            if (userDTOs.Image != null)
-            {
-                string fileName = $"{Guid.NewGuid()}{Path.GetExtension(userDTOs.Image.FileName)}";
-                string subfolder = Path.Combine(webHostEnvironment.WebRootPath, "Uploads", "UsersImage");
-                Directory.CreateDirectory(subfolder);
-                string filePath = Path.Combine(subfolder, fileName);
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
-                {
-                    await userDTOs.Image.CopyToAsync(fileStream);
-                }
-                user.Image_userUrl = $"Uploads/UsersImage{fileName}";
-            }
-
+            user.Public_id = await SaveImage(userDTOs.Image_userUrl);
+            user.CreateDate = DateTimeOffset.Now.LocalDateTime;
+            var img = user.Image_userUrl;
             // Create the user and return the result
-            await uow.UserRepository.Create(userDTOs,user);
+            await uow.UserRepository.Create(userDTOs,user, img);
             await uow.SaveChanges();
             return Ok(user);
 
         }
+        [NonAction]
+        public async Task<string> SaveImage(IFormFile imageFile)
+        {
+            string imagename = new String(Path.GetFileNameWithoutExtension(imageFile.FileName).Take(10).ToArray()).Replace(' ', ' ');
+            imagename = Guid.NewGuid() + Path.GetExtension(imageFile.FileName);
+            string imagePath = Path.Combine(@"D:\project fianal\E-commerce\projects\dashboard\src\assets\image\Users", imagename);
+            using (var fileStream = new FileStream(imagePath, FileMode.Create))
+            {
+                await imageFile.CopyToAsync(fileStream);
+            }
+            return imagename;
+        }
 
+        [HttpPut("Users/update")]
+        public async Task<IActionResult> Updateuser(int id)
+        {
+            try
+            {
+                  var userDTOs = new FullUserDTOs();
+
+                userDTOs.Id = id = int.Parse(HttpContext.Request.Form["id"].ToString());
+                var img = HttpContext.Request.Form.Files["Image_userUrl"];
+                userDTOs.Frist_Name = HttpContext.Request.Form["Frist_Name"].ToString();
+                userDTOs.Last_Name = HttpContext.Request.Form["Last_Name"].ToString();
+                userDTOs.UserName = HttpContext.Request.Form["UserName"].ToString();
+                userDTOs.Email = HttpContext.Request.Form["Email"].ToString();
+                userDTOs.Phone1 = HttpContext.Request.Form["Phone1"].ToString();
+                userDTOs.Phone2 = HttpContext.Request.Form["Phone2"].ToString();
+                userDTOs.Address = HttpContext.Request.Form["Address"].ToString();
+                if (!StringValues.IsNullOrEmpty(HttpContext.Request.Form["Role"]) && HttpContext.Request.Form["Role"] != "0")
+                {
+                    userDTOs.Role = int.Parse(HttpContext.Request.Form["Role"]);
+                }
+                if (id == userDTOs.Id)
+                {
+                    if (img != null && img.Length > 0)
+                    {
+                        // A new image is selected
+                        var Update = await uow.UserRepository.UpdateAsync(id, userDTOs, img);
+                        if (Update != null) return Ok();
+                    }
+                    else
+                    {
+                        // Preserve the existing image
+                        var Update = await uow.UserRepository.UpdateAsync(id, userDTOs, null);
+                        if (Update != null) return Ok();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            return BadRequest();
+        }
 
     }
 }
