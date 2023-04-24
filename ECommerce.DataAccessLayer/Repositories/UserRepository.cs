@@ -210,50 +210,55 @@ namespace ECommerce.DataAccessLayer.Repositories
             createpasswordHash(userDTOs.password, out passwordHash, out passwordSalt);
 
             // Check if properties have been updated and modify only those that have
+            if (!string.IsNullOrEmpty(userDTOs.UserName) && userDTOs.UserName != Query.UserName)
+            {
+                Query.UserName = userDTOs.UserName;
+                DC.Entry(Query).Property(x => x.UserName).IsModified = true;
+            }
             if (!string.IsNullOrEmpty(userDTOs.Frist_Name) && userDTOs.Frist_Name != Query.Frist_Name)
             {
                 Query.Frist_Name = userDTOs.Frist_Name;
                 DC.Entry(Query).Property(x => x.Frist_Name).IsModified = true;
             }
 
-            else if (!string.IsNullOrEmpty(userDTOs.Last_Name) && userDTOs.Last_Name != Query.Last_Name)
+             if (!string.IsNullOrEmpty(userDTOs.Last_Name) && userDTOs.Last_Name != Query.Last_Name)
             {
                 Query.Last_Name = userDTOs.Last_Name;
                 DC.Entry(Query).Property(x => x.Last_Name).IsModified = true;
             }
 
-            else if (!string.IsNullOrEmpty(userDTOs.Email) && userDTOs.Email != Query.Email)
+             if (!string.IsNullOrEmpty(userDTOs.Email) && userDTOs.Email != Query.Email)
             {
                 Query.Email = userDTOs.Email;
                 DC.Entry(Query).Property(x => x.Email).IsModified = true;
             }
 
-            else if (userDTOs.Role != 0 && userDTOs.Role != Query.Role)
+             if (userDTOs.Role != 0 && userDTOs.Role != Query.Role)
             {
                 Query.Role = userDTOs.Role;
                 DC.Entry(Query).Property(x => x.Role).IsModified = true;
             }
 
-            else if (!string.IsNullOrEmpty(userDTOs.Phone1) && userDTOs.Phone1 != Query.Phone1)
+             if (!string.IsNullOrEmpty(userDTOs.Phone1) && userDTOs.Phone1 != Query.Phone1)
             {
                 Query.Phone1 = userDTOs.Phone1;
                 DC.Entry(Query).Property(x => x.Phone1).IsModified = true;
             }
 
-            else if (!string.IsNullOrEmpty(userDTOs.Phone2) && userDTOs.Phone2 != Query.Phone2)
+             if (!string.IsNullOrEmpty(userDTOs.Phone2) && userDTOs.Phone2 != Query.Phone2)
             {
                 Query.Phone2 = userDTOs.Phone2;
                 DC.Entry(Query).Property(x => x.Phone2).IsModified = true;
             }
 
-            else if (!string.IsNullOrEmpty(userDTOs.Address) && userDTOs.Address != Query.Address)
+             if (!string.IsNullOrEmpty(userDTOs.Address) && userDTOs.Address != Query.Address)
             {
                 Query.Address = userDTOs.Address;
                 DC.Entry(Query).Property(x => x.Address).IsModified = true;
             }
             // Check if password and confirm password are valid
 
-            else if (!string.IsNullOrEmpty(userDTOs.password) && userDTOs.password == userDTOs.comfirmPassword)
+             if (!string.IsNullOrEmpty(userDTOs.password) && userDTOs.password == userDTOs.comfirmPassword)
             {
           
 

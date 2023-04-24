@@ -124,138 +124,6 @@ namespace WebAPIs.Controllers
             return Ok(GetByIdDtos);
 
         }
-        //[HttpPut("Users/update")]
-        //public async Task<IActionResult> UpdateUsers()
-        //{
-        //    try
-        //    {
-        //        var userDTOs = new FullUserDTOs();
-        //        var id = int.Parse(HttpContext.Request.Form["id"].ToString());
-        //        var img = HttpContext.Request.Form.Files["Image_userUrl"];
-
-        //        var user = await uow.UserRepository.FindByIdAsync(id);
-
-        //        if (user == null)
-        //        {
-        //            apiError.Error_Code = BadRequest().StatusCode;
-        //            apiError.Error_Messages = "User not found";
-        //            return BadRequest(apiError);
-        //        }
-
-        //        if (await uow.UserRepository.UserAlreadyExists(userDTOs.UserName, userDTOs.Email))
-        //        {
-        //            apiError.Error_Code = BadRequest().StatusCode;
-        //            apiError.Error_Messages = "User already exists, please try different user name";
-        //            return BadRequest(apiError);
-        //        }
-
-        //        // Update the user with the new data
-        //        await uow.UserRepository.UpdateAsync(id, userDTOs, img);
-
-        //        return Ok();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return BadRequest(ex.Message);
-        //    }
-        //}
-
-
-        
-        //[HttpPut("Users/update")]
-        //public async Task<IActionResult> UpdateUsers(int id)
-        //{
-        //    try
-        //    {
-        //        var userDTOs = new FullUserDTOs();
-        //        userDTOs.Id = id = int.Parse(HttpContext.Request.Form["id"].ToString());
-        //        if (await uow.UserRepository.UserAlreadyExists(userDTOs.UserName, userDTOs.Email))
-        //        {
-        //            apiError.Error_Code = BadRequest().StatusCode;
-        //            apiError.Error_Messages = "User already exists, please try different user name";
-        //            return BadRequest(apiError);
-        //        }
-
-        //        var img = HttpContext.Request.Form.Files["Image_userUrl"];
-
-        //        //if (Convert.ToInt32(id) == userDTOs.Id)
-        //        if (userDTOs.Id == Convert.ToInt32(id))
-        //        {
-        //            if (img != null && img.Length > 0)
-        //            {
-        //                // A new image is selected
-        //                var Update = await uow.UserRepository.UpdateAsync(id, userDTOs, img);
-        //                if (Update != null) return Ok();
-        //            }
-        //            else
-        //            {
-        //                // Preserve the existing image
-        //                var Update = await uow.UserRepository.UpdateAsync(id, userDTOs, null);
-        //                if (Update != null) return Ok();
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return BadRequest(ex.Message);
-        //    }
-        //    return BadRequest();
-
-
-        //}
-        //[HttpPut("Users/update")]
-        //public async Task<IActionResult> UpdateUser(int id)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
-
-        //    try
-        //    {
-        //        var userDTOs = new FullUserDTOs();
-        //         userDTOs.Id = id = int.Parse(HttpContext.Request.Form["id"].ToString());
-        //        if (await uow.UserRepository.UserAlreadyExists(userDTOs.UserName, userDTOs.Email))
-        //        {
-        //            apiError.Error_Code = BadRequest().StatusCode;
-        //            apiError.Error_Messages = "User already exists, please try different user name";
-        //            return BadRequest(apiError);
-        //        }
-        //        var img = HttpContext.Request.Form.Files["Image_userUrl"];
-        //        //if (userDTOs.Id == Convert.ToInt32(id))
-        //        //{
-        //        //    var Update = await uow.UserRepository.UpdateAsync(id, userDTOs, img);
-        //        //    return Ok(Update);
-        //        //}
-        //        if (userDTOs.Id == Convert.ToInt32(id))
-        //        {
-        //            if (img != null && img.Length > 0)
-        //            {
-        //                // A new image is selected
-        //                var Update = await uow.UserRepository.UpdateAsync(id, userDTOs, img);
-        //                if (Update != null) return Ok();
-        //            }
-        //            else
-        //            {
-        //                // Preserve the existing image
-        //                var Update = await uow.UserRepository.UpdateAsync(id, userDTOs, null);
-        //                if (Update != null) return Ok();
-        //            }
-        //        }
-
-        //    }
-        //    catch (ArgumentException ex)
-        //    {
-        //        return NotFound(ex.Message);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        // Log the exception
-        //        return StatusCode(500, "An error occurred while updating the user.");
-        //    }
-        //    return BadRequest(401);
-        //}
-
         [HttpPut("Users/Delete/{id}")]
         public async Task<IActionResult> DeleteUsers(int id)
         {
@@ -368,6 +236,9 @@ namespace WebAPIs.Controllers
                 userDTOs.Phone1 = HttpContext.Request.Form["Phone1"].ToString();
                 userDTOs.Phone2 = HttpContext.Request.Form["Phone2"].ToString();
                 userDTOs.Address = HttpContext.Request.Form["Address"].ToString();
+                userDTOs.password = HttpContext.Request.Form["password"].ToString();
+                userDTOs.comfirmPassword = HttpContext.Request.Form["comfirmPassword"].ToString();
+
                 if (!StringValues.IsNullOrEmpty(HttpContext.Request.Form["Role"]) && HttpContext.Request.Form["Role"] != "0")
                 {
                     userDTOs.Role = int.Parse(HttpContext.Request.Form["Role"]);
