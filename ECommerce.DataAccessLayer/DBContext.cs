@@ -23,8 +23,8 @@ namespace ECommerce.DataAccessLayer
         public DbSet<Car> Cars { get; set; }
         public DbSet<Brands> Brand { get; set; }
         public DbSet<Vehicles> Vehicle { get; set; }
-        public DbSet<Photo>Photos { get; set; } 
-
+        public DbSet<Photo>Photos { get; set; }
+        public DbSet<SubProducts> SubProducts { get; set; }
 
 
     }
