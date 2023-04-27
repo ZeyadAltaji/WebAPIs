@@ -18,4 +18,5 @@ namespace ECommerce.Application.Abstractions
 
         Task<IEnumerable<TEntity>> GetAll();
     }
+
 }

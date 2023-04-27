@@ -1,16 +1,22 @@
-﻿using CloudinaryDotNet;
+﻿using Azure.Core;
 using ECommerce.Application.Abstractions;
+using ECommerce.Application.DTOs;
 using ECommerce.Domain.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ECommerce.DataAccessLayer.Repositories
 {
-    public class ProductRepository : IRepository<Product>
+    public class ProductRepository : IListImage<Product>, IRepository<Product>
     {
         private readonly DBContext Dc;
 
@@ -35,14 +41,16 @@ namespace ECommerce.DataAccessLayer.Repositories
         }
         public async Task<IEnumerable<Product>> GetAll()
         {
-             return await Dc.Products.Include(Getbyid => Getbyid.User).Include(Getbyid => Getbyid.Image).Where(x => x.IsDelete == false).ToListAsync();
+            //return await Dc.Products.Include(Getbyid => Getbyid.User).Include(Getbyid => Getbyid.Image1).Where(x => x.IsDelete == false).ToListAsync();
 
+            return await Dc.Products.Include(Getbyid => Getbyid.User).Where(x => x.IsDelete == false).ToListAsync();
         }
 
         public async Task<Product> GetByID(int id)
         {
-            return await Dc.Products.Include(Getbyid => Getbyid.User).Include(Getbyid=> Getbyid.Image).Include(Getbyid => Getbyid.Brands).Include(Getbyid => Getbyid.Category).Include(Getbyid => Getbyid.Car).SingleOrDefaultAsync(Getbyid => Getbyid.Id == id);
- 
+            //return await Dc.Products.Include(Getbyid => Getbyid.User).Include(Getbyid=> Getbyid.Image1).Include(Getbyid => Getbyid.Brands).Include(Getbyid => Getbyid.Category).Include(Getbyid => Getbyid.Car).SingleOrDefaultAsync(Getbyid => Getbyid.Id == id);
+            return await Dc.Products.Include(Getbyid => Getbyid.User).SingleOrDefaultAsync(Getbyid => Getbyid.Id == id);
+
         }
 
         public void Update(int Id, Product entity)
@@ -67,10 +75,122 @@ namespace ECommerce.DataAccessLayer.Repositories
 
         public IList<Product> GetAllViewFrontClinet()
         {
-            return Dc.Products.Include(Getbyid => Getbyid.User).Include(Getbyid => Getbyid.Category).Include(Getbyid => Getbyid.Brands).Include(Getbyid => Getbyid.Car).Where(x => x.IsActive == true && x.IsDelete == false).ToList();
+            return Dc.Products.Include(Getbyid => Getbyid.User).Where(x => x.IsActive == true && x.IsDelete == false).ToList();
+
+            //return Dc.Products.Include(Getbyid => Getbyid.User).Include(Getbyid => Getbyid.Category).Include(Getbyid => Getbyid.Brands).Include(Getbyid => Getbyid.Car).Where(x => x.IsActive == true && x.IsDelete == false).ToList();
         }
 
-       
-       
+  
+
+        public async Task<Product> EditAsyncTest(int id, object entity, IFormFile PrimaryImage, IFormFile Foreign_Image1, IFormFile Foreign_Image2)
+        {
+            var product = await Dc.Products.FindAsync(id);
+
+            if (product == null)
+            {
+                return null;
+            }
+            var productDTOs = entity as ProductDTOs;
+
+            if (!string.IsNullOrEmpty(productDTOs.Serial_Id) && productDTOs.Serial_Id != product.Serial_Id)
+            {
+                product.Serial_Id = productDTOs.Serial_Id;
+            }
+
+            if (!string.IsNullOrEmpty(productDTOs.Title) && productDTOs.Title != product.Title)
+            {
+                product.Title = productDTOs.Title;
+            }
+
+            if (!string.IsNullOrEmpty(productDTOs.Description) && productDTOs.Description != product.Description)
+            {
+                product.Description = productDTOs.Description;
+            }
+
+            if (productDTOs.Price != 0 && productDTOs.Price != product.Price)
+            {
+                product.Price = productDTOs.Price;
+            }
+
+            if (productDTOs.offers != 0 && productDTOs.offers != product.offers)
+            {
+                product.offers = productDTOs.offers;
+            }
+
+            if (productDTOs.New_price != 0 && productDTOs.New_price != product.New_price)
+            {
+                product.New_price = productDTOs.New_price;
+            }
+
+            if (productDTOs.Quantity != 0 && productDTOs.Quantity != product.Quantity)
+            {
+                product.Quantity = productDTOs.Quantity;
+            }
+
+            if (productDTOs.Brands_Id != 0 && productDTOs.Brands_Id != product.BrandsId)
+            {
+                product.BrandsId = productDTOs.Brands_Id;
+            }
+
+            if (productDTOs.Car_Id != 0 && productDTOs.Car_Id != product.CarId)
+            {
+                product.CarId = productDTOs.Car_Id;
+            }
+
+            if (productDTOs.Category_Id != 0 && productDTOs.Category_Id != product.CategoryId)
+            {
+                product.CategoryId = productDTOs.Category_Id;
+            }
+
+            if (productDTOs.Customer_Id != 0 && productDTOs.Customer_Id != product.Customer_Id)
+            {
+                product.Customer_Id = productDTOs.Customer_Id;
+            }
+
+            if (productDTOs.Admin_Id != 0 && productDTOs.Admin_Id != product.Admin_Id)
+            {
+                product.Admin_Id = productDTOs.Admin_Id;
+            }
+            if (PrimaryImage != null)
+            {
+                // Save the new image 
+                var filePath = Path.Combine(@"D:\project fianal\E-commerce\projects\dashboard\src\assets\image\Products", PrimaryImage.FileName);
+                using (FileStream fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await PrimaryImage.CopyToAsync(fileStream);
+                }
+
+                product.IsPrimaryImage = PrimaryImage.FileName;
+                Dc.Entry(product).Property(x => x.IsPrimaryImage).IsModified = true;
+            }
+            if (Foreign_Image1 != null)
+            {
+                // Save the new image 
+                var filePath = Path.Combine(@"D:\project fianal\E-commerce\projects\dashboard\src\assets\image\Products", Foreign_Image1.FileName);
+                using (FileStream fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await Foreign_Image1.CopyToAsync(fileStream);
+                }
+
+                product.IsForeignImage1 = Foreign_Image1.FileName;
+                Dc.Entry(product).Property(x => x.IsForeignImage1).IsModified = true;
+            }
+            if (Foreign_Image2 != null)
+            {
+                // Save the new image 
+                var filePath = Path.Combine(@"D:\project fianal\E-commerce\projects\dashboard\src\assets\image\Products", Foreign_Image2.FileName);
+                using (FileStream fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await Foreign_Image2.CopyToAsync(fileStream);
+                }
+
+                product.IsForeignImage2 = Foreign_Image2.FileName;
+                Dc.Entry(product).Property(x => x.IsForeignImage2).IsModified = true;
+            }
+            product.UpdateDate = DateTimeOffset.Now.LocalDateTime;
+            await Dc.SaveChangesAsync();
+
+            return product;
+        }
     }
 }

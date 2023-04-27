@@ -1,5 +1,4 @@
-﻿using CloudinaryDotNet.Actions;
-using ECommerce.Application.Abstractions;
+﻿using ECommerce.Application.Abstractions;
 using ECommerce.Application.DTOs;
 using ECommerce.Domain.Models;
 using Microsoft.AspNetCore.Hosting;
@@ -18,8 +17,7 @@ using System.Threading.Tasks;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using static System.Net.Mime.MediaTypeNames;
 using System.ComponentModel;
-using System.Data.Entity.Validation;
-
+ 
 namespace ECommerce.DataAccessLayer.Repositories
 {
     public class UserRepository : IUserRepository
@@ -38,8 +36,8 @@ namespace ECommerce.DataAccessLayer.Repositories
             var user = await DC.Users.FirstOrDefaultAsync(X => X.UserName == UserName);
             if (user == null || user.Password == null) return null;
             if (!MatchPasswordHash(passwordText, user.Password, user.PasswordKey)) return null;
-            if (user.IsDelete) throw new Exception("User has been deleted.");
-            else if (!user.IsActive) throw new Exception("User is inactive.");
+            if (user.IsDelete) throw new Exception("User Has Been Deleted.");
+            else if (!user.IsActive) throw new Exception("User Is In Active.");
             return user;
 
         }

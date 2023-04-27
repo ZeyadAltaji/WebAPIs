@@ -49,6 +49,7 @@ namespace ECommerce.DataAccessLayer
 
         public ITesting<Brands> repositoryBrand => new BrandsRepository(DC);
         public ITesting<Car> repositoryCars => new CarRepository(DC);
+        public IListImage<Product> ProductRepository => new ProductRepository(DC);
 
         public async Task<bool> SaveChanges()
         {

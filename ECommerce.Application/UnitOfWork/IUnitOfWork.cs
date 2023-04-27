@@ -26,6 +26,7 @@ namespace ECommerce.Application.UnitOfWork
         ITesting<Brands> repositoryBrand { get; }
         ITesting<Car> repositoryCars { get; }
 
+        IListImage<Product> ProductRepository { get; }
         Task<bool> SaveChanges();
 
     }

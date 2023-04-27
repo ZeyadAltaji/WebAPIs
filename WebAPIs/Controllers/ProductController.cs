@@ -1,6 +1,4 @@
 ﻿using AutoMapper;
-using CloudinaryDotNet.Actions;
-using CloudinaryDotNet;
 using ECommerce.Application.Abstractions;
 using ECommerce.Application.DTOs;
 using ECommerce.Application.UnitOfWork;
@@ -8,6 +6,7 @@ using ECommerce.Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Primitives;
 using WebAPIs.Services;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -42,35 +41,114 @@ namespace WebAPIs.Controllers
         public async Task<IActionResult> GetById(int id)
         {
             var ProductGetByID = await uow.repositoryProduct.GetByID(id);
-            var ProductDTO = mapper.Map<PorductsListDto>(ProductGetByID);
+            var ProductDTO = mapper.Map<ProductDTOs>(ProductGetByID);
             return Ok(ProductDTO);
         }
 
         // POST api/Product
         [HttpPost]
-        public async Task<IActionResult> CreateProducts(ProductDTOs productDTOs)
+        public async Task<IActionResult> CreateProducts([FromForm]ProductDTOs productDTOs)
         {
             var CreateNewProduct = mapper.Map<Product>(productDTOs);
-            productDTOs.CreateDate= DateTime.Now;
+            CreateNewProduct.IsPrimaryImage = await SaveImage(productDTOs.Primary_Image);
+            CreateNewProduct.IsForeignImage1 = await SaveImage(productDTOs.ForeignImage1);
+            CreateNewProduct.IsForeignImage2 = await SaveImage(productDTOs.ForeignImage2);
+            productDTOs.CreateDate= DateTimeOffset.Now.LocalDateTime;
             uow.repositoryProduct.Create(CreateNewProduct);
             await uow.SaveChanges();
             return StatusCode(201);
         }
 
         // PUT api/Products/update/5
-        [HttpPut("Products/update/{id}")]
-        public async Task<IActionResult> UpdateProducts(int id, ProductDTOs productDTOs)
+        [HttpPut("Products/update")]
+        public async Task<IActionResult> UpdateProducts(int id)
         {
-            if (id != productDTOs.Id)
-                return BadRequest("Update not allowed");
-            var productFromDb = await uow.repositoryProduct.GetByID(id);
+            try
+            
+            {
+                var productDTOs = new ProductDTOs();
 
-            if (productFromDb == null)
-                return BadRequest("Update not allowed");
-            mapper.Map(productDTOs, productFromDb);
+                productDTOs.Id = id = int.Parse(HttpContext.Request.Form["id"].ToString());
+                var img = HttpContext.Request.Form.Files["Primary_Image"];
+                var img1 = HttpContext.Request.Form.Files["ForeignImage1"];
+                var img2 = HttpContext.Request.Form.Files["ForeignImage2"];
 
-            await uow.SaveChanges();
-            return StatusCode(200);
+              
+                productDTOs.Serial_Id = HttpContext.Request.Form["Serial_Id"].ToString();
+                productDTOs.Title = HttpContext.Request.Form["Title"].ToString();
+                productDTOs.Description = HttpContext.Request.Form["Description"].ToString();
+                 
+                if (!string.IsNullOrEmpty(HttpContext.Request.Form["Price"].ToString()))
+                {
+                    productDTOs.Price = double.Parse(HttpContext.Request.Form["Price"].ToString());
+                }
+                if (!string.IsNullOrEmpty(HttpContext.Request.Form["Offers"].ToString()))
+                {
+                    productDTOs.offers = double.Parse(HttpContext.Request.Form["Offers"].ToString());
+                }
+                if (!string.IsNullOrEmpty(HttpContext.Request.Form["New_price"].ToString()))
+                {
+                    productDTOs.New_price = double.Parse(HttpContext.Request.Form["New_price"].ToString());
+                }
+                if (!StringValues.IsNullOrEmpty(HttpContext.Request.Form["Quantity"]) && HttpContext.Request.Form["Quantity"] != "0")
+                {
+                    productDTOs.Quantity = int.Parse(HttpContext.Request.Form["Quantity"]);
+                }
+
+                if (!StringValues.IsNullOrEmpty(HttpContext.Request.Form["Brands_Id"]) && HttpContext.Request.Form["Brands_Id"] != "0")
+                {
+                    productDTOs.Brands_Id = int.Parse(HttpContext.Request.Form["Brands_Id"]);
+                }
+                if (!StringValues.IsNullOrEmpty(HttpContext.Request.Form["Car_Id"]) && HttpContext.Request.Form["Car_Id"] != "0")
+                {
+                    productDTOs.Car_Id = int.Parse(HttpContext.Request.Form["Car_Id"]);
+                }
+                if (!StringValues.IsNullOrEmpty(HttpContext.Request.Form["Category_Id"]) && HttpContext.Request.Form["Category_Id"] != "0")
+                {
+                    productDTOs.Category_Id = int.Parse(HttpContext.Request.Form["Category_Id"]);
+                }
+                if (!StringValues.IsNullOrEmpty(HttpContext.Request.Form["Customer_Id"]) && HttpContext.Request.Form["Customer_Id"] != "0")
+                {
+                    productDTOs.Customer_Id = int.Parse(HttpContext.Request.Form["Customer_Id"]);
+                }
+                if (!StringValues.IsNullOrEmpty(HttpContext.Request.Form["Admin_Id"]) && HttpContext.Request.Form["Admin_Id"] != "0")
+                {
+                    productDTOs.Admin_Id = int.Parse(HttpContext.Request.Form["Admin_Id"]);
+                }
+                //productDTOs.User = int.Parse(HttpContext.Request.Form["User"].ToString());
+
+
+                if (id != productDTOs.Id)
+                    return BadRequest("Update not allowed");
+                var productFromDb = await uow.repositoryProduct.GetByID(id);
+
+                if (productFromDb == null)
+                    return BadRequest("Update not allowed");
+                if (id == productDTOs.Id)
+                {
+                    if (img != null && img.Length > 0 || img1 != null && img1.Length > 0 )
+                    {
+                        // A new image is selected
+                        var Update = await uow.ProductRepository.EditAsyncTest(id, productDTOs, img, img1, img2);
+                        if (Update != null) return Ok();
+                    }
+                    else
+                    {
+                        // Preserve the existing image
+                        var Update = await uow.ProductRepository.EditAsyncTest(id, productDTOs, null, null, null);
+                        if (Update != null) return Ok();
+                    }
+                }
+                
+
+            }catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+
+            }
+            return BadRequest(401);
+
+
         }
 
         // DELETE api/Product/5
@@ -83,79 +161,22 @@ namespace WebAPIs.Controllers
             await uow.SaveChanges();
             return Ok(id);
         }
-        [HttpPost("Products/UploadImage")]
-        public async Task<ActionResult> UploadImage()
-        {
-            bool Results = false;
-            try
-            {
-                var _uploadedfiles = Request.Form.Files;
-                foreach (IFormFile source in _uploadedfiles)
-                {
-                    string Filename = source.FileName;
-                    string Filepath = GetFilePath(Filename);
-
-                    if (!System.IO.Directory.Exists(Filepath))
-                    {
-                        System.IO.Directory.CreateDirectory(Filepath);
-                    }
-
-                    string imagepath = Filepath + "\\image.png";
-
-                    if (System.IO.File.Exists(imagepath))
-                    {
-                        System.IO.File.Delete(imagepath);
-                    }
-                    using (FileStream stream = System.IO.File.Create(imagepath))
-                    {
-                        await source.CopyToAsync(stream);
-                        Results = true;
-                    }
-
-
-                }
-            }
-            catch (Exception ex)
-            {
-
-            }
-            return Ok(Results);
-        }
+     
         [NonAction]
-        private string GetFilePath(string ProductCode)
+        public async Task<string> SaveImage(IFormFile imageFile)
         {
-            return this._environment.WebRootPath + "\\Uploads\\Product\\" + ProductCode;
+            string imagename = new String(Path.GetFileNameWithoutExtension(imageFile.FileName).Take(10).ToArray()).Replace(' ', ' ');
+            imagename = Guid.NewGuid() + Path.GetExtension(imageFile.FileName);
+            string imagePath = Path.Combine(@"D:\project fianal\E-commerce\projects\dashboard\src\assets\image\Products", imagename);
+            using (var fileStream = new FileStream(imagePath, FileMode.Create))
+            {
+                await imageFile.CopyToAsync(fileStream);
+            }
+            return imagename;
         }
 
-        [HttpPost("Products/UploadImages/{propId}")]
-        public async Task<IActionResult> AddPropertyPhoto(IFormFile Products_files, int propId)
-        {
-            var res = await photoService.UploadPhotoAsync(Products_files);
-            if (res.Error != null)
-            {
-                return BadRequest(res.Error.Message);
 
-            }
-            var property = await uow.repositoryProduct.GetByID(propId);
-            var photo = new Photo
-            {
-                main_ImageUrl = res.SecureUrl.AbsoluteUri,
-                sub_Image1Url = res.SecureUrl.AbsoluteUri,
-                sub_Image2Url = res.SecureUrl.AbsoluteUri,
-                publicID = res.PublicId
-            };
-            if (property.Image.Count == 0)
-            {
-                photo.main_Image = true;
-                photo.sub_Image1 = false;
-                photo.sub_Image1 = false;
 
-            }
-            property.Image.Add(photo);
-            await uow.SaveChanges();
-
-            return StatusCode(201);
-        }
 
     }
 }

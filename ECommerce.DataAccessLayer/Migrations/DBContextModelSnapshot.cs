@@ -92,10 +92,6 @@ namespace ECommerce.DataAccessLayer.Migrations
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Image_CarUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -424,6 +420,18 @@ namespace ECommerce.DataAccessLayer.Migrations
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
 
+                    b.Property<string>("IsForeignImage1")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IsForeignImage2")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IsPrimaryImage")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Link")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -693,10 +701,6 @@ namespace ECommerce.DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Image_userUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -860,7 +864,7 @@ namespace ECommerce.DataAccessLayer.Migrations
             modelBuilder.Entity("ECommerce.Domain.Models.Photo", b =>
                 {
                     b.HasOne("ECommerce.Domain.Models.Product", "Product")
-                        .WithMany("Image")
+                        .WithMany()
                         .HasForeignKey("ProductId");
 
                     b.HasOne("ECommerce.Domain.Models.User", "user")
@@ -939,11 +943,6 @@ namespace ECommerce.DataAccessLayer.Migrations
                         .HasForeignKey("UserId");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("ECommerce.Domain.Models.Product", b =>
-                {
-                    b.Navigation("Image");
                 });
 #pragma warning restore 612, 618
         }

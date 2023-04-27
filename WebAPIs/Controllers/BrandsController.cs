@@ -57,7 +57,7 @@ namespace WebAPIs.Controllers
         {
             var newBrand = mapper.Map<Brands>(brandsDTOs);
             newBrand.Public_id = await SaveImage(brandsDTOs.Image_BrandUrl);
-            newBrand.CreateDate = DateTime.Now;
+            newBrand.CreateDate = DateTimeOffset.Now.LocalDateTime;
             uow.repositoryBrands.Create(newBrand);
             await uow.SaveChanges();
             return StatusCode(201);
@@ -108,24 +108,7 @@ namespace WebAPIs.Controllers
             return Ok(id);
         }
 
-        [HttpPost("Brand/UploadIamge/{BrandID}")]
-        public async Task<ActionResult<BrandsImageDtos>>UploadImageBrands(int BrandID,IFormFile BrandFiles)
-        {
-            var Brand = await uow.repositoryBrands.GetByID(BrandID);
-            if (Brand == null)
-            {
-                return NotFound();
-            }
-            var BrandRes = await photoService.UploadPhotoAsync(BrandFiles);
-            if (BrandRes == null || string.IsNullOrEmpty(BrandRes.PublicId) || BrandRes.SecureUri == null)
-            {
-                return BadRequest("Invalid upload Result");
-            }
-            Brand.Public_id = BrandRes.PublicId;
-            uow.repositoryBrands.Update(BrandID, Brand);
-            await uow.SaveChanges();
-            return Ok(Brand);
-        }
+       
         [NonAction]
         public async Task<string> SaveImage(IFormFile imageFile)
         {
