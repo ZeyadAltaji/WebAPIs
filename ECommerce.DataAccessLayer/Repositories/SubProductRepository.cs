@@ -52,31 +52,91 @@ namespace ECommerce.DataAccessLayer.Repositories
 
         public async Task<SubProducts> EditAsyncTest(int id, object entity, IFormFile img)
         {
-            var Query = await Dc.SubProducts.FirstOrDefaultAsync(x => x.Id == id);
-            if (Query == null)
+            var productDTOs = entity as SubProductDTOs;
+
+            var product = await Dc.SubProducts.FindAsync(id);
+
+            if (product == null)
             {
                 return null;
             }
+           
 
-            Dc.Attach(Query);
-            var brandsDTOs = entity as ListSubProducts;
-            Query.Title = brandsDTOs.Title;
-            Query.UpdateDate = DateTimeOffset.Now.LocalDateTime;
+            Dc.Attach(product);
+             product.UpdateDate = DateTimeOffset.Now.LocalDateTime;
+            if (!string.IsNullOrEmpty(productDTOs.Serial_Id) && productDTOs.Serial_Id != product.Serial_Id)
+            {
+                product.Serial_Id = productDTOs.Serial_Id;
+            }
 
+            if (!string.IsNullOrEmpty(productDTOs.Title) && productDTOs.Title != product.Title)
+            {
+                product.Title = productDTOs.Title;
+            }
+
+            if (!string.IsNullOrEmpty(productDTOs.Description) && productDTOs.Description != product.Description)
+            {
+                product.Description = productDTOs.Description;
+            }
+
+            if (productDTOs.Price != 0 && productDTOs.Price != product.Price)
+            {
+                product.Price = productDTOs.Price;
+            }
+
+            if (productDTOs.offers != 0 && productDTOs.offers != product.offers)
+            {
+                product.offers = productDTOs.offers;
+            }
+
+            if (productDTOs.New_price != 0 && productDTOs.New_price != product.New_price)
+            {
+                product.New_price = productDTOs.New_price;
+            }
+
+            if (productDTOs.Quantity != 0 && productDTOs.Quantity != product.Quantity)
+            {
+                product.Quantity = productDTOs.Quantity;
+            }
+
+            if (productDTOs.Brands_Id != 0 && productDTOs.Brands_Id != product.BrandsId)
+            {
+                product.BrandsId = productDTOs.Brands_Id;
+            }
+
+            if (productDTOs.Car_Id != 0 && productDTOs.Car_Id != product.CarId)
+            {
+                product.CarId = productDTOs.Car_Id;
+            }
+
+            if (productDTOs.Category_Id != 0 && productDTOs.Category_Id != product.CategoryId)
+            {
+                product.CategoryId = productDTOs.Category_Id;
+            }
+
+            if (productDTOs.Customer_Id != 0 && productDTOs.Customer_Id != product.Customer_Id)
+            {
+                product.Customer_Id = productDTOs.Customer_Id;
+            }
+
+            if (productDTOs.Admin_Id != 0 && productDTOs.Admin_Id != product.Admin_Id)
+            {
+                product.Admin_Id = productDTOs.Admin_Id;
+            }
             if (img != null)
             {
                 // Save the new image
-                var filePath = Path.Combine(@"D:\project fianal\E-commerce\projects\dashboard\src\assets\image\Brands", img.FileName);
+                var filePath = Path.Combine(@"D:\project fianal\E-commerce\projects\dashboard\src\assets\image\SubProduct", img.FileName);
                 using (FileStream fileStream = new FileStream(filePath, FileMode.Create))
                 {
                     await img.CopyToAsync(fileStream);
                 }
-                Query.IsPrimaryImage = img.FileName;
-                Dc.Entry(Query).Property(x => x.IsPrimaryImage).IsModified = true;
+                product.IsPrimaryImage = img.FileName;
+                Dc.Entry(product).Property(x => x.IsPrimaryImage).IsModified = true;
             }
-            Dc.Entry(Query).Property(x => x.IsPrimaryImage).IsModified = true;
+            Dc.Entry(product).Property(x => x.IsPrimaryImage).IsModified = true;
             await Dc.SaveChangesAsync();
-            return Query;
+            return product;
         }
 
         public async Task<IEnumerable<SubProducts>> GetAll()
@@ -92,7 +152,7 @@ namespace ECommerce.DataAccessLayer.Repositories
 
         public async Task<SubProducts> GetByID(int id)
         {
-            return await Dc.SubProducts.Include(Getbyid => Getbyid.User).SingleOrDefaultAsync(Getbyid => Getbyid.Id == id);
+            return await Dc.SubProducts.Include(Getbyid => Getbyid.User).Include(Productid=> Productid.product).SingleOrDefaultAsync(Getbyid => Getbyid.Id == id);
 
         }
 

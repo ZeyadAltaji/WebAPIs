@@ -22,6 +22,7 @@ namespace ECommerce.Application.UnitOfWork
         IRepository<Sub_Slider> repositorySub_Slider { get; }
         IRepository<Vehicles> repositoryVehicles { get; }
 
+        IRepository<SubProducts> repositorySubProducts { get; }
         //delete after testing
         ITesting<Brands> repositoryBrand { get; }
         ITesting<Car> repositoryCars { get; }

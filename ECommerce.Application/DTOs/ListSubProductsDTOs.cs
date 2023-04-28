@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ECommerce.Application.DTOs
 {
-    public class ListSubProducts:BaseEntity
+    public class ListSubProductsDTOs:BaseEntity
     {
         public string Serial_Id { get; set; }
 
