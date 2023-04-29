@@ -29,7 +29,7 @@ namespace ECommerce.Application.Helpers
             CreateMap<Special, SpecialDTOs>().ReverseMap();
             CreateMap<Sub_Slider, Sub_SliderDTOs>().ReverseMap();
             CreateMap<Vehicles, VehiclesDTOs>().ReverseMap();
-            CreateMap<Photo, PhotoDTOs>().ReverseMap();
+            CreateMap<PhotoLogo, PhotoDTOs>().ReverseMap();
 
 
             //CreateMap<Product, PorductsListDto>();

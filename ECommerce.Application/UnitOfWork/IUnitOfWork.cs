@@ -21,13 +21,17 @@ namespace ECommerce.Application.UnitOfWork
         IRepository<Special> repositorySpecial { get; }
         IRepository<Sub_Slider> repositorySub_Slider { get; }
         IRepository<Vehicles> repositoryVehicles { get; }
-
+        IRepository<PhotoLogo> SettingRepository { get; }
         IRepository<SubProducts> repositorySubProducts { get; }
         //delete after testing
         ITesting<Brands> repositoryBrand { get; }
         ITesting<Car> repositoryCars { get; }
+        ITesting<PhotoLogo> settingRepository { get; }
 
         IListImage<Product> ProductRepository { get; }
+        IListImage<Slider> RepositorySlider { get; }
+        IListImage<Sub_Slider> RepositorySub_Slider { get; }
+
         Task<bool> SaveChanges();
 
     }

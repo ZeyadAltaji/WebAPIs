@@ -39,17 +39,26 @@ namespace ECommerce.DataAccessLayer
 
         public IRepository<Slider> repositorySlider => new SliderRepository(DC);
 
+        public IListImage<Slider> RepositorySlider =>   new SliderRepository(DC);
+
         public IRepository<Special> repositorySpecial => new SpecialRepository(DC);
 
         public IRepository<Sub_Slider> repositorySub_Slider => new Sub_SliderRepository(DC);
 
+        public IListImage<Sub_Slider> RepositorySub_Slider =>  new Sub_SliderRepository(DC);
+
         public IRepository<Vehicles> repositoryVehicles => new VehiclesRepository(DC);
+        public IRepository<SubProducts> repositorySubProducts => new SubProductRepository(DC);
 
         //delete after testing
 
         public ITesting<Brands> repositoryBrand => new BrandsRepository(DC);
         public ITesting<Car> repositoryCars => new CarRepository(DC);
         public IListImage<Product> ProductRepository => new ProductRepository(DC);
+
+        public IRepository<PhotoLogo> SettingRepository => new SettingRepository(DC);
+
+        public ITesting<PhotoLogo> settingRepository =>   new SettingRepository(DC);
 
         public async Task<bool> SaveChanges()
         {
