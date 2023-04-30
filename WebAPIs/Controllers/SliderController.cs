@@ -38,30 +38,63 @@ namespace WebAPIs.Controllers
 
         // POST api/<SliderController>
         [HttpPost]
-        public async Task<IActionResult> Createslider(SliderDTOs sliderDTOs)
+        public async Task<IActionResult> Createslider([FromForm] SliderDTOs sliderDTOs)
         {
 
             var CreateNewSlider = mapper.Map<Slider>(sliderDTOs);
-            sliderDTOs.CreateDate = DateTime.Now;
+            CreateNewSlider.ImageURl = await SaveImage(sliderDTOs.Image);
+ 
+            sliderDTOs.CreateDate = DateTimeOffset.Now.LocalDateTime;
             uow.repositorySlider.Create(CreateNewSlider);
             await uow.SaveChanges();
             return StatusCode(201);
         }
 
         // PUT api/<SliderController>/5
-        [HttpPut("Sliders/update/{id}")]
-        public async Task<IActionResult> UpdateSlider(int id, SliderDTOs sliderDTOs)
+        [HttpPut("Sliders/update")]
+        public async Task<IActionResult> UpdateSlider(int id)
         {
-            if (id != sliderDTOs.Id)
-                return BadRequest("Update not allowed");
-            var SliderFromDb = await uow.repositorySlider.GetByID(id);
+            try
+            {
+                var sliderDtos = new SliderDTOs();
+                sliderDtos.Id = id = int.Parse(HttpContext.Request.Form["id"].ToString());
+                var img = HttpContext.Request.Form.Files["Image"];
+ 
+                sliderDtos.Title = HttpContext.Request.Form["Title"].ToString();
+                sliderDtos.Description = HttpContext.Request.Form["Description"].ToString();
+                sliderDtos.Button = HttpContext.Request.Form["Button"].ToString();
 
-            if (SliderFromDb == null)
-                return BadRequest("Update not allowed");
-            mapper.Map(sliderDTOs, SliderFromDb);
+                if (id != sliderDtos.Id)
+                    return BadRequest("Update not allowed");
+                var SliderFromDb = await uow.repositorySlider.GetByID(id);
 
-            await uow.SaveChanges();
-            return StatusCode(200);
+                if (SliderFromDb == null)
+                    return BadRequest("Update not allowed");
+                if (id == SliderFromDb.Id)
+                {
+                    if (img != null && img.Length > 0 )
+                    {
+                        // A new image is selected
+                        var Update = await uow.RepositorySlider.EditAsyncTest(id, sliderDtos, img );
+                        if (Update != null) return StatusCode(200);
+
+                    }
+                    else
+                    {
+                        // Preserve the existing image
+                        var Update = await uow.RepositorySlider.EditAsyncTest(id, sliderDtos, null);
+                        if (Update != null) return StatusCode(200);
+
+                    }
+                }
+             }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+
+            }
+
+            return BadRequest(404);
         }
 
         // DELETE api/<SliderController>/5
@@ -74,5 +107,19 @@ namespace WebAPIs.Controllers
             await uow.SaveChanges();
             return Ok(id);
         }
+        [NonAction]
+        public async Task<string> SaveImage(IFormFile imageFile)
+        {
+            string imagename = new String(Path.GetFileNameWithoutExtension(imageFile.FileName).Take(10).ToArray()).Replace(' ', ' ');
+            imagename = Guid.NewGuid() + Path.GetExtension(imageFile.FileName);
+            string imagePath = Path.Combine(@"D:\project fianal\E-commerce\projects\dashboard\src\assets\image\Slider", imagename);
+            using (var fileStream = new FileStream(imagePath, FileMode.Create))
+            {
+                await imageFile.CopyToAsync(fileStream);
+            }
+            return imagename;
+        }
+
+
     }
 }

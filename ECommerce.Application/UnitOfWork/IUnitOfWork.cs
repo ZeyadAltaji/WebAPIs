@@ -29,7 +29,7 @@ namespace ECommerce.Application.UnitOfWork
         ITesting<PhotoLogo> settingRepository { get; }
 
         IListImage<Product> ProductRepository { get; }
-        IListImage<Slider> RepositorySlider { get; }
+        ITesting<Slider> RepositorySlider { get; }
         IListImage<Sub_Slider> RepositorySub_Slider { get; }
 
         Task<bool> SaveChanges();

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -12,16 +13,18 @@ namespace ECommerce.Domain.Models
     {
 
         [Required]
-        public string Image { get; set; } = string.Empty;
-        [Required]
         public string Title { get; set; } = string.Empty;
         [Required]
         public string Description { get; set; }=string.Empty;
         public string Button { get; set; } = string.Empty;
-        public string Link { get; set; } = string.Empty;
-        public int Admin_Id { get; set; }
+         public int Admin_Id { get; set; }
         public User? User { get; set; }
 
+        public string ImageURl { get; set; } = string.Empty;
+
+        [NotMapped]
+        public IFormFile Image { get; set; }
+     
 
     }
 }

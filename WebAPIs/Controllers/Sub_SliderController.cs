@@ -39,29 +39,64 @@ namespace WebAPIs.Controllers
 
         // POST api/<Sub_SliderController>
         [HttpPost]
-        public async Task<IActionResult> CreateSub_Slider(Sub_SliderDTOs sub_SliderDTOs)
+        public async Task<IActionResult> CreateSub_Slider([FromForm] Sub_SliderDTOs sub_SliderDTOs)
         {
             var CreateNewSub_Slider = mapper.Map<Sub_Slider>(sub_SliderDTOs);
-            sub_SliderDTOs.CreateDate = DateTime.Now;
+            CreateNewSub_Slider.ImageURl = await SaveImage(sub_SliderDTOs.Image);
+            CreateNewSub_Slider.ImageURl1 = await SaveImage(sub_SliderDTOs.Image1);
+            CreateNewSub_Slider.ImageURl2 = await SaveImage(sub_SliderDTOs.Image2);
+            sub_SliderDTOs.CreateDate = DateTimeOffset.Now.LocalDateTime;
             uow.repositorySub_Slider.Create(CreateNewSub_Slider);
             await uow.SaveChanges();
             return StatusCode(201);
         }
 
         // PUT api/<Sub_SliderController>/5
-        [HttpPut("Sub_Sliders/update/{id}")]
-        public async Task<IActionResult> UpdateSub_Slider(int id, Sub_SliderDTOs sub_SliderDTOs)
+        [HttpPut("Sub_Sliders/update")]
+        public async Task<IActionResult> UpdateSub_Slider(int id)
         {
-            if (id != sub_SliderDTOs.Id)
-                return BadRequest("Update not allowed");
-            var Sub_SliderFromDb = await uow.repositorySub_Slider.GetByID(id);
+            try
+            {
+                var subsliderDtos = new Sub_SliderDTOs();
+                subsliderDtos.Id = id = int.Parse(HttpContext.Request.Form["id"].ToString());
+                var img = HttpContext.Request.Form.Files["Image"];
+                var img1 = HttpContext.Request.Form.Files["Image1"];
+                var img2 = HttpContext.Request.Form.Files["Image2"];
+                subsliderDtos.Title = HttpContext.Request.Form["Title"].ToString();
+                subsliderDtos.Description = HttpContext.Request.Form["Description"].ToString();
+                subsliderDtos.Button = HttpContext.Request.Form["Button"].ToString();
 
-            if (Sub_SliderFromDb == null)
-                return BadRequest("Update not allowed");
-            mapper.Map(sub_SliderDTOs, Sub_SliderFromDb);
+                if (id != subsliderDtos.Id)
+                    return BadRequest("Update not allowed");
+                var SliderFromDb = await uow.repositorySlider.GetByID(id);
 
-            await uow.SaveChanges();
-            return StatusCode(200);
+                if (SliderFromDb == null)
+                    return BadRequest("Update not allowed");
+                if (id == SliderFromDb.Id)
+                {
+                    if (img != null && img.Length > 0 || img1 != null && img1.Length > 0)
+                    {
+                        // A new image is selected
+                        var Update = await uow.RepositorySub_Slider.EditAsyncTest(id, subsliderDtos, img, img1, img2);
+                        if (Update != null) return StatusCode(200);
+
+                    }
+                    else
+                    {
+                        // Preserve the existing image
+                        var Update = await uow.RepositorySub_Slider.EditAsyncTest(id, subsliderDtos, null, null, null);
+                        if (Update != null) return StatusCode(200);
+
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+
+            }
+
+            return BadRequest(404);
         }
 
         // DELETE api/<Sub_SliderController>/5
@@ -74,5 +109,19 @@ namespace WebAPIs.Controllers
             await uow.SaveChanges();
             return Ok(id);
         }
+        [NonAction]
+       
+        public async Task<string> SaveImage(IFormFile imageFile)
+        {
+            string imagename = new String(Path.GetFileNameWithoutExtension(imageFile.FileName).Take(10).ToArray()).Replace(' ', ' ');
+            imagename = Guid.NewGuid() + Path.GetExtension(imageFile.FileName);
+            string imagePath = Path.Combine(@"D:\project fianal\E-commerce\projects\dashboard\src\assets\image\SubSlider", imagename);
+            using (var fileStream = new FileStream(imagePath, FileMode.Create))
+            {
+                await imageFile.CopyToAsync(fileStream);
+            }
+            return imagename;
+        }
+        
     }
 }
