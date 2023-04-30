@@ -90,7 +90,7 @@ namespace ECommerce.DataAccessLayer.Repositories
 
         public async Task<PhotoLogo> GetByID(int id)
         {
-            return await Dc.PhotoLogo.SingleOrDefaultAsync(Getbyid => Getbyid.Id == 1);
+            return await Dc.PhotoLogo.SingleOrDefaultAsync(Getbyid => Getbyid.Id == 4);
         }
 
         public void Update(int Id, PhotoLogo entity)

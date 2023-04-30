@@ -90,6 +90,11 @@ namespace ECommerce.DataAccessLayer.Repositories
                 {
                     await img.CopyToAsync(fileStream);
                 }
+                var oldFilePath = Path.Combine(@"D:\project fianal\E-commerce\projects\dashboard\src\assets\image\Brands", Query.Public_id);
+                if (File.Exists(oldFilePath))
+                {
+                    File.Delete(oldFilePath);
+                }
                 Query.Public_id = img.FileName;
                 Dc.Entry(Query).Property(x => x.Public_id).IsModified = true;
             }

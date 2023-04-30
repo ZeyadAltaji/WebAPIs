@@ -39,7 +39,7 @@ namespace ECommerce.DataAccessLayer
 
         public IRepository<Slider> repositorySlider => new SliderRepository(DC);
 
-        public IListImage<Slider> RepositorySlider =>   new SliderRepository(DC);
+        public ITesting<Slider> RepositorySlider =>   new SliderRepository(DC);
 
         public IRepository<Special> repositorySpecial => new SpecialRepository(DC);
 

@@ -159,6 +159,11 @@ namespace ECommerce.DataAccessLayer.Repositories
                 {
                     await PrimaryImage.CopyToAsync(fileStream);
                 }
+                var oldFilePath = Path.Combine(@"D:\project fianal\E-commerce\projects\dashboard\src\assets\image\Products", product.IsPrimaryImage);
+                if (File.Exists(oldFilePath))
+                {
+                    File.Delete(oldFilePath);
+                }
 
                 product.IsPrimaryImage = PrimaryImage.FileName;
                 Dc.Entry(product).Property(x => x.IsPrimaryImage).IsModified = true;
@@ -171,7 +176,11 @@ namespace ECommerce.DataAccessLayer.Repositories
                 {
                     await Foreign_Image1.CopyToAsync(fileStream);
                 }
-
+                var oldFilePath = Path.Combine(@"D:\project fianal\E-commerce\projects\dashboard\src\assets\image\Products", product.IsForeignImage1);
+                if (File.Exists(oldFilePath))
+                {
+                    File.Delete(oldFilePath);
+                }
                 product.IsForeignImage1 = Foreign_Image1.FileName;
                 Dc.Entry(product).Property(x => x.IsForeignImage1).IsModified = true;
             }
@@ -183,7 +192,11 @@ namespace ECommerce.DataAccessLayer.Repositories
                 {
                     await Foreign_Image2.CopyToAsync(fileStream);
                 }
-
+                var oldFilePath = Path.Combine(@"D:\project fianal\E-commerce\projects\dashboard\src\assets\image\Products", product.IsForeignImage2);
+                if (File.Exists(oldFilePath))
+                {
+                    File.Delete(oldFilePath);
+                }
                 product.IsForeignImage2 = Foreign_Image2.FileName;
                 Dc.Entry(product).Property(x => x.IsForeignImage2).IsModified = true;
             }

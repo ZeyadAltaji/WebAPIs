@@ -185,6 +185,11 @@ namespace ECommerce.DataAccessLayer.Repositories
                 {
                     await img.CopyToAsync(fileStream);
                 }
+                var oldFilePath = Path.Combine(@"D:\project fianal\E-commerce\projects\dashboard\src\assets\image\Users", data.Public_id);
+                if (File.Exists(oldFilePath))
+                {
+                    File.Delete(oldFilePath);
+                }
                 data.Public_id = img.FileName;
              }
             // Add user to the database and save changes
