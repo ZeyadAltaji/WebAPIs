@@ -32,6 +32,9 @@ namespace ECommerce.Application.UnitOfWork
         ITesting<Slider> RepositorySlider { get; }
         IListImage<Sub_Slider> RepositorySub_Slider { get; }
 
+        IGetData<Product> RepositoryProducts { get; }
+        IGetData<Car> RepositoryCars { get; }
+ 
         Task<bool> SaveChanges();
 
     }

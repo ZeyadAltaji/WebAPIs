@@ -161,7 +161,31 @@ namespace WebAPIs.Controllers
             await uow.SaveChanges();
             return Ok(id);
         }
-     
+        [HttpGet("ByBrand/{brandId}")]
+        public async Task<ActionResult<List<Product>>> GetByBrand(int brandId)
+        {
+            Brands brand = await uow.repositoryBrands.GetByID(brandId);
+            if (brand == null)
+            {
+                return NotFound();
+            }
+
+            List<Product> products = await uow.RepositoryProducts.GetProductsByBrand(brand);
+            return Ok(products);
+        }
+        [HttpGet("ByCars/{CarId}")]
+        public async Task<ActionResult<List<Product>>> GetByCars(int carId)
+        {
+            Car car= await uow.repositoryCar.GetByID(carId);
+            if (car == null)
+            {
+                return NotFound();
+            }
+
+            List<Product> products = await uow.RepositoryProducts.GetProductsByCars(car);
+            return Ok(products);
+        }
+
         [NonAction]
         public async Task<string> SaveImage(IFormFile imageFile)
         {

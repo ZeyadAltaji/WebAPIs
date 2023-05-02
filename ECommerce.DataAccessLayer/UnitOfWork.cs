@@ -54,11 +54,16 @@ namespace ECommerce.DataAccessLayer
 
         public ITesting<Brands> repositoryBrand => new BrandsRepository(DC);
         public ITesting<Car> repositoryCars => new CarRepository(DC);
+
+        public IGetData<Car> RepositoryCars => throw new NotImplementedException();
+
         public IListImage<Product> ProductRepository => new ProductRepository(DC);
 
         public IRepository<PhotoLogo> SettingRepository => new SettingRepository(DC);
 
         public ITesting<PhotoLogo> settingRepository =>   new SettingRepository(DC);
+
+        public IGetData<Product> RepositoryProducts => new ProductRepository(DC);
 
         public async Task<bool> SaveChanges()
         {

@@ -16,7 +16,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace ECommerce.DataAccessLayer.Repositories
 {
-    public class ProductRepository : IListImage<Product>, IRepository<Product>
+    public class ProductRepository : IListImage<Product>, IRepository<Product>,IGetData<Product>
     {
         private readonly DBContext Dc;
 
@@ -43,7 +43,7 @@ namespace ECommerce.DataAccessLayer.Repositories
         {
             //return await Dc.Products.Include(Getbyid => Getbyid.User).Include(Getbyid => Getbyid.Image1).Where(x => x.IsDelete == false).ToListAsync();
 
-            return await Dc.Products.Include(Getbyid => Getbyid.User).Where(x => x.IsDelete == false).ToListAsync();
+            return await Dc.Products.Include(Getbyid => Getbyid.User).Include(x=>x.Brands).Where(x => x.IsDelete == false).ToListAsync();
         }
 
         public async Task<Product> GetByID(int id)
@@ -51,6 +51,19 @@ namespace ECommerce.DataAccessLayer.Repositories
             //return await Dc.Products.Include(Getbyid => Getbyid.User).Include(Getbyid=> Getbyid.Image1).Include(Getbyid => Getbyid.Brands).Include(Getbyid => Getbyid.Category).Include(Getbyid => Getbyid.Car).SingleOrDefaultAsync(Getbyid => Getbyid.Id == id);
             return await Dc.Products.Include(Getbyid => Getbyid.User).SingleOrDefaultAsync(Getbyid => Getbyid.Id == id);
 
+        }
+        public async Task<List<Product>> GetProductsByBrand(Brands brand)
+        {
+               return await Dc.Products
+             .Where(p => p.BrandsId == brand.Id)
+             .ToListAsync();
+        }
+
+        public async Task<List<Product>> GetProductsByCars(Car car)
+        {
+            return await Dc.Products
+           .Where(p => p.CarId == car.Id)
+           .ToListAsync();
         }
 
         public void Update(int Id, Product entity)
@@ -205,5 +218,6 @@ namespace ECommerce.DataAccessLayer.Repositories
 
             return product;
         }
+
     }
 }
