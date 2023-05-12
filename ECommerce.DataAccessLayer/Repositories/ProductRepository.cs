@@ -105,61 +105,29 @@ namespace ECommerce.DataAccessLayer.Repositories
             }
             var productDTOs = entity as ProductDTOs;
 
-            if (!string.IsNullOrEmpty(productDTOs.Serial_Id) && productDTOs.Serial_Id != product.Serial_Id)
-            {
-                product.Serial_Id = productDTOs.Serial_Id;
-            }
-
+            
             if (!string.IsNullOrEmpty(productDTOs.Title) && productDTOs.Title != product.Title)
             {
                 product.Title = productDTOs.Title;
             }
 
-            if (!string.IsNullOrEmpty(productDTOs.Description) && productDTOs.Description != product.Description)
-            {
-                product.Description = productDTOs.Description;
-            }
-
-            if (productDTOs.Price != 0 && productDTOs.Price != product.Price)
-            {
-                product.Price = productDTOs.Price;
-            }
-
+            
             if (productDTOs.offers != 0 && productDTOs.offers != product.offers)
             {
                 product.offers = productDTOs.offers;
             }
-
-            if (productDTOs.New_price != 0 && productDTOs.New_price != product.New_price)
-            {
-                product.New_price = productDTOs.New_price;
-            }
-
-            if (productDTOs.Quantity != 0 && productDTOs.Quantity != product.Quantity)
-            {
-                product.Quantity = productDTOs.Quantity;
-            }
-
             if (productDTOs.Brands_Id != 0 && productDTOs.Brands_Id != product.BrandsId)
             {
                 product.BrandsId = productDTOs.Brands_Id;
             }
-
             if (productDTOs.Car_Id != 0 && productDTOs.Car_Id != product.CarId)
             {
                 product.CarId = productDTOs.Car_Id;
             }
-
             if (productDTOs.Category_Id != 0 && productDTOs.Category_Id != product.CategoryId)
             {
                 product.CategoryId = productDTOs.Category_Id;
-            }
-
-            if (productDTOs.Customer_Id != 0 && productDTOs.Customer_Id != product.Customer_Id)
-            {
-                product.Customer_Id = productDTOs.Customer_Id;
-            }
-
+            }           
             if (productDTOs.Admin_Id != 0 && productDTOs.Admin_Id != product.Admin_Id)
             {
                 product.Admin_Id = productDTOs.Admin_Id;

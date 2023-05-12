@@ -34,7 +34,7 @@ namespace ECommerce.Application.UnitOfWork
 
         IGetData<Product> RepositoryProducts { get; }
         IGetData<Car> RepositoryCars { get; }
- 
+        IGetDataByProducts<SubProducts> RepositorySubProducts { get; }
         Task<bool> SaveChanges();
 
     }

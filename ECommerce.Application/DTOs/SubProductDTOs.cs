@@ -24,6 +24,8 @@ namespace ECommerce.Application.DTOs
         public int? Car_Id { get; set; }
         public int? Category_Id { get; set; }
         public int Customer_Id { get; set; }
+        public int? productId { get; set; }
+
         public int Admin_Id { get; set; }
         public User? User { get; set; }
 

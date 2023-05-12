@@ -65,6 +65,9 @@ namespace ECommerce.DataAccessLayer
 
         public IGetData<Product> RepositoryProducts => new ProductRepository(DC);
 
+
+        public IGetDataByProducts<SubProducts> RepositorySubProducts => new SubProductRepository(DC);
+
         public async Task<bool> SaveChanges()
         {
             return await DC.SaveChangesAsync()>0;

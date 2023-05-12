@@ -24,7 +24,7 @@ namespace WebAPIs.Controllers
         {
             var allproduct = await uow.repositorySubProducts.GetAll();
             var getbyDTOs = mapper.Map<IEnumerable<SubProducts>>(allproduct);
-            return StatusCode(201);
+            return Ok(getbyDTOs);
         }
         [HttpGet("Products/{id}")]
         public async Task<IActionResult>GetByID(int id)
@@ -42,6 +42,21 @@ namespace WebAPIs.Controllers
             uow.repositorySubProducts.Create(CreateNewproduct);
             await uow.SaveChanges();
             return StatusCode(201);
+        }
+        [HttpGet("ByProducts/{ProductsId}")]
+        public async Task<ActionResult<List<Product>>> GetByProducts(int ProductsId)
+        {          
+            var product = await uow.repositoryProduct.GetByID(ProductsId);
+
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            // Call GetSubProductsByProducts method to retrieve related SubProducts
+            var subProducts = await uow.RepositorySubProducts.GetSubProductsByProducts(product);
+            return Ok(subProducts);
+
         }
         [HttpPut("update")]
         public async Task<IActionResult> UpdateCar(int id)
@@ -80,6 +95,10 @@ namespace WebAPIs.Controllers
                 if (!StringValues.IsNullOrEmpty(HttpContext.Request.Form["Car_Id"]) && HttpContext.Request.Form["Car_Id"] != "0")
                 {
                     productDTOs.Car_Id = int.Parse(HttpContext.Request.Form["Car_Id"]);
+                }
+                if(!StringValues.IsNullOrEmpty(HttpContext.Request.Form["productId"]) && HttpContext.Request.Form["productId"] != "0")
+                {
+                    productDTOs.productId = int.Parse(HttpContext.Request.Form["productId"]);
                 }
                 if (!StringValues.IsNullOrEmpty(HttpContext.Request.Form["Category_Id"]) && HttpContext.Request.Form["Category_Id"] != "0")
                 {

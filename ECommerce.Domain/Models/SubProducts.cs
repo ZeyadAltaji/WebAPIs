@@ -38,13 +38,14 @@ namespace ECommerce.Domain.Models
         public int Customer_Id { get; set; }
         public int Admin_Id { get; set; }
         public User? User { get; set; }
-        public Product? product { get; set; }
+
+         public int? productId { get; set; }
+        public Product?product { get; set; }
+
         public string IsPrimaryImage { get; set; } = string.Empty;
-      
+
 
         [NotMapped]
         public IFormFile Primary_Image { get; set; }
- 
- 
     }
 }

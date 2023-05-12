@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace ECommerce.DataAccessLayer.Repositories
 {
-    public class SubProductRepository: IRepository<SubProducts>, ITesting<SubProducts>
+    public class SubProductRepository: IRepository<SubProducts>, ITesting<SubProducts>,IGetDataByProducts<SubProducts>
     {
         private readonly DBContext Dc;
 
@@ -31,7 +31,7 @@ namespace ECommerce.DataAccessLayer.Repositories
             {
                 entity.IsActive = false;
             }
-            Dc.SubProducts.Update(entity);
+            Dc.SProducts.Update(entity);
             Dc.SaveChanges();
         }
 
@@ -39,14 +39,14 @@ namespace ECommerce.DataAccessLayer.Repositories
         {
             if (entity == null) throw new ArgumentNullException(nameof(entity));
 
-            Dc.SubProducts.Add(entity);
+            Dc.SProducts.Add(entity);
             Dc.SaveChanges();
         }
 
         public void Delete(int Id, SubProducts entity)
         {
             entity.IsDelete = true;
-            Dc.SubProducts.Update(entity);
+            Dc.SProducts.Update(entity);
             Dc.SaveChanges();
         }
 
@@ -54,7 +54,7 @@ namespace ECommerce.DataAccessLayer.Repositories
         {
             var productDTOs = entity as SubProductDTOs;
 
-            var product = await Dc.SubProducts.FindAsync(id);
+            var product = await Dc.SProducts.FindAsync(id);
 
             if (product == null)
             {
@@ -118,6 +118,10 @@ namespace ECommerce.DataAccessLayer.Repositories
             {
                 product.Customer_Id = productDTOs.Customer_Id;
             }
+            if (productDTOs.productId != 0 && productDTOs.productId != product.productId)
+            {
+                product.productId = productDTOs.productId;
+            }
 
             if (productDTOs.Admin_Id != 0 && productDTOs.Admin_Id != product.Admin_Id)
             {
@@ -141,19 +145,29 @@ namespace ECommerce.DataAccessLayer.Repositories
 
         public async Task<IEnumerable<SubProducts>> GetAll()
         {
-            return await Dc.SubProducts.Include(Getbyid => Getbyid.User).Where(x => x.IsDelete == false).ToListAsync();
+            return await Dc.SProducts.Include(Getbyid => Getbyid.User).Where(x => x.IsDelete == false).ToListAsync();
         }
 
         public IList<SubProducts> GetAllViewFrontClinet()
         {
-            return Dc.SubProducts.Include(Getbyid => Getbyid.User).Where(x => x.IsActive == true && x.IsDelete == false).ToList();
+            return Dc.SProducts.Include(Getbyid => Getbyid.User).Where(x => x.IsActive == true && x.IsDelete == false).ToList();
 
         }
 
         public async Task<SubProducts> GetByID(int id)
         {
-            return await Dc.SubProducts.Include(Getbyid => Getbyid.User).Include(Productid=> Productid.product).SingleOrDefaultAsync(Getbyid => Getbyid.Id == id);
+            return await Dc.SProducts.Include(Getbyid => Getbyid.User).SingleOrDefaultAsync(Getbyid => Getbyid.Id == id);
 
+        }
+        public async Task<List<SubProducts>> GetSubProductsByProducts(Product product)
+        {
+            // Use Include method to include related SubProducts
+            var subProducts = await Dc.SProducts
+                .Include(sp => sp.product)
+                .Where(sp => sp.productId == product.Id)
+                .ToListAsync();
+
+            return subProducts;
         }
 
         public void Update(int Id, SubProducts entity)
