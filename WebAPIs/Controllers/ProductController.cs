@@ -74,26 +74,14 @@ namespace WebAPIs.Controllers
                 var img2 = HttpContext.Request.Form.Files["ForeignImage2"];
 
               
-                //productDTOs.Serial_Id = HttpContext.Request.Form["Serial_Id"].ToString();
                 productDTOs.Title = HttpContext.Request.Form["Title"].ToString();
-                //productDTOs.Description = HttpContext.Request.Form["Description"].ToString();
                  
-                //if (!string.IsNullOrEmpty(HttpContext.Request.Form["Price"].ToString()))
-                //{
-                //    productDTOs.Price = double.Parse(HttpContext.Request.Form["Price"].ToString());
-                //}
+            
                 if (!string.IsNullOrEmpty(HttpContext.Request.Form["Offers"].ToString()))
                 {
                     productDTOs.offers = double.Parse(HttpContext.Request.Form["Offers"].ToString());
                 }
-                //if (!string.IsNullOrEmpty(HttpContext.Request.Form["New_price"].ToString()))
-                //{
-                //    productDTOs.New_price = double.Parse(HttpContext.Request.Form["New_price"].ToString());
-                //}
-                //if (!StringValues.IsNullOrEmpty(HttpContext.Request.Form["Quantity"]) && HttpContext.Request.Form["Quantity"] != "0")
-                //{
-                //    productDTOs.Quantity = int.Parse(HttpContext.Request.Form["Quantity"]);
-                //}
+            
 
                 if (!StringValues.IsNullOrEmpty(HttpContext.Request.Form["Brands_Id"]) && HttpContext.Request.Form["Brands_Id"] != "0")
                 {
@@ -107,15 +95,11 @@ namespace WebAPIs.Controllers
                 {
                     productDTOs.Category_Id = int.Parse(HttpContext.Request.Form["Category_Id"]);
                 }
-                //if (!StringValues.IsNullOrEmpty(HttpContext.Request.Form["Customer_Id"]) && HttpContext.Request.Form["Customer_Id"] != "0")
-                //{
-                //    productDTOs.Customer_Id = int.Parse(HttpContext.Request.Form["Customer_Id"]);
-                //}
+                
                 if (!StringValues.IsNullOrEmpty(HttpContext.Request.Form["Admin_Id"]) && HttpContext.Request.Form["Admin_Id"] != "0")
                 {
                     productDTOs.Admin_Id = int.Parse(HttpContext.Request.Form["Admin_Id"]);
                 }
-                //productDTOs.User = int.Parse(HttpContext.Request.Form["User"].ToString());
 
 
                 if (id != productDTOs.Id)
@@ -175,7 +159,7 @@ namespace WebAPIs.Controllers
         }
         [HttpGet("ByCars/{CarId}")]
         public async Task<ActionResult<List<Product>>> GetByCars(int carId)
-       {
+        {
             Car car= await uow.repositoryCar.GetByID(carId);
             if (car == null)
             {
@@ -185,7 +169,18 @@ namespace WebAPIs.Controllers
             List<Product> products = await uow.RepositoryProducts.GetProductsByCars(car);
             return Ok(products);
         }
+        [HttpGet("ByCateogers/{CategoryId}")]
+        public async Task<ActionResult<List<Product>>> GetByCategory(int categoryId)
+        {
+            Category category = await uow.repositoryCategory.GetByID(categoryId);
+            if (category == null)
+            {
+                return NotFound();
+            }
 
+            List<Product> products = await uow.RepositoryProducts.GetProductsByCategory(category);
+            return Ok(products);
+        }
         [NonAction]
         public async Task<string> SaveImage(IFormFile imageFile)
         {

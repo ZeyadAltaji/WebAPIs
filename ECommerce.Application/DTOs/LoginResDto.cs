@@ -10,5 +10,7 @@ namespace ECommerce.Application.DTOs
     {
         public string UserName { get; set; } = string.Empty;
         public string Token { get; set; } = string.Empty;
+        public FullUserDTOs FullUser { get; set; }
+
     }
 }

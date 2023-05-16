@@ -11,6 +11,6 @@ namespace ECommerce.Application.Abstractions
     {
          Task<List<Product>> GetProductsByBrand(Brands brand);
          Task<List<Product>> GetProductsByCars(Car car);
-
+        Task<List<Product>> GetProductsByCategory(Category category);
     }
 }

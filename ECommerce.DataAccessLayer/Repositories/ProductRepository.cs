@@ -65,7 +65,12 @@ namespace ECommerce.DataAccessLayer.Repositories
            .Where(p => p.CarId == car.Id)
            .ToListAsync();
         }
+        public async Task<List<Product>> GetProductsByCategory(Category category)
+        {
+            var products =await Dc.Products.Where(p => p.CategoryId == category.Id).ToListAsync();
+            return products;
 
+        }
         public void Update(int Id, Product entity)
         {
             Dc.Products.Update(entity);
@@ -187,5 +192,6 @@ namespace ECommerce.DataAccessLayer.Repositories
             return product;
         }
 
+       
     }
 }

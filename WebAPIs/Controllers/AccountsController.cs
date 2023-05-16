@@ -99,9 +99,13 @@ namespace WebAPIs.Controllers
                 apiError.Errors_Details = "This error appear when provided user id or password does not exists";
                 return Unauthorized(apiError);
             }
+ 
             var LoginRes = new LoginResDto();
             LoginRes.UserName = user.UserName;
             LoginRes.Token =CreateJWT(user);
+            var fullUser = mapper.Map<FullUserDTOs>(user);
+            LoginRes.FullUser = fullUser;
+
             return Ok(LoginRes);
 
         }
