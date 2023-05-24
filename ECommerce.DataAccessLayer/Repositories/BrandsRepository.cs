@@ -81,7 +81,9 @@ namespace ECommerce.DataAccessLayer.Repositories
             Dc.Attach(Query);
             var brandsDTOs = entity as BrandsDTOs;
             Query.Name = brandsDTOs.Name;
-            
+            Query.UserUpdate = brandsDTOs.UserUpdate;
+
+
             if (img != null)
             {
                 // Save the new image
@@ -99,6 +101,8 @@ namespace ECommerce.DataAccessLayer.Repositories
                 Dc.Entry(Query).Property(x => x.Public_id).IsModified = true;
             }
             Dc.Entry(Query).Property(x => x.Name).IsModified = true;
+            Dc.Entry(Query).Property(x => x.UserUpdate).IsModified = true;
+
             await Dc.SaveChangesAsync();
             return Query;
         }

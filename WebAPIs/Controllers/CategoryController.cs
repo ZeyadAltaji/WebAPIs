@@ -47,7 +47,7 @@ namespace WebAPIs.Controllers
         public async Task<IActionResult> Createcategorise(CategoryDTOs categoryDTOs)
         {
             var CreateNewcategorise = mapper.Map<Category>(categoryDTOs);
-            categoryDTOs.CreateDate = DateTime.Now;
+            categoryDTOs.CreateDate = DateTimeOffset.Now.LocalDateTime;
             uow.repositoryCategory.Create(CreateNewcategorise);
             await uow.SaveChanges();
             return StatusCode(201);
@@ -57,12 +57,19 @@ namespace WebAPIs.Controllers
         [HttpPut("categorise/update/{id}")]
         public async Task<IActionResult> Updatecategorise(int id, CategoryDTOs categoryDTOs)
         {
+            Category category =new Category();
             if (id != categoryDTOs.Id)
                 return BadRequest("Update not allowed");
             var categoriseFromDb = await uow.repositoryCategory.GetByID(id);
 
             if (categoriseFromDb == null)
                 return BadRequest("Update not allowed");
+            if (!string.IsNullOrEmpty(categoryDTOs.Name) && categoryDTOs.Name != category.Name)
+            {
+                categoryDTOs.Name = categoryDTOs.Name;
+            }
+            categoryDTOs.UpdateDate = DateTimeOffset.Now.LocalDateTime;
+
             mapper.Map(categoryDTOs, categoriseFromDb);
 
             await uow.SaveChanges();

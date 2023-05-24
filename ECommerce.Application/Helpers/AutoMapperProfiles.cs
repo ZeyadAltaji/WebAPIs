@@ -16,6 +16,7 @@ namespace ECommerce.Application.Helpers
         {
             CreateMap<User, UserDTOs>().ReverseMap();
             CreateMap<Category, CategoryDTOs>().ReverseMap();
+ 
             CreateMap<Brands, BrandsDTOs>()
             .ForMember(d => d.Image_BrandUrl, opt => opt.MapFrom(src => src.Image_BrandUrl)).ReverseMap();
 
@@ -23,6 +24,9 @@ namespace ECommerce.Application.Helpers
 
             CreateMap<Coupon, CouponDTOs>().ReverseMap();
             CreateMap<Order, OrderDTOs>().ReverseMap();
+            CreateMap<ContactUs, ContactUsDTOs>().ReverseMap();
+
+
             CreateMap<Slider, SliderDTOs>().ReverseMap();
             CreateMap<Special, SpecialDTOs>().ReverseMap();
             CreateMap<Sub_Slider, Sub_SliderDTOs>().ReverseMap();
@@ -87,8 +91,15 @@ namespace ECommerce.Application.Helpers
                 .ReverseMap()
                 .ForMember(dest => dest.Password, opt => opt.MapFrom(src => Encoding.UTF8.GetBytes(src.password)))
                 .ForMember(dest => dest.ComfirmPassword, opt => opt.MapFrom(src => Encoding.UTF8.GetBytes(src.comfirmPassword)))
-                .ForMember(d => d.Image_userUrl, opt => opt.MapFrom(src => src.Image_userUrl))
-;
+                .ForMember(d => d.Image_userUrl, opt => opt.MapFrom(src => src.Image_userUrl));
+
+
+            CreateMap<Cart, CartDTOs>().ReverseMap();
+
+            CreateMap<ItemCart, ItemCartDTOs>().ReverseMap();
+            CreateMap<Order, OrderDTOs>().ReverseMap();
+
+
         }
     }
 }

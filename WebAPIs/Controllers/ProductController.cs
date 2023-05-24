@@ -53,7 +53,7 @@ namespace WebAPIs.Controllers
             CreateNewProduct.IsPrimaryImage = await SaveImage(productDTOs.Primary_Image);
             CreateNewProduct.IsForeignImage1 = await SaveImage(productDTOs.ForeignImage1);
             CreateNewProduct.IsForeignImage2 = await SaveImage(productDTOs.ForeignImage2);
-            productDTOs.CreateDate= DateTimeOffset.Now.LocalDateTime;
+            CreateNewProduct.CreateDate= DateTimeOffset.Now.LocalDateTime;
             uow.repositoryProduct.Create(CreateNewProduct);
             await uow.SaveChanges();
             return StatusCode(201);
@@ -75,8 +75,10 @@ namespace WebAPIs.Controllers
 
               
                 productDTOs.Title = HttpContext.Request.Form["Title"].ToString();
-                 
-            
+
+                productDTOs.UserUpdate = HttpContext.Request.Form["userUpdate"].ToString();
+                productDTOs.UpdateDate = DateTimeOffset.Now.LocalDateTime;
+
                 if (!string.IsNullOrEmpty(HttpContext.Request.Form["Offers"].ToString()))
                 {
                     productDTOs.offers = double.Parse(HttpContext.Request.Form["Offers"].ToString());

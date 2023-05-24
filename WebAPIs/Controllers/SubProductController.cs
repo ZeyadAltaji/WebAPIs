@@ -32,13 +32,20 @@ namespace WebAPIs.Controllers
             var productByID = await uow.repositorySubProducts.GetByID(id);
             return Ok(productByID);
         }
+        [HttpGet("GetAllproducts/{userId}")]
+        public async Task<IActionResult> GetallProducts(int userId)
+        {
+            var allproduct = await uow.RepositoryProductsById.GetAllById(userId);
+            var getbyDTOs = mapper.Map<IEnumerable<SubProducts>>(allproduct);
+            return Ok(getbyDTOs);
+        }
         [HttpPost]
         public async Task<IActionResult> CreateCar([FromForm] SubProductDTOs productDTOs)
         {
             var CreateNewproduct = mapper.Map<SubProducts>(productDTOs);
             CreateNewproduct.IsPrimaryImage = await SaveImage(productDTOs.Primary_Image);
 
-            productDTOs.CreateDate = DateTimeOffset.Now.LocalDateTime;
+            CreateNewproduct.CreateDate = DateTimeOffset.Now.LocalDateTime;
             uow.repositorySubProducts.Create(CreateNewproduct);
             await uow.SaveChanges();
             return StatusCode(201);
@@ -71,6 +78,10 @@ namespace WebAPIs.Controllers
                 productDTOs.Serial_Id = HttpContext.Request.Form["Serial_Id"].ToString();
                 productDTOs.Title = HttpContext.Request.Form["Title"].ToString();
                 productDTOs.Description = HttpContext.Request.Form["Description"].ToString();
+                productDTOs.UserUpdate = HttpContext.Request.Form["userUpdate"].ToString();
+
+                productDTOs.UpdateDate = DateTimeOffset.Now.LocalDateTime;
+
                 if (!string.IsNullOrEmpty(HttpContext.Request.Form["Price"].ToString()))
                 {
                     productDTOs.Price = double.Parse(HttpContext.Request.Form["Price"].ToString());
@@ -125,13 +136,13 @@ namespace WebAPIs.Controllers
                     if (img != null && img.Length > 0)
                     {
                         // A new image is selected
-                        var Update = await uow.repositoryCars.EditAsyncTest(id, productDTOs, img);
+                        var Update = await uow.RepositorySubproducts.EditAsyncTest(id, productDTOs, img);
                         if (Update != null) return Ok();
                     }
                     else
                     {
                         // Preserve the existing image
-                        var Update = await uow.repositoryCars.EditAsyncTest(id, productDTOs, null);
+                        var Update = await uow.RepositorySubproducts.EditAsyncTest(id, productDTOs, null);
                         if (Update != null) return Ok();
                     }
                 }

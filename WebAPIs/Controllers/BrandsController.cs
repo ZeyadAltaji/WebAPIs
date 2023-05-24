@@ -22,19 +22,13 @@ namespace WebAPIs.Controllers
     {
         private readonly IUnitOfWork uow;
         private readonly IMapper mapper;
-        private readonly IPhotoService photoService;
-        private readonly IWebHostEnvironment webHostEnvironment;
+ 
+ 
 
-        private readonly DBContext _context;
-
-
-        public BrandsController(IUnitOfWork uow, IMapper mapper, IPhotoService photoService, IWebHostEnvironment webHostEnvironment, DBContext context)
+        public BrandsController(IUnitOfWork uow, IMapper mapper)
         {
             this.uow = uow;
             this.mapper = mapper;
-            this.photoService = photoService;
-            this.webHostEnvironment = webHostEnvironment;
-            _context = context;
         }
         // GET: api/Brands/GetAllBrand
         [HttpGet("GetAllBrand")]
@@ -73,6 +67,7 @@ namespace WebAPIs.Controllers
                 var img = HttpContext.Request.Form.Files["Image_BrandUrl"];
                 var brandDTO = new BrandsDTOs();
                 brandDTO.Name = HttpContext.Request.Form["Name"].ToString();
+                brandDTO.UserUpdate = HttpContext.Request.Form["userUpdate"].ToString();
 
                 if (!string.IsNullOrEmpty(brandDTO.Name))
                 {

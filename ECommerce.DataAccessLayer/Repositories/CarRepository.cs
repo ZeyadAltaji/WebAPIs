@@ -85,7 +85,10 @@ namespace ECommerce.DataAccessLayer.Repositories
             Query.Name = carDTOs.Name;
             Query.Production_Date=carDTOs.Production_Date;
             Query.Class= carDTOs.Class;
-             if (img != null)
+            Query.UserUpdate = carDTOs.UserUpdate;
+ 
+            Query.UpdateDate = DateTimeOffset.Now.LocalDateTime;
+            if (img != null)
             {
                 // Save the new image
                 var filePath = Path.Combine(@"D:\project fianal\E-commerce\projects\dashboard\src\assets\image\Cars", img.FileName);
@@ -102,6 +105,8 @@ namespace ECommerce.DataAccessLayer.Repositories
                 Dc.Entry(Query).Property(x => x.Public_id).IsModified = true;
             }
             Dc.Entry(Query).Property(x => x.Name).IsModified = true;
+            Dc.Entry(Query).Property(x => x.UserUpdate).IsModified = true;
+
             await Dc.SaveChangesAsync();
             return Query;
         }

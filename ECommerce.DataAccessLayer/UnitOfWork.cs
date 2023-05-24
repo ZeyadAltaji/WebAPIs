@@ -1,4 +1,5 @@
 ﻿using ECommerce.Application.Abstractions;
+using ECommerce.Application.Abstractions.Command;
 using ECommerce.Application.UnitOfWork;
 using ECommerce.DataAccessLayer.Repositories;
 using ECommerce.Domain.Models;
@@ -33,8 +34,7 @@ namespace ECommerce.DataAccessLayer
 
         public IRepository<Coupon> repositoryCoupon => new CouponRepository(DC);
 
-        public IRepository<Order> repositoryOrder => new OrderRepository(DC);
-
+ 
         public IRepository<Product> repositoryProduct => new ProductRepository(DC);
 
         public IRepository<Slider> repositorySlider => new SliderRepository(DC);
@@ -67,6 +67,23 @@ namespace ECommerce.DataAccessLayer
 
 
         public IGetDataByProducts<SubProducts> RepositorySubProducts => new SubProductRepository(DC);
+
+        public ITesting<SubProducts> RepositorySubproducts => new SubProductRepository(DC);
+
+         public IGetById<SubProducts> RepositoryProductsById => new SubProductRepository(DC);
+
+ 
+ 
+        public IOrderRepository OrderRepository => new OrderRepository(DC);
+
+        public IOrderItemRepository OrderItemRepository => new OrderItemRepository(DC);
+
+ 
+        public ICartRepository cartRepository => new CartRepository(DC);
+
+        public ICartItemRepository CartItemRepository => new CartItemRepository(DC);
+
+        public IRepository<ContactUs> repositoryContactUs => new ContactUsRepository(DC);
 
         public async Task<bool> SaveChanges()
         {

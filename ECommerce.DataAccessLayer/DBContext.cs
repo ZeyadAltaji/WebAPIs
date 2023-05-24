@@ -25,6 +25,10 @@ namespace ECommerce.DataAccessLayer
         public DbSet<Vehicles> Vehicle { get; set; }
         public DbSet<PhotoLogo> PhotoLogo { get; set; }
         public DbSet<SubProducts> SProducts { get; set; }
+        public DbSet<Cart> Carts { get; set; }
+        public DbSet<ItemCart>ItemCart { get; set; }
+        public DbSet<OrderItem> OrderItem { get; set; }
+        public DbSet<ContactUs> ContactUs { get; set; }
 
 
     }

@@ -7,15 +7,18 @@ using System.Threading.Tasks;
 
 namespace ECommerce.Application.DTOs
 {
-    public class OrderDTOs :BaseClass
+    public class OrderDTOs 
     {
-         public int Customer_Id { get; set; }
-        public DateTime Order_Date { get; set; }
-        public int Quantity { get; set; }
-        public double Price { get; set; }
-        public string Payment_Info { get; set; } = string.Empty;
-        public int Product_Id { get; set; }
-        public Product? Product { get; set; }
-        public User? User { get; set; }
+        public int Id { get; set; }
+        public int Customer_Id { get; set; }
+        public string FullName { get; set; }
+        public string Email { get; set; }
+        public string Mobile { get; set; }
+        public DateTime? Order_Date { get; set; }
+        public double TotalPrice { get; set; }
+        public string ShippingAddress { get; set; }
+        public string OrderStatus { get; set; }
+        public int CartId { get; set; }
+        public Cart? Cart { get; set; }
     }
 }

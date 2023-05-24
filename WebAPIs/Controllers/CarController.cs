@@ -51,7 +51,7 @@ namespace WebAPIs.Controllers
             CreateNewCar.Public_id = await SaveImage(carDTOs.Image_CarUrl);
             CreateNewCar.Production_Date = carDTOs.Production_Date ;
 
-            carDTOs.CreateDate = DateTime.Now;
+            carDTOs.CreateDate = DateTimeOffset.Now.LocalDateTime;
             uow.repositoryCar.Create(CreateNewCar);
             await uow.SaveChanges();
             return StatusCode(201);
@@ -62,13 +62,15 @@ namespace WebAPIs.Controllers
             try
             {
 
-                //var Name = HttpContext.Request.Form["Name"].ToString();
-                int id = int.Parse(HttpContext.Request.Form["id"].ToString());
+                 int id = int.Parse(HttpContext.Request.Form["id"].ToString());
                 var img = HttpContext.Request.Form.Files["Image_CarUrl"];
                 var carDTOs = new CarDTOs();
                 carDTOs.Name = HttpContext.Request.Form["Name"].ToString();
                 carDTOs.Production_Date =int.Parse(HttpContext.Request.Form["Production_Date"].ToString());
                 carDTOs.Class = HttpContext.Request.Form["Class"].ToString();
+                carDTOs.UserUpdate = HttpContext.Request.Form["userUpdate"].ToString();
+                carDTOs.UpdateDate = DateTimeOffset.Now.LocalDateTime;
+
                 if (!string.IsNullOrEmpty(carDTOs.Name))
                 {
                     if (img != null && img.Length > 0)

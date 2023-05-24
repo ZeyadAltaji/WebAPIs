@@ -1,4 +1,5 @@
 ﻿using ECommerce.Application.Abstractions;
+using ECommerce.Application.Abstractions.Command;
 using ECommerce.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ECommerce.DataAccessLayer.Repositories
 {
-    public class OrderRepository : IRepository<Order>
+    public class OrderRepository : IOrderRepository
     {
         private readonly DBContext Dc;
 
@@ -18,58 +19,39 @@ namespace ECommerce.DataAccessLayer.Repositories
             Dc = dc;
         }
 
-
-        public void Create(Order entity)
+        public void CreateOrder(Order order)
         {
-            if (entity == null) throw new ArgumentNullException(nameof(entity));
-
-            Dc.Orders.Add(entity);
+            Dc.Orders.Add(order);
             Dc.SaveChanges();
         }
 
-        public void Delete(int Id, Order entity)
+        public void DeleteOrder(Order order)
         {
-            entity.IsDelete = true;
-            Dc.Orders.Update(entity);
+            Dc.Orders.Add(order);
             Dc.SaveChanges();
         }
+
         public async Task<IEnumerable<Order>> GetAll()
         {
-            return await Dc.Orders.Include(Getbyid => Getbyid.User).Where(x => x.IsDelete == false).ToListAsync();
-
+            return await Dc.Orders.ToListAsync();
         }
 
-        public async Task<Order> GetByID(int id)
+        public async Task<Order> GetOrderById(int id)
         {
-            return await Dc.Orders.Include(Getbyid => Getbyid.User).SingleOrDefaultAsync(Getbyid => Getbyid.Id == id);
-
+ 
+            return Dc.Orders.Include(o => o.Id).FirstOrDefault(o => o.Id == id);
         }
+         
+        public async Task<Order> GetOrdersByCustomerId(int customerId)
+        {
+            return await Dc.Orders.FirstOrDefaultAsync(o => o.Customer_Id == customerId);
+        }
+        public void UpdateOrder(Order order)
+        {
+            Dc.Orders.Add(order);
+            Dc.SaveChanges();
+        }
+
         
-        public void Update(int Id, Order entity)
-        {
-            Dc.Orders.Update(entity);
-            Dc.SaveChanges();
-        }
-
-        public void Active(int Id, Order entity)
-        {
-            if (entity.IsActive == false)
-            {
-                entity.IsActive = true;
-            }
-            else if (entity.IsActive == true)
-            {
-                entity.IsActive = false;
-            }
-            Dc.Orders.Update(entity);
-            Dc.SaveChanges();
-        }
-
-        public IList<Order> GetAllViewFrontClinet()
-        {
-            return Dc.Orders.Include(Getbyid => Getbyid.User).Include(x => x.Product).Where(x => x.IsActive == true && x.IsDelete == false).ToList();
-        }
-
-    
     }
 }

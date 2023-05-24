@@ -60,8 +60,10 @@ namespace ECommerce.DataAccessLayer.Repositories
                     Password = passwordHash,
                     ComfirmPassword = passwordHash,
                     PasswordKey = passwordSalt,
-                    CreateDate = DateTime.Now,
-                    Role = 3
+                    CreateDate = DateTimeOffset.Now.LocalDateTime,
+                    Role = 3,
+                    IsActive = true,
+                    UserCreate = UserName
                 };
                 DC.Users.Add(user);
             }
@@ -87,8 +89,11 @@ namespace ECommerce.DataAccessLayer.Repositories
                 user.Password = passwordHash;
                 user.ComfirmPassword = passwordHash;
                 user.PasswordKey = passwordSalt;
-                user.CreateDate = DateTime.Now;
+                user.CreateDate = DateTimeOffset.Now.LocalDateTime;
                 user.Role = 2;
+                user.UserCreate = UserName;
+                user.IsActive=true ;
+
 
                 DC.Users.Add(user);
             }
@@ -116,45 +121,18 @@ namespace ECommerce.DataAccessLayer.Repositories
             return await DC.Users.AnyAsync(x => x.UserName == UserName || x.Email==Email);
 
         }
-
-        private void createpasswordHash(string password, out byte[] passwordHash, out byte[] passwordsalt)
-        {
-            using (var hmac = new HMACSHA512())
-            {
-                passwordsalt = hmac.Key;
-                passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-            }
-        }
-    
-          //Passwordalgorithm
-        private bool MatchPasswordHash(string passwordText, byte[] password, byte[] passwordKey)
-         {
-            using (var hmac = new HMACSHA512(passwordKey))
-            {
-                var passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(passwordText));
-
-                for (int i = 0; i < passwordHash.Length; i++)
-                {
-                    if (passwordHash[i] != password[i])
-                        return false;
-                }
-
-                return true;
-            }
-         }
-
         public async Task<IEnumerable<User>> GetAllUserAsync()
-            {
-                return await DC.Users.ToListAsync();
-            }
+        {
+            return await DC.Users.ToListAsync();
+        }
 
         public void DeleteAsync(int id, User user)
-            {
-                user.IsDelete = true;
-                user.IsActive = false;
-                DC.Users.Update(user);
-                DC.SaveChangesAsync();
-            }
+        {
+            user.IsDelete = true;
+            user.IsActive = false;
+            DC.Users.Update(user);
+            DC.SaveChangesAsync();
+        }
 
         public async Task<User> Create(FullUserDTOs userDtos, User user, IFormFile img)
         {
@@ -170,7 +148,7 @@ namespace ECommerce.DataAccessLayer.Repositories
                 Password = passwordHash,
                 ComfirmPassword = passwordHash,
                 PasswordKey = passwordSalt,
-              
+
                 CreateDate = DateTimeOffset.Now.LocalDateTime,
                 Role = userDtos.Role,
                 Phone1 = userDtos.Phone1,
@@ -191,7 +169,7 @@ namespace ECommerce.DataAccessLayer.Repositories
                     File.Delete(oldFilePath);
                 }
                 data.Public_id = img.FileName;
-             }
+            }
             // Add user to the database and save changes
             DC.Users.Add(data);
             await DC.SaveChangesAsync();
@@ -209,6 +187,8 @@ namespace ECommerce.DataAccessLayer.Repositories
             DC.Attach(Query);
 
             var userDTOs = entity as FullUserDTOs;
+            Query.UserUpdate = userDTOs.UserUpdate;
+
             byte[] passwordHash, passwordSalt;
             createpasswordHash(userDTOs.password, out passwordHash, out passwordSalt);
 
@@ -224,46 +204,46 @@ namespace ECommerce.DataAccessLayer.Repositories
                 DC.Entry(Query).Property(x => x.Frist_Name).IsModified = true;
             }
 
-             if (!string.IsNullOrEmpty(userDTOs.Last_Name) && userDTOs.Last_Name != Query.Last_Name)
+            if (!string.IsNullOrEmpty(userDTOs.Last_Name) && userDTOs.Last_Name != Query.Last_Name)
             {
                 Query.Last_Name = userDTOs.Last_Name;
                 DC.Entry(Query).Property(x => x.Last_Name).IsModified = true;
             }
 
-             if (!string.IsNullOrEmpty(userDTOs.Email) && userDTOs.Email != Query.Email)
+            if (!string.IsNullOrEmpty(userDTOs.Email) && userDTOs.Email != Query.Email)
             {
                 Query.Email = userDTOs.Email;
                 DC.Entry(Query).Property(x => x.Email).IsModified = true;
             }
 
-             if (userDTOs.Role != 0 && userDTOs.Role != Query.Role)
+            if (userDTOs.Role != 0 && userDTOs.Role != Query.Role)
             {
                 Query.Role = userDTOs.Role;
                 DC.Entry(Query).Property(x => x.Role).IsModified = true;
             }
 
-             if (!string.IsNullOrEmpty(userDTOs.Phone1) && userDTOs.Phone1 != Query.Phone1)
+            if (!string.IsNullOrEmpty(userDTOs.Phone1) && userDTOs.Phone1 != Query.Phone1)
             {
                 Query.Phone1 = userDTOs.Phone1;
                 DC.Entry(Query).Property(x => x.Phone1).IsModified = true;
             }
 
-             if (!string.IsNullOrEmpty(userDTOs.Phone2) && userDTOs.Phone2 != Query.Phone2)
+            if (!string.IsNullOrEmpty(userDTOs.Phone2) && userDTOs.Phone2 != Query.Phone2)
             {
                 Query.Phone2 = userDTOs.Phone2;
                 DC.Entry(Query).Property(x => x.Phone2).IsModified = true;
             }
 
-             if (!string.IsNullOrEmpty(userDTOs.Address) && userDTOs.Address != Query.Address)
+            if (!string.IsNullOrEmpty(userDTOs.Address) && userDTOs.Address != Query.Address)
             {
                 Query.Address = userDTOs.Address;
                 DC.Entry(Query).Property(x => x.Address).IsModified = true;
             }
             // Check if password and confirm password are valid
 
-             if (!string.IsNullOrEmpty(userDTOs.password) && userDTOs.password == userDTOs.comfirmPassword)
+            if (!string.IsNullOrEmpty(userDTOs.password) && userDTOs.password == userDTOs.comfirmPassword)
             {
-          
+
 
                 Query.Password = passwordHash;
                 Query.ComfirmPassword = passwordHash;
@@ -286,11 +266,40 @@ namespace ECommerce.DataAccessLayer.Repositories
                 Query.Public_id = img.FileName;
                 DC.Entry(Query).Property(x => x.Public_id).IsModified = true;
             }
+            DC.Entry(Query).Property(x => x.UserUpdate).IsModified = true;
 
             await DC.SaveChangesAsync();
 
             return Query;
         }
 
+        //PasswordHashalgorithm
+        private void createpasswordHash(string password, out byte[] passwordHash, out byte[] passwordsalt)
+        {
+            using (var hmac = new HMACSHA512())
+            {
+                passwordsalt = hmac.Key;
+                passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+            }
+        }
+    
+
+        private bool MatchPasswordHash(string passwordText, byte[] password, byte[] passwordKey)
+         {
+            using (var hmac = new HMACSHA512(passwordKey))
+            {
+                var passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(passwordText));
+
+                for (int i = 0; i < passwordHash.Length; i++)
+                {
+                    if (passwordHash[i] != password[i])
+                        return false;
+                }
+
+                return true;
+            }
+         }
+
+        
     }
 }

@@ -105,6 +105,7 @@ namespace WebAPIs.Controllers
             LoginRes.Token =CreateJWT(user);
             var fullUser = mapper.Map<FullUserDTOs>(user);
             LoginRes.FullUser = fullUser;
+            fullUser.Role = user.Role;
 
             return Ok(LoginRes);
 
@@ -159,32 +160,6 @@ namespace WebAPIs.Controllers
 
             return Ok(user);
 
-        }
-        private string CreateJWT(User user)
-        {
-
-            var secretKey = configuration.GetSection("AppSettings:key").Value;
-            var key = new SymmetricSecurityKey(Encoding.UTF8
-                .GetBytes(secretKey));
-
-            var claims = new Claim[] {
-                new Claim(ClaimTypes.Name,user.UserName),
-                new Claim(ClaimTypes.NameIdentifier,user.Id.ToString())
-            };
-
-            var signingCredentials = new SigningCredentials(
-                    key, SecurityAlgorithms.HmacSha256Signature);
-
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddMinutes(1),
-                SigningCredentials = signingCredentials
-            };
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
         }
         [HttpPost("NewUser")]
         public async Task<IActionResult> NewUser([FromForm] FullUserDTOs userDTOs)
@@ -242,6 +217,8 @@ namespace WebAPIs.Controllers
                 userDTOs.Address = HttpContext.Request.Form["Address"].ToString();
                 userDTOs.password = HttpContext.Request.Form["password"].ToString();
                 userDTOs.comfirmPassword = HttpContext.Request.Form["comfirmPassword"].ToString();
+                userDTOs.UserUpdate = HttpContext.Request.Form["userUpdate"].ToString();
+                userDTOs.UpdateDate = DateTimeOffset.Now.LocalDateTime;
 
                 if (!StringValues.IsNullOrEmpty(HttpContext.Request.Form["Role"]) && HttpContext.Request.Form["Role"] != "0")
                 {
@@ -269,6 +246,33 @@ namespace WebAPIs.Controllers
             }
             return BadRequest();
         }
+        private string CreateJWT(User user)
+        {
+
+            var secretKey = configuration.GetSection("AppSettings:key").Value;
+            var key = new SymmetricSecurityKey(Encoding.UTF8
+                .GetBytes(secretKey));
+
+            var claims = new Claim[] {
+                new Claim(ClaimTypes.Name,user.UserName),
+                new Claim(ClaimTypes.NameIdentifier,user.Id.ToString())
+            };
+
+            var signingCredentials = new SigningCredentials(
+                    key, SecurityAlgorithms.HmacSha256Signature);
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims),
+                Expires = DateTime.UtcNow.AddMinutes(1),
+                SigningCredentials = signingCredentials
+            };
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
+        }
+
 
     }
 }

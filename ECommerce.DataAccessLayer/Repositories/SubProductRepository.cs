@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace ECommerce.DataAccessLayer.Repositories
 {
-    public class SubProductRepository: IRepository<SubProducts>, ITesting<SubProducts>,IGetDataByProducts<SubProducts>
+    public class SubProductRepository: IRepository<SubProducts>, ITesting<SubProducts>,IGetDataByProducts<SubProducts>, IGetById<SubProducts>
     {
         private readonly DBContext Dc;
 
@@ -63,7 +63,9 @@ namespace ECommerce.DataAccessLayer.Repositories
            
 
             Dc.Attach(product);
-             product.UpdateDate = DateTimeOffset.Now.LocalDateTime;
+            product.UserUpdate = productDTOs.UserUpdate;
+
+            product.UpdateDate = DateTimeOffset.Now.LocalDateTime;
             if (!string.IsNullOrEmpty(productDTOs.Serial_Id) && productDTOs.Serial_Id != product.Serial_Id)
             {
                 product.Serial_Id = productDTOs.Serial_Id;
@@ -139,6 +141,8 @@ namespace ECommerce.DataAccessLayer.Repositories
                 Dc.Entry(product).Property(x => x.IsPrimaryImage).IsModified = true;
             }
             Dc.Entry(product).Property(x => x.IsPrimaryImage).IsModified = true;
+            Dc.Entry(product).Property(x => x.UserUpdate).IsModified = true;
+
             await Dc.SaveChangesAsync();
             return product;
         }
@@ -146,6 +150,14 @@ namespace ECommerce.DataAccessLayer.Repositories
         public async Task<IEnumerable<SubProducts>> GetAll()
         {
             return await Dc.SProducts.Include(Getbyid => Getbyid.User).Where(x => x.IsDelete == false).ToListAsync();
+        }
+
+        public async Task<IEnumerable<SubProducts>> GetAllById(int userId)
+        {
+            return await Dc.SProducts
+             .Include(Getbyid => Getbyid.User)
+             .Where(x => x.IsDelete == false && x.Admin_Id == userId)
+             .ToListAsync();
         }
 
         public IList<SubProducts> GetAllViewFrontClinet()

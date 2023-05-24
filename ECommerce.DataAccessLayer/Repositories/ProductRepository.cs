@@ -28,8 +28,7 @@ namespace ECommerce.DataAccessLayer.Repositories
         public void Create(Product entity)
         {
             if (entity == null) throw new ArgumentNullException(nameof(entity));
-
-            Dc.Products.Add(entity);
+             Dc.Products.Add(entity);
             Dc.SaveChanges();
         }
 
@@ -109,8 +108,9 @@ namespace ECommerce.DataAccessLayer.Repositories
                 return null;
             }
             var productDTOs = entity as ProductDTOs;
+            product.UserUpdate = productDTOs.UserUpdate;
 
-            
+
             if (!string.IsNullOrEmpty(productDTOs.Title) && productDTOs.Title != product.Title)
             {
                 product.Title = productDTOs.Title;
@@ -186,7 +186,8 @@ namespace ECommerce.DataAccessLayer.Repositories
                 product.IsForeignImage2 = Foreign_Image2.FileName;
                 Dc.Entry(product).Property(x => x.IsForeignImage2).IsModified = true;
             }
-            product.UpdateDate = DateTimeOffset.Now.LocalDateTime;
+            Dc.Entry(product).Property(x => x.UserUpdate).IsModified = true;
+
             await Dc.SaveChangesAsync();
 
             return product;
