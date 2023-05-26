@@ -5,25 +5,19 @@
 namespace ECommerce.DataAccessLayer.Migrations
 {
     /// <inheritdoc />
-    public partial class part3 : Migration
+    public partial class newTesting : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<int>(
-                name: "productId",
-                table: "SubProducts",
-                type: "int",
-                nullable: true);
-
             migrationBuilder.CreateIndex(
-                name: "IX_SubProducts_productId",
-                table: "SubProducts",
+                name: "IX_SProducts_productId",
+                table: "SProducts",
                 column: "productId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_SubProducts_Products_productId",
-                table: "SubProducts",
+                name: "FK_SProducts_Products_productId",
+                table: "SProducts",
                 column: "productId",
                 principalTable: "Products",
                 principalColumn: "Id");
@@ -33,16 +27,12 @@ namespace ECommerce.DataAccessLayer.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_SubProducts_Products_productId",
-                table: "SubProducts");
+                name: "FK_SProducts_Products_productId",
+                table: "SProducts");
 
             migrationBuilder.DropIndex(
-                name: "IX_SubProducts_productId",
-                table: "SubProducts");
-
-            migrationBuilder.DropColumn(
-                name: "productId",
-                table: "SubProducts");
+                name: "IX_SProducts_productId",
+                table: "SProducts");
         }
     }
 }

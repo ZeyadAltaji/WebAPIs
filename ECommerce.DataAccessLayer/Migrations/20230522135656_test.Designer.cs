@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ECommerce.DataAccessLayer.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20230428110632_part3")]
-    partial class part3
+    [Migration("20230522135656_test")]
+    partial class test
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -134,6 +134,57 @@ namespace ECommerce.DataAccessLayer.Migrations
                     b.ToTable("Cars");
                 });
 
+            modelBuilder.Entity("ECommerce.Domain.Models.Cart", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Carts");
+                });
+
+            modelBuilder.Entity("ECommerce.Domain.Models.CartItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CartId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SubProductsId")
+                        .HasColumnType("int");
+
+                    b.Property<double>("TotalPrice")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CartId");
+
+                    b.HasIndex("SubProductsId");
+
+                    b.ToTable("CartItem");
+                });
+
             modelBuilder.Entity("ECommerce.Domain.Models.Category", b =>
                 {
                     b.Property<int>("Id")
@@ -246,63 +297,69 @@ namespace ECommerce.DataAccessLayer.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnOrder(0);
+                        .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreateDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<int>("Customer_Id")
                         .HasColumnType("int");
 
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsDelete")
-                        .HasColumnType("bit");
+                    b.Property<string>("OrderStatus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("Order_Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Payment_Info")
+                    b.Property<string>("PaymentMethod")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("Price")
+                    b.Property<string>("ShippingAddress")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("TotalPrice")
                         .HasColumnType("float");
 
-                    b.Property<int?>("ProductId")
+                    b.HasKey("Id");
+
+                    b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("ECommerce.Domain.Models.OrderItem", b =>
+                {
+                    b.Property<int>("OrderItemId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderItemId"));
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
                         .HasColumnType("int");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("UpdateDate")
-                        .HasColumnType("datetime2");
+                    b.Property<double>("TotalPrice")
+                        .HasColumnType("float");
 
-                    b.Property<string>("UserCreate")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<double>("UnitPrice")
+                        .HasColumnType("float");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
+                    b.HasKey("OrderItemId");
 
-                    b.Property<string>("UserUpdate")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
+                    b.HasIndex("OrderId");
 
                     b.HasIndex("ProductId");
 
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Orders");
+                    b.ToTable("OrderItem");
                 });
 
-            modelBuilder.Entity("ECommerce.Domain.Models.Photo", b =>
+            modelBuilder.Entity("ECommerce.Domain.Models.PhotoLogo", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -314,20 +371,13 @@ namespace ECommerce.DataAccessLayer.Migrations
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Image_userUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Public_id")
+                    b.Property<string>("IsLogoUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -342,44 +392,9 @@ namespace ECommerce.DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("main_Image")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("main_ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("publicID")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("sub_Image1")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("sub_Image1Url")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("sub_Image2")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("sub_Image2Url")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("userId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("user_Id")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("userId");
-
-                    b.ToTable("Photos");
+                    b.ToTable("PhotoLogo");
                 });
 
             modelBuilder.Entity("ECommerce.Domain.Models.Product", b =>
@@ -407,13 +422,6 @@ namespace ECommerce.DataAccessLayer.Migrations
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Customer_Id")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -429,19 +437,6 @@ namespace ECommerce.DataAccessLayer.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("IsPrimaryImage")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double?>("New_price")
-                        .HasColumnType("float");
-
-                    b.Property<double>("Price")
-                        .HasColumnType("float");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Serial_Id")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -502,7 +497,7 @@ namespace ECommerce.DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Image")
+                    b.Property<string>("ImageURl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -511,10 +506,6 @@ namespace ECommerce.DataAccessLayer.Migrations
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
-
-                    b.Property<string>("Link")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -705,7 +696,7 @@ namespace ECommerce.DataAccessLayer.Migrations
 
                     b.HasIndex("productId");
 
-                    b.ToTable("SubProducts");
+                    b.ToTable("SProducts");
                 });
 
             modelBuilder.Entity("ECommerce.Domain.Models.Sub_Slider", b =>
@@ -724,6 +715,9 @@ namespace ECommerce.DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("CategoryId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
 
@@ -731,7 +725,15 @@ namespace ECommerce.DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Image")
+                    b.Property<string>("ImageURl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageURl1")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageURl2")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -740,10 +742,6 @@ namespace ECommerce.DataAccessLayer.Migrations
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
-
-                    b.Property<string>("Link")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -764,6 +762,8 @@ namespace ECommerce.DataAccessLayer.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
 
                     b.HasIndex("UserId");
 
@@ -919,6 +919,25 @@ namespace ECommerce.DataAccessLayer.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("ECommerce.Domain.Models.CartItem", b =>
+                {
+                    b.HasOne("ECommerce.Domain.Models.Cart", "Cart")
+                        .WithMany()
+                        .HasForeignKey("CartId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ECommerce.Domain.Models.SubProducts", "SubProducts")
+                        .WithMany()
+                        .HasForeignKey("SubProductsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Cart");
+
+                    b.Navigation("SubProducts");
+                });
+
             modelBuilder.Entity("ECommerce.Domain.Models.Category", b =>
                 {
                     b.HasOne("ECommerce.Domain.Models.User", "User")
@@ -943,34 +962,21 @@ namespace ECommerce.DataAccessLayer.Migrations
                     b.Navigation("product");
                 });
 
-            modelBuilder.Entity("ECommerce.Domain.Models.Order", b =>
+            modelBuilder.Entity("ECommerce.Domain.Models.OrderItem", b =>
                 {
-                    b.HasOne("ECommerce.Domain.Models.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId");
+                    b.HasOne("ECommerce.Domain.Models.Order", null)
+                        .WithMany("Items")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("ECommerce.Domain.Models.User", "User")
+                    b.HasOne("ECommerce.Domain.Models.SubProducts", "Product")
                         .WithMany()
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Product");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("ECommerce.Domain.Models.Photo", b =>
-                {
-                    b.HasOne("ECommerce.Domain.Models.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId");
-
-                    b.HasOne("ECommerce.Domain.Models.User", "user")
-                        .WithMany()
-                        .HasForeignKey("userId");
-
-                    b.Navigation("Product");
-
-                    b.Navigation("user");
                 });
 
             modelBuilder.Entity("ECommerce.Domain.Models.Product", b =>
@@ -1061,11 +1067,17 @@ namespace ECommerce.DataAccessLayer.Migrations
 
             modelBuilder.Entity("ECommerce.Domain.Models.Sub_Slider", b =>
                 {
+                    b.HasOne("ECommerce.Domain.Models.Category", "category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId");
+
                     b.HasOne("ECommerce.Domain.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId");
 
                     b.Navigation("User");
+
+                    b.Navigation("category");
                 });
 
             modelBuilder.Entity("ECommerce.Domain.Models.Vehicles", b =>
@@ -1075,6 +1087,11 @@ namespace ECommerce.DataAccessLayer.Migrations
                         .HasForeignKey("UserId");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ECommerce.Domain.Models.Order", b =>
+                {
+                    b.Navigation("Items");
                 });
 #pragma warning restore 612, 618
         }

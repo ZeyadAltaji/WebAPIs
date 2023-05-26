@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ECommerce.Application.DTOs;
 using ECommerce.Application.UnitOfWork;
+using ECommerce.DataAccessLayer.Repositories;
 using ECommerce.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,7 +25,7 @@ namespace WebAPIs.Controllers
         [HttpGet("GetAllOrders")]
         public async Task<IActionResult> GetALlOrder()
         {
-            var AllOrders= await uow.repositoryOrder.GetAll();
+            var AllOrders= await uow.OrderRepository.GetAll();
             var OrdesrDTOs = mapper.Map<IEnumerable<OrderDTOs>>(AllOrders);
             return Ok(OrdesrDTOs);
 
@@ -33,7 +34,7 @@ namespace WebAPIs.Controllers
         [HttpGet("Orders/{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var OrdersByID = await uow.repositoryOrder.GetByID(id);
+            var OrdersByID = await uow.OrderRepository.GetOrderById(id);
             return Ok(OrdersByID);
         }
 
@@ -42,35 +43,48 @@ namespace WebAPIs.Controllers
         public async Task<IActionResult> CreateOrders(OrderDTOs orderDTOs)
         {
             var CreateNewOrder = mapper.Map<Order>(orderDTOs);
-            orderDTOs.CreateDate = DateTime.Now;
-            uow.repositoryOrder.Create(CreateNewOrder);
+            orderDTOs.Order_Date =DateTimeOffset.Now.LocalDateTime;
+            uow.OrderRepository.CreateOrder(CreateNewOrder);
             await uow.SaveChanges();
             return StatusCode(201);
         }
-
-        // PUT api/Order/update/5
-        [HttpPut("Orders/update/{id}")]
-        public async Task<IActionResult> UpdateOrders(int id, OrderDTOs orderDTOs)
+        [HttpGet("order/delivery")]
+        public IActionResult GetOrdersBydelivery()
         {
-            if (id != orderDTOs.Id)
-                return BadRequest("Update not allowed");
-            var OrderFromDb = await uow.repositoryOrder.GetByID(id);
-
-            if (OrderFromDb == null)
-                return BadRequest("Update not allowed");
-            mapper.Map(orderDTOs, OrderFromDb);
-
-            await uow.SaveChanges();
-            return StatusCode(200);
+            var orders = uow.OrderRepository.GetOrdersBydelivery();
+            return Ok(orders);
         }
+        // PUT api/Order/update/5
 
+        [HttpPut("Orders/update")]
+        public async Task<IActionResult> UpdateOrders(int id)
+        {
+            var orderDTOs = new OrderStatusDTOs();
+            orderDTOs.Id = id = int.Parse(HttpContext.Request.Form["id"].ToString());
+
+            orderDTOs.OrderStatus = HttpContext.Request.Form["OrderStatus"].ToString();
+
+            //if (id != orderDTOs.Id)
+            //    return BadRequest("Update not allowed");
+
+            //if (orderFromDb == null)
+            //    return BadRequest("Order not found");
+            if (id == orderDTOs.Id)
+            {
+                var Update = await uow.OrderRepository.EditAsyncTest(id, orderDTOs);
+                if (Update != null) return Ok();
+            }
+
+
+            return BadRequest(401);
+        }
         // DELETE api/Order/delete/5
         [HttpPut("Orders/Delete/{id}")]
         public async Task<IActionResult> DeleteOrders(int id)
         {
-            var OrdersDelete = await uow.repositoryOrder.GetByID(id);
+            var OrdersDelete = await uow.OrderRepository.GetOrderById(id);
 
-            uow.repositoryOrder.Delete(id, OrdersDelete);
+            //uow.OrderRepository.Delete(id, OrdersDelete);
             await uow.SaveChanges();
             return Ok(id);
         }

@@ -34,8 +34,6 @@ namespace ECommerce.Application.Helpers
             CreateMap<PhotoLogo, PhotoDTOs>().ReverseMap();
 
 
-            //CreateMap<Product, PorductsListDto>();
-
 
             CreateMap<Product, ProductDTOs>()
                 .ForMember(dest => dest.Brands_Id, opt => opt.MapFrom(src => src.BrandsId))
@@ -98,8 +96,9 @@ namespace ECommerce.Application.Helpers
 
             CreateMap<ItemCart, ItemCartDTOs>().ReverseMap();
             CreateMap<Order, OrderDTOs>().ReverseMap();
+            CreateMap<Order, OrderStatusDTOs>().ReverseMap();
 
-
+            
         }
     }
 }
