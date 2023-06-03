@@ -129,6 +129,12 @@ namespace ECommerce.DataAccessLayer.Repositories
             {
                 product.Admin_Id = productDTOs.Admin_Id;
             }
+            if (productDTOs.IsSpecialProduct.HasValue)
+            {
+                product.IsSpecialProduct = productDTOs.IsSpecialProduct.Value;
+            }
+            product.IsActive = productDTOs.IsActive;
+
             if (img != null)
             {
                 // Save the new image

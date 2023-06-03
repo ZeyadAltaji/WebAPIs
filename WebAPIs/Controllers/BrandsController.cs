@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Primitives;
 using Microsoft.IdentityModel.Tokens;
 using System;
 
@@ -68,6 +69,10 @@ namespace WebAPIs.Controllers
                 var brandDTO = new BrandsDTOs();
                 brandDTO.Name = HttpContext.Request.Form["Name"].ToString();
                 brandDTO.UserUpdate = HttpContext.Request.Form["userUpdate"].ToString();
+                if (!StringValues.IsNullOrEmpty(HttpContext.Request.Form["isActive"]))
+                {
+                    brandDTO.IsActive = bool.Parse(HttpContext.Request.Form["isActive"]);
+                }
 
                 if (!string.IsNullOrEmpty(brandDTO.Name))
                 {

@@ -123,6 +123,15 @@ namespace WebAPIs.Controllers
                 {
                     productDTOs.Admin_Id = int.Parse(HttpContext.Request.Form["Admin_Id"]);
                 }
+                if (!StringValues.IsNullOrEmpty(HttpContext.Request.Form["isActive"]))
+                {
+                    productDTOs.IsActive = bool.Parse(HttpContext.Request.Form["isActive"]);
+                }
+                if (!StringValues.IsNullOrEmpty(HttpContext.Request.Form["IsSpecialProduct"]))
+                {
+                    productDTOs.IsSpecialProduct = bool.Parse(HttpContext.Request.Form["IsSpecialProduct"]);
+                }
+
                 if (id != productDTOs.Id)
                     return BadRequest("Update not allowed");
 

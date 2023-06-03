@@ -2,9 +2,12 @@
 using ECommerce.Application.Abstractions;
 using ECommerce.Application.DTOs;
 using ECommerce.Application.UnitOfWork;
+using ECommerce.DataAccessLayer;
+using ECommerce.DataAccessLayer.Repositories;
 using ECommerce.Domain.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Primitives;
 
 namespace WebAPIs.Controllers
 {
@@ -14,12 +17,12 @@ namespace WebAPIs.Controllers
     {
         private readonly IUnitOfWork uow;
         private readonly IMapper mapper;
- 
+
         public ContactUsController(IUnitOfWork uow, IMapper mapper)
         {
             this.uow = uow;
             this.mapper = mapper;
- 
+
         }
         [HttpGet("Messages")]
         public async Task<IActionResult> GetAllCar()
@@ -40,9 +43,29 @@ namespace WebAPIs.Controllers
         {
             var CreateNewMessages = mapper.Map<ContactUs>(contactUsDTOs);
             CreateNewMessages.Show = true;
-             uow.repositoryContactUs.Create(CreateNewMessages);
+            uow.repositoryContactUs.Create(CreateNewMessages);
             await uow.SaveChanges();
             return StatusCode(201);
         }
+        [HttpPut("Messages/{id}")]
+        public async Task<IActionResult> UpdateMessage(int id, [FromForm] int show)
+        {
+            var existingMessage = await uow.repositoryContactUs.GetByID(id);
+            if (existingMessage == null)
+            {
+                return NotFound();
+            }
+            //if (!StringValues.IsNullOrEmpty(HttpContext.Request.Form["Show"]))
+            //{
+            //    existingMessage.Show = bool.Parse(HttpContext.Request.Form["Show"]);
+            //}
+            existingMessage.Show = show != 0; // Convert non-zero values to true, zero to false
+
+            await uow.SaveChanges();
+
+            return NoContent();
+        }
+
+
     }
 }

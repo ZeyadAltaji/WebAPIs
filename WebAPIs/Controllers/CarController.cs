@@ -5,6 +5,7 @@ using ECommerce.Application.ImageDTOs;
 using ECommerce.Application.UnitOfWork;
 using ECommerce.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Primitives;
 using WebAPIs.Services;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -70,7 +71,10 @@ namespace WebAPIs.Controllers
                 carDTOs.Class = HttpContext.Request.Form["Class"].ToString();
                 carDTOs.UserUpdate = HttpContext.Request.Form["userUpdate"].ToString();
                 carDTOs.UpdateDate = DateTimeOffset.Now.LocalDateTime;
-
+                 if (!StringValues.IsNullOrEmpty(HttpContext.Request.Form["isActive"]))
+                {
+                    carDTOs.IsActive = bool.Parse(HttpContext.Request.Form["isActive"]);
+                }
                 if (!string.IsNullOrEmpty(carDTOs.Name))
                 {
                     if (img != null && img.Length > 0)

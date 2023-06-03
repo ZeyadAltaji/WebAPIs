@@ -12,7 +12,10 @@ namespace ECommerce.Domain.Models
         public int Customer_Id { get; set; }
         public User?User { get; set; }
          public DateTime CreatedAt { get; set; }
-
+        public int GetCustomerId()
+        {
+            return Customer_Id;
+        }
         //public int Id { get; set; }
         //public int CustomerId { get; set; }
         //public int ItemCart_Id { get; set; }

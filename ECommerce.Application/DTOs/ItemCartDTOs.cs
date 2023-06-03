@@ -9,6 +9,7 @@ namespace ECommerce.Application.DTOs
 {
     public class ItemCartDTOs
     {
+        public int Id { get; set; }
 
         public int SubProductsId { get; set; }
         public int Quantity { get; set; }

@@ -43,7 +43,7 @@ namespace WebAPIs.Controllers
         public async Task<IActionResult> CreateOrders(OrderDTOs orderDTOs)
         {
             var CreateNewOrder = mapper.Map<Order>(orderDTOs);
-            orderDTOs.Order_Date =DateTimeOffset.Now.LocalDateTime;
+            CreateNewOrder.Order_Date =DateTimeOffset.Now.LocalDateTime;
             uow.OrderRepository.CreateOrder(CreateNewOrder);
             await uow.SaveChanges();
             return StatusCode(201);

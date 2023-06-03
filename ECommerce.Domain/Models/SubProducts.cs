@@ -24,14 +24,14 @@ namespace ECommerce.Domain.Models
         [Required]
         public double Price { get; set; }
 
-        public double? offers { get; set; }
+        public double? offers { get; set; } = 0.0;
 
-        public double? New_price { get; set; }
+        public double? New_price { get; set; } = 0.0;
         [Required]
         public int Quantity { get; set; }
         [Required]
         public string Link { get; set; } = string.Empty;
-        public string Button { get; set; } = string.Empty;
+        public bool? IsSpecialProduct { get; set; }
         public Brands? Brands { get; set; }
         public Car? Car { get; set; }
         public Category? Category { get; set; }
@@ -47,5 +47,15 @@ namespace ECommerce.Domain.Models
 
         [NotMapped]
         public IFormFile Primary_Image { get; set; }
+        // This method returns the final price after applying the offer if any
+        public double GetFinalPrice()
+        {
+            // Use the ?? operator to assign a default value of 0 if offers is null
+            double offer = offers ?? 0;
+            // Use the ?? operator to assign the original price if New_price is null
+            double newPrice = New_price ?? Price;
+            // Return the final price after subtracting the offer
+            return newPrice - offer;
+        }
     }
 }

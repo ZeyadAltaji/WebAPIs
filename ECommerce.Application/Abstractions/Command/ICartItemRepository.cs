@@ -11,6 +11,10 @@ namespace ECommerce.Application.Abstractions.Command
     {
         void Create(ItemCart itemCart);
         Task<IEnumerable<ItemCart>> GetAll();
+        void Deleteitem(int itemCartId);
+        Task<IEnumerable<ItemCart>> GetByCustomerId(int customerId);
+        void UpdateItems(IEnumerable<ItemCart> itemCarts);
+        List<ItemCart> GetByCustomerCartId(int customerId, int cartId);
 
 
     }

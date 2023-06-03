@@ -86,7 +86,8 @@ namespace ECommerce.DataAccessLayer.Repositories
             Query.Production_Date=carDTOs.Production_Date;
             Query.Class= carDTOs.Class;
             Query.UserUpdate = carDTOs.UserUpdate;
- 
+            Query.IsActive = carDTOs.IsActive;
+
             Query.UpdateDate = DateTimeOffset.Now.LocalDateTime;
             if (img != null)
             {

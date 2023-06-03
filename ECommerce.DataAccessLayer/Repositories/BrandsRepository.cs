@@ -82,6 +82,7 @@ namespace ECommerce.DataAccessLayer.Repositories
             var brandsDTOs = entity as BrandsDTOs;
             Query.Name = brandsDTOs.Name;
             Query.UserUpdate = brandsDTOs.UserUpdate;
+            Query.IsActive = brandsDTOs.IsActive;
 
 
             if (img != null)

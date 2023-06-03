@@ -253,6 +253,7 @@ namespace ECommerce.DataAccessLayer.Repositories
                 DC.Entry(Query).Property(x => x.ComfirmPassword).IsModified = true;
                 DC.Entry(Query).Property(x => x.PasswordKey).IsModified = true;
             }
+            Query.IsActive = userDTOs.IsActive;
 
             if (img != null)
             {

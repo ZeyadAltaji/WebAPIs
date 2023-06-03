@@ -135,7 +135,6 @@ namespace WebAPIs.Controllers
             var UsersDelete = await uow.UserRepository.FindByIdAsync(id);
 
             uow.UserRepository.DeleteAsync(id, UsersDelete);
-            await uow.SaveChanges();
             return Ok(id);
         }
         [HttpPost("ForGet-Password")]
@@ -219,6 +218,10 @@ namespace WebAPIs.Controllers
                 userDTOs.comfirmPassword = HttpContext.Request.Form["comfirmPassword"].ToString();
                 userDTOs.UserUpdate = HttpContext.Request.Form["userUpdate"].ToString();
                 userDTOs.UpdateDate = DateTimeOffset.Now.LocalDateTime;
+                if (!StringValues.IsNullOrEmpty(HttpContext.Request.Form["isActive"]))
+                {
+                    userDTOs.IsActive = bool.Parse(HttpContext.Request.Form["isActive"]);
+                }
 
                 if (!StringValues.IsNullOrEmpty(HttpContext.Request.Form["Role"]) && HttpContext.Request.Form["Role"] != "0")
                 {

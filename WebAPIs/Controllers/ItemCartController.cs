@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
+using ECommerce.Application.Abstractions;
+using ECommerce.Application.Abstractions.Command;
 using ECommerce.Application.DTOs;
 using ECommerce.Application.UnitOfWork;
+using ECommerce.DataAccessLayer.Repositories;
 using ECommerce.Domain.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -38,6 +41,36 @@ namespace WebAPIs.Controllers
             var BrandDTOs = mapper.Map<IEnumerable<ItemCartDTOs>>(AllItem);
             return Ok(BrandDTOs);
 
+        }
+        [HttpGet("{customerId}")]
+        public async Task<IActionResult> GetByCustomerId(int customerId)
+        {
+            var itemCarts = await uow.CartItemRepository.GetByCustomerId(customerId);
+            return Ok(itemCarts);
+        }
+        [HttpPut("update-items")]
+        public IActionResult UpdateItems([FromBody] IEnumerable<ItemCart> itemCarts)
+        {
+            if (itemCarts == null)
+            {
+                return BadRequest();
+            }
+
+            uow.CartItemRepository.UpdateItems(itemCarts);
+
+            return Ok();
+        }
+        [HttpGet("customer/{customerId}/cart/{cartId}")]
+        public async Task<ActionResult<IEnumerable<ItemCart>>> GetByCustomerAndCartId(int customerId, int cartId)
+        {
+            var cartItems =  uow.CartItemRepository.GetByCustomerCartId(customerId, cartId);
+            return Ok(cartItems);
+        }
+        [HttpDelete("{itemCartId}")]
+        public IActionResult Delete(int itemCartId)
+        {
+            uow.CartItemRepository.Deleteitem(itemCartId);
+            return Ok();
         }
     }
 }
