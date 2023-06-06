@@ -91,18 +91,20 @@ namespace WebAPIs.Controllers
         public async Task<IActionResult> Login(LoginReqDto LoginReq)
         {
             var user = await uow.UserRepository.Authenticate(LoginReq.UserName, LoginReq.Password);
+             
+
             ErrorsAPIs apiError = new ErrorsAPIs();
             if (user == null)
             {
                 apiError.Error_Code = Unauthorized().StatusCode;
-                apiError.Error_Messages = "Invalid user name or password";
-                apiError.Errors_Details = "This error appear when provided user id or password does not exists";
+                apiError.Error_Messages = "Invalid username or password";
+                apiError.Errors_Details = "This error appears when the provided username or password does not exist";
                 return Unauthorized(apiError);
             }
- 
+
             var LoginRes = new LoginResDto();
             LoginRes.UserName = user.UserName;
-            LoginRes.Token =CreateJWT(user);
+            LoginRes.Token = CreateJWT(user);
             var fullUser = mapper.Map<FullUserDTOs>(user);
             LoginRes.FullUser = fullUser;
             fullUser.Role = user.Role;

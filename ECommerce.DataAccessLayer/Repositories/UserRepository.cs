@@ -33,7 +33,7 @@ namespace ECommerce.DataAccessLayer.Repositories
         }
         public async Task<User> Authenticate(string UserName, string passwordText)
         {
-            var user = await DC.Users.FirstOrDefaultAsync(X => X.UserName == UserName);
+            var user = await DC.Users.FirstOrDefaultAsync(X => X.UserName == UserName||X.Email== UserName);
             if (user == null || user.Password == null) return null;
             if (!MatchPasswordHash(passwordText, user.Password, user.PasswordKey)) return null;
             if (user.IsDelete) throw new Exception("User Has Been Deleted.");
@@ -154,7 +154,9 @@ namespace ECommerce.DataAccessLayer.Repositories
                 Phone1 = userDtos.Phone1,
                 Phone2 = userDtos.Phone2,
                 Address = userDtos.Address,
+                IsActive = true
             };
+
             if (img != null)
             {
                 // Save the new image
@@ -239,6 +241,8 @@ namespace ECommerce.DataAccessLayer.Repositories
                 Query.Address = userDTOs.Address;
                 DC.Entry(Query).Property(x => x.Address).IsModified = true;
             }
+            Query.IsActive = userDTOs.IsActive;
+
             // Check if password and confirm password are valid
 
             if (!string.IsNullOrEmpty(userDTOs.password) && userDTOs.password == userDTOs.comfirmPassword)
