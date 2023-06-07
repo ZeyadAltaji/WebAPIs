@@ -123,7 +123,7 @@ namespace ECommerce.DataAccessLayer.Repositories
         }
         public async Task<IEnumerable<User>> GetAllUserAsync()
         {
-            return await DC.Users.ToListAsync();
+            return await DC.Users.Where(x=>x.IsActive==true||x.IsDelete==false).ToListAsync();
         }
 
         public void DeleteAsync(int id, User user)
