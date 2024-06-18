@@ -2,28 +2,31 @@
 using ECommerce.Application.DTOs;
 using ECommerce.Application.UnitOfWork;
 using ECommerce.Domain.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace WebAPIs.Controllers
 {
+    [Authorize]
+
     [Route("api/[controller]")]
     [ApiController]
     public class CouponController : ControllerBase
     {
         private readonly IUnitOfWork uow;
         private readonly IMapper mapper;
-        public CouponController(IUnitOfWork uow, IMapper mapper)
+        public CouponController (IUnitOfWork uow , IMapper mapper)
         {
             this.uow = uow;
             this.mapper = mapper;
 
         }
         // GET: api/Coupon/GetAllCoupon
-        
+
         [HttpGet("GetAllCoupon")]
-        public async Task<IActionResult> GetALlCoupon()
+        public async Task<IActionResult> GetALlCoupon ()
         {
             var AllCoupon = await uow.repositoryCoupon.GetAll();
             var CouponDTOs = mapper.Map<IEnumerable<CouponDTOs>>(AllCoupon);
@@ -32,7 +35,7 @@ namespace WebAPIs.Controllers
         }
         // GET: api/Coupon/Couponbyid/id
         [HttpGet("Couponbyid/{id}")]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetById (int id)
         {
             var Couponbyid = await uow.repositoryCoupon.GetByID(id);
             return Ok(Couponbyid);
@@ -40,7 +43,7 @@ namespace WebAPIs.Controllers
 
         // POST api/Coupon
         [HttpPost]
-        public async Task<IActionResult> CreateBrands(CouponDTOs couponDTOs )
+        public async Task<IActionResult> CreateBrands (CouponDTOs couponDTOs)
         {
             var CreateNewCoupon = mapper.Map<Coupon>(couponDTOs);
             couponDTOs.CreateDate = DateTime.Now;
@@ -51,15 +54,15 @@ namespace WebAPIs.Controllers
 
         // PUT api/Coupon/update/5
         [HttpPut("Coupons/update/{id}")]
-        public async Task<IActionResult> UpdateCoupon(int id, CouponDTOs couponDTOs)
+        public async Task<IActionResult> UpdateCoupon (int id , CouponDTOs couponDTOs)
         {
-            if (id != couponDTOs.Id)
+            if ( id != couponDTOs.Id )
                 return BadRequest("Update not allowed");
             var CouponFromDb = await uow.repositoryCoupon.GetByID(id);
 
-            if (CouponFromDb == null)
+            if ( CouponFromDb == null )
                 return BadRequest("Update not allowed");
-            mapper.Map(couponDTOs, CouponFromDb);
+            mapper.Map(couponDTOs , CouponFromDb);
 
             await uow.SaveChanges();
             return StatusCode(200);
@@ -67,11 +70,11 @@ namespace WebAPIs.Controllers
 
         // DELETE api/Coupon/delete/1
         [HttpPut("Coupons/Delete/{id}")]
-        public async Task<IActionResult> DeleteCoupon(int id)
+        public async Task<IActionResult> DeleteCoupon (int id)
         {
             var CouponDelete = await uow.repositoryCoupon.GetByID(id);
 
-            uow.repositoryCoupon.Delete(id, CouponDelete);
+            uow.repositoryCoupon.Delete(id , CouponDelete);
             await uow.SaveChanges();
             return Ok(id);
         }

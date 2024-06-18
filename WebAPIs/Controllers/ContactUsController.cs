@@ -1,16 +1,14 @@
 ﻿using AutoMapper;
-using ECommerce.Application.Abstractions;
 using ECommerce.Application.DTOs;
 using ECommerce.Application.UnitOfWork;
-using ECommerce.DataAccessLayer;
-using ECommerce.DataAccessLayer.Repositories;
 using ECommerce.Domain.Models;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Primitives;
 
 namespace WebAPIs.Controllers
 {
+    [Authorize]
+
     [Route("api/[controller]")]
     [ApiController]
     public class ContactUsController : ControllerBase
@@ -18,14 +16,14 @@ namespace WebAPIs.Controllers
         private readonly IUnitOfWork uow;
         private readonly IMapper mapper;
 
-        public ContactUsController(IUnitOfWork uow, IMapper mapper)
+        public ContactUsController (IUnitOfWork uow , IMapper mapper)
         {
             this.uow = uow;
             this.mapper = mapper;
 
         }
         [HttpGet("Messages")]
-        public async Task<IActionResult> GetAllCar()
+        public async Task<IActionResult> GetAllCar ()
         {
             var AllMessages = await uow.repositoryContactUs.GetAll();
             var MessagesDTOs = mapper.Map<IEnumerable<ContactUsDTOs>>(AllMessages);
@@ -33,13 +31,13 @@ namespace WebAPIs.Controllers
 
         }
         [HttpGet("Messages/{id}")]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetById (int id)
         {
             var MessagesByID = await uow.repositoryContactUs.GetByID(id);
             return Ok(MessagesByID);
         }
         [HttpPost]
-        public async Task<IActionResult> CreateMessages([FromForm] ContactUsDTOs contactUsDTOs)
+        public async Task<IActionResult> CreateMessages ([FromForm] ContactUsDTOs contactUsDTOs)
         {
             var CreateNewMessages = mapper.Map<ContactUs>(contactUsDTOs);
             CreateNewMessages.Show = true;
@@ -48,10 +46,10 @@ namespace WebAPIs.Controllers
             return StatusCode(201);
         }
         [HttpPut("Messages/{id}")]
-        public async Task<IActionResult> UpdateMessage(int id, [FromForm] int show)
+        public async Task<IActionResult> UpdateMessage (int id , [FromForm] int show)
         {
             var existingMessage = await uow.repositoryContactUs.GetByID(id);
-            if (existingMessage == null)
+            if ( existingMessage == null )
             {
                 return NotFound();
             }

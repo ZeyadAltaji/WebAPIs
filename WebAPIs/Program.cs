@@ -3,11 +3,8 @@ using ECommerce.Application.Helpers;
 using ECommerce.Application.UnitOfWork;
 using ECommerce.DataAccessLayer;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.Net;
 using System.Text;
 using WebAPIs.Extensions;
 using WebAPIs.Middlewares;
@@ -27,16 +24,19 @@ builder.Services.AddControllers();
 // call DB
 builder.Services.AddDbContext<DBContext>(options => options.UseSqlServer(cfm.GetConnectionString("ConnectionDB")));
 // call interface and class Unit of work 
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IUnitOfWork , UnitOfWork>();
 //call AutoMapper profile 
-builder.Services.AddScoped<IPhotoService, PhotoService>();
+builder.Services.AddScoped<IPhotoService , PhotoService>();
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
+builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddSwaggerGen();
 
 //Enable Cors
 builder.Services.AddCors(x =>
 {
-    x.AddPolicy("MyPolicy", builder =>
+    x.AddPolicy("MyPolicy" , builder =>
     {
         builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
     });
@@ -46,14 +46,19 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 {
     options.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidateIssuerSigningKey = true,
-        ValidateIssuer = false,
-        ValidateAudience = false,
+        ValidateIssuerSigningKey = true ,
+        ValidateIssuer = false ,
+        ValidateAudience = false ,
         IssuerSigningKey = key
     };
 });
 
 var app = builder.Build();
+if ( app.Environment.IsDevelopment() )
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 IConfiguration configuration = app.Configuration;
 IWebHostEnvironment environment = app.Environment;
 
@@ -61,6 +66,7 @@ app.ConfigureExceptionHandler(environment);
 //app.ConfigureBuiltinExceptionHandler;
 
 // Configure the HTTP request pipeline.
+app.UseMiddleware<TokenMiddleware>();
 
 app.UseHttpsRedirection();
 app.UseCors("MyPolicy");

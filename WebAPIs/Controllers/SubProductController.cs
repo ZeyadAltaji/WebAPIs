@@ -2,45 +2,46 @@
 using ECommerce.Application.DTOs;
 using ECommerce.Application.UnitOfWork;
 using ECommerce.Domain.Models;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 
 namespace WebAPIs.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class SubProductController : ControllerBase
     {
         private readonly IUnitOfWork uow;
         private readonly IMapper mapper;
-        public SubProductController(IUnitOfWork uow, IMapper mapper)
+        public SubProductController (IUnitOfWork uow , IMapper mapper)
         {
-                this.uow=uow;
-            this.mapper=mapper;
+            this.uow = uow;
+            this.mapper = mapper;
         }
         [HttpGet("GetAllproducts")]
-        public async Task<IActionResult> GetallProducts()
+        public async Task<IActionResult> GetallProducts ()
         {
             var allproduct = await uow.repositorySubProducts.GetAll();
             var getbyDTOs = mapper.Map<IEnumerable<SubProducts>>(allproduct);
             return Ok(getbyDTOs);
         }
         [HttpGet("Products/{id}")]
-        public async Task<IActionResult>GetByID(int id)
+        public async Task<IActionResult> GetByID (int id)
         {
             var productByID = await uow.repositorySubProducts.GetByID(id);
             return Ok(productByID);
         }
         [HttpGet("GetAllproducts/{userId}")]
-        public async Task<IActionResult> GetallProducts(int userId)
+        public async Task<IActionResult> GetallProducts (int userId)
         {
             var allproduct = await uow.RepositoryProductsById.GetAllById(userId);
             var getbyDTOs = mapper.Map<IEnumerable<SubProducts>>(allproduct);
             return Ok(getbyDTOs);
         }
         [HttpPost]
-        public async Task<IActionResult> CreateCar([FromForm] SubProductDTOs productDTOs)
+        public async Task<IActionResult> CreateCar ([FromForm] SubProductDTOs productDTOs)
         {
             var CreateNewproduct = mapper.Map<SubProducts>(productDTOs);
             CreateNewproduct.IsPrimaryImage = await SaveImage(productDTOs.Primary_Image);
@@ -51,11 +52,11 @@ namespace WebAPIs.Controllers
             return StatusCode(201);
         }
         [HttpGet("ByProducts/{ProductsId}")]
-        public async Task<ActionResult<List<Product>>> GetByProducts(int ProductsId)
-        {          
+        public async Task<ActionResult<List<Product>>> GetByProducts (int ProductsId)
+        {
             var product = await uow.repositoryProduct.GetByID(ProductsId);
 
-            if (product == null)
+            if ( product == null )
             {
                 return NotFound();
             }
@@ -66,118 +67,118 @@ namespace WebAPIs.Controllers
 
         }
         [HttpPut("update")]
-        public async Task<IActionResult> UpdateCar(int id)
+        public async Task<IActionResult> UpdateCar (int id)
         {
             try
             {
                 var productDTOs = new SubProductDTOs();
 
 
-                productDTOs.Id = id = int.Parse(HttpContext.Request.Form["id"].ToString());
-                var img = HttpContext.Request.Form.Files["Primary_Image"];
-                productDTOs.Serial_Id = HttpContext.Request.Form["Serial_Id"].ToString();
-                productDTOs.Title = HttpContext.Request.Form["Title"].ToString();
-                productDTOs.Description = HttpContext.Request.Form["Description"].ToString();
-                productDTOs.UserUpdate = HttpContext.Request.Form["userUpdate"].ToString();
+                productDTOs.Id = id = int.Parse(HttpContext.Request.Form ["id"].ToString());
+                var img = HttpContext.Request.Form.Files ["Primary_Image"];
+                productDTOs.Serial_Id = HttpContext.Request.Form ["Serial_Id"].ToString();
+                productDTOs.Title = HttpContext.Request.Form ["Title"].ToString();
+                productDTOs.Description = HttpContext.Request.Form ["Description"].ToString();
+                productDTOs.UserUpdate = HttpContext.Request.Form ["userUpdate"].ToString();
 
                 productDTOs.UpdateDate = DateTimeOffset.Now.LocalDateTime;
 
-                if (!string.IsNullOrEmpty(HttpContext.Request.Form["Price"].ToString()))
+                if ( !string.IsNullOrEmpty(HttpContext.Request.Form ["Price"].ToString()) )
                 {
-                    productDTOs.Price = double.Parse(HttpContext.Request.Form["Price"].ToString());
+                    productDTOs.Price = double.Parse(HttpContext.Request.Form ["Price"].ToString());
                 }
-                if (!string.IsNullOrEmpty(HttpContext.Request.Form["Offers"].ToString()))
+                if ( !string.IsNullOrEmpty(HttpContext.Request.Form ["Offers"].ToString()) )
                 {
-                    productDTOs.offers = double.Parse(HttpContext.Request.Form["Offers"].ToString());
+                    productDTOs.offers = double.Parse(HttpContext.Request.Form ["Offers"].ToString());
                 }
-                if (!string.IsNullOrEmpty(HttpContext.Request.Form["New_price"].ToString()))
+                if ( !string.IsNullOrEmpty(HttpContext.Request.Form ["New_price"].ToString()) )
                 {
-                    productDTOs.New_price = double.Parse(HttpContext.Request.Form["New_price"].ToString());
+                    productDTOs.New_price = double.Parse(HttpContext.Request.Form ["New_price"].ToString());
                 }
-                if (!StringValues.IsNullOrEmpty(HttpContext.Request.Form["Quantity"]) && HttpContext.Request.Form["Quantity"] != "0")
+                if ( !StringValues.IsNullOrEmpty(HttpContext.Request.Form ["Quantity"]) && HttpContext.Request.Form ["Quantity"] != "0" )
                 {
-                    productDTOs.Quantity = int.Parse(HttpContext.Request.Form["Quantity"]);
-                }
-
-                if (!StringValues.IsNullOrEmpty(HttpContext.Request.Form["Brands_Id"]) && HttpContext.Request.Form["Brands_Id"] != "0")
-                {
-                    productDTOs.Brands_Id = int.Parse(HttpContext.Request.Form["Brands_Id"]);
-                }
-                if (!StringValues.IsNullOrEmpty(HttpContext.Request.Form["Car_Id"]) && HttpContext.Request.Form["Car_Id"] != "0")
-                {
-                    productDTOs.Car_Id = int.Parse(HttpContext.Request.Form["Car_Id"]);
-                }
-                if(!StringValues.IsNullOrEmpty(HttpContext.Request.Form["productId"]) && HttpContext.Request.Form["productId"] != "0")
-                {
-                    productDTOs.productId = int.Parse(HttpContext.Request.Form["productId"]);
-                }
-                if (!StringValues.IsNullOrEmpty(HttpContext.Request.Form["Category_Id"]) && HttpContext.Request.Form["Category_Id"] != "0")
-                {
-                    productDTOs.Category_Id = int.Parse(HttpContext.Request.Form["Category_Id"]);
-                }
-                if (!StringValues.IsNullOrEmpty(HttpContext.Request.Form["Customer_Id"]) && HttpContext.Request.Form["Customer_Id"] != "0")
-                {
-                    productDTOs.Customer_Id = int.Parse(HttpContext.Request.Form["Customer_Id"]);
-                }
-                if (!StringValues.IsNullOrEmpty(HttpContext.Request.Form["Admin_Id"]) && HttpContext.Request.Form["Admin_Id"] != "0")
-                {
-                    productDTOs.Admin_Id = int.Parse(HttpContext.Request.Form["Admin_Id"]);
-                }
-                if (!StringValues.IsNullOrEmpty(HttpContext.Request.Form["isActive"]))
-                {
-                    productDTOs.IsActive = bool.Parse(HttpContext.Request.Form["isActive"]);
-                }
-                if (!StringValues.IsNullOrEmpty(HttpContext.Request.Form["IsSpecialProduct"]))
-                {
-                    productDTOs.IsSpecialProduct = bool.Parse(HttpContext.Request.Form["IsSpecialProduct"]);
+                    productDTOs.Quantity = int.Parse(HttpContext.Request.Form ["Quantity"]);
                 }
 
-                if (id != productDTOs.Id)
+                if ( !StringValues.IsNullOrEmpty(HttpContext.Request.Form ["Brands_Id"]) && HttpContext.Request.Form ["Brands_Id"] != "0" )
+                {
+                    productDTOs.Brands_Id = int.Parse(HttpContext.Request.Form ["Brands_Id"]);
+                }
+                if ( !StringValues.IsNullOrEmpty(HttpContext.Request.Form ["Car_Id"]) && HttpContext.Request.Form ["Car_Id"] != "0" )
+                {
+                    productDTOs.Car_Id = int.Parse(HttpContext.Request.Form ["Car_Id"]);
+                }
+                if ( !StringValues.IsNullOrEmpty(HttpContext.Request.Form ["productId"]) && HttpContext.Request.Form ["productId"] != "0" )
+                {
+                    productDTOs.productId = int.Parse(HttpContext.Request.Form ["productId"]);
+                }
+                if ( !StringValues.IsNullOrEmpty(HttpContext.Request.Form ["Category_Id"]) && HttpContext.Request.Form ["Category_Id"] != "0" )
+                {
+                    productDTOs.Category_Id = int.Parse(HttpContext.Request.Form ["Category_Id"]);
+                }
+                if ( !StringValues.IsNullOrEmpty(HttpContext.Request.Form ["Customer_Id"]) && HttpContext.Request.Form ["Customer_Id"] != "0" )
+                {
+                    productDTOs.Customer_Id = int.Parse(HttpContext.Request.Form ["Customer_Id"]);
+                }
+                if ( !StringValues.IsNullOrEmpty(HttpContext.Request.Form ["Admin_Id"]) && HttpContext.Request.Form ["Admin_Id"] != "0" )
+                {
+                    productDTOs.Admin_Id = int.Parse(HttpContext.Request.Form ["Admin_Id"]);
+                }
+                if ( !StringValues.IsNullOrEmpty(HttpContext.Request.Form ["isActive"]) )
+                {
+                    productDTOs.IsActive = bool.Parse(HttpContext.Request.Form ["isActive"]);
+                }
+                if ( !StringValues.IsNullOrEmpty(HttpContext.Request.Form ["IsSpecialProduct"]) )
+                {
+                    productDTOs.IsSpecialProduct = bool.Parse(HttpContext.Request.Form ["IsSpecialProduct"]);
+                }
+
+                if ( id != productDTOs.Id )
                     return BadRequest("Update not allowed");
 
                 var productFromDb = await uow.repositorySubProducts.GetByID(id);
 
-                if (productFromDb == null)
+                if ( productFromDb == null )
                     return BadRequest("Update not allowed");
 
-                if (id == productDTOs.Id)
+                if ( id == productDTOs.Id )
                 {
-                    if (img != null && img.Length > 0)
+                    if ( img != null && img.Length > 0 )
                     {
                         // A new image is selected
-                        var Update = await uow.RepositorySubproducts.EditAsyncTest(id, productDTOs, img);
-                        if (Update != null) return Ok();
+                        var Update = await uow.RepositorySubproducts.EditAsyncTest(id , productDTOs , img);
+                        if ( Update != null ) return Ok();
                     }
                     else
                     {
                         // Preserve the existing image
-                        var Update = await uow.RepositorySubproducts.EditAsyncTest(id, productDTOs, null);
-                        if (Update != null) return Ok();
+                        var Update = await uow.RepositorySubproducts.EditAsyncTest(id , productDTOs , null);
+                        if ( Update != null ) return Ok();
                     }
                 }
             }
-            catch (Exception ex)
+            catch ( Exception ex )
             {
                 return BadRequest(ex.Message);
             }
             return BadRequest();
         }
         [HttpPut("Delete/{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete (int id)
         {
             var productDelete = await uow.repositorySubProducts.GetByID(id);
 
-            uow.repositorySubProducts.Delete(id, productDelete);
+            uow.repositorySubProducts.Delete(id , productDelete);
             await uow.SaveChanges();
             return Ok(id);
         }
         [NonAction]
-        public async Task<string> SaveImage(IFormFile imageFile)
+        public async Task<string> SaveImage (IFormFile imageFile)
         {
-            string imagename = new String(Path.GetFileNameWithoutExtension(imageFile.FileName).Take(10).ToArray()).Replace(' ', ' ');
+            string imagename = new String(Path.GetFileNameWithoutExtension(imageFile.FileName).Take(10).ToArray()).Replace(' ' , ' ');
             imagename = Guid.NewGuid() + Path.GetExtension(imageFile.FileName);
-            string imagePath = Path.Combine(@"D:\project fianal\E-commerce\projects\dashboard\src\assets\image\SubProduct", imagename);
-            using (var fileStream = new FileStream(imagePath, FileMode.Create))
+            string imagePath = Path.Combine(@"D:\project fianal\E-commerce\projects\dashboard\src\assets\image\SubProduct" , imagename);
+            using ( var fileStream = new FileStream(imagePath , FileMode.Create) )
             {
                 await imageFile.CopyToAsync(fileStream);
             }

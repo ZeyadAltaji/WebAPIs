@@ -1,11 +1,6 @@
 ﻿using ECommerce.Application.Abstractions;
 using ECommerce.Application.Abstractions.Command;
 using ECommerce.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ECommerce.Application.UnitOfWork
 {
@@ -23,7 +18,10 @@ namespace ECommerce.Application.UnitOfWork
         IRepository<Vehicles> repositoryVehicles { get; }
         IRepository<PhotoLogo> SettingRepository { get; }
         IRepository<SubProducts> repositorySubProducts { get; }
-        IRepository<ContactUs> repositoryContactUs{ get; }
+        IRepository<ContactUs> repositoryContactUs { get; }
+        IRepository<Messages> repositoryMessages { get; }
+        IRepository<Language> repositoryLanguage { get; }
+
 
         //delete after testing
         ITesting<Brands> repositoryBrand { get; }
@@ -40,12 +38,12 @@ namespace ECommerce.Application.UnitOfWork
         IGetData<Car> RepositoryCars { get; }
         IGetDataByProducts<SubProducts> RepositorySubProducts { get; }
         IGetById<SubProducts> RepositoryProductsById { get; }
- 
+
         ICartRepository cartRepository { get; }
         IOrderRepository OrderRepository { get; }
         IOrderItemRepository OrderItemRepository { get; }
         ICartItemRepository CartItemRepository { get; }
-        Task<bool> SaveChanges();
+        Task<bool> SaveChanges ();
 
     }
 
