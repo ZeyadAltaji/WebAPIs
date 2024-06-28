@@ -7,13 +7,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using WebAPIs.Extensions;
-using WebAPIs.Middlewares;
 using WebAPIs.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+var configurations = builder.Configuration;
 
 
 var secretKey = builder.Configuration.GetSection("AppSettings:key").Value;
+var brevoApiKey = configurations ["BrevoAPIs:APIKey"];
+
 var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
 ConfigurationManager cfm = builder.Configuration;
 
@@ -53,6 +55,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     };
 });
 
+
+
 var app = builder.Build();
 if ( app.Environment.IsDevelopment() )
 {
@@ -66,7 +70,7 @@ app.ConfigureExceptionHandler(environment);
 //app.ConfigureBuiltinExceptionHandler;
 
 // Configure the HTTP request pipeline.
-app.UseMiddleware<TokenMiddleware>();
+//app.UseMiddleware<TokenMiddleware>();
 
 app.UseHttpsRedirection();
 app.UseCors("MyPolicy");

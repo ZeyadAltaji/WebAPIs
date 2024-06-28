@@ -11,6 +11,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using WebAPIs.Errors;
+using WebAPIs.Services;
 
 namespace WebAPIs.Controllers
 {
@@ -24,6 +25,8 @@ namespace WebAPIs.Controllers
         private readonly IMapper mapper;
         private readonly IPhotoService photoService;
         private readonly IWebHostEnvironment webHostEnvironment;
+        private readonly string SenderEmail;
+        private readonly string SenderName;
 
         public static ErrorsAPIs apiError = new ErrorsAPIs();
 
@@ -31,7 +34,7 @@ namespace WebAPIs.Controllers
         public AccountsController (
             IConfiguration configuration ,
             IUnitOfWork uow ,
-             IMapper mapper ,
+            IMapper mapper ,
             IPhotoService photoService ,
             IWebHostEnvironment webHostEnvironment
           )
@@ -41,7 +44,14 @@ namespace WebAPIs.Controllers
             this.mapper = mapper;
             this.photoService = photoService;
             this.webHostEnvironment = webHostEnvironment;
-
+            this.SenderEmail = configuration ["BrevoAPIs:SenderEmail"];
+            this.SenderName = configuration ["BrevoAPIs:SenderName"];
+        }
+        [NonAction]
+        private string GenerateVerificationCode ()
+        {
+            Random random = new Random();
+            return random.Next(10000 , 100000).ToString(); // Generates a random number between 10000 and 99999 (5 digits)
         }
         [HttpPost("register")]
         public async Task<IActionResult> Register (LoginReqDto loginReq)
@@ -59,8 +69,43 @@ namespace WebAPIs.Controllers
                 return BadRequest(apiError);
             }
             uow.UserRepository.Register(loginReq.UserName , loginReq.Frist_Name , loginReq.Last_Name , loginReq.Email , loginReq.Password , loginReq.ComfirmPassword , loginReq.Role);
+            string recmail = "loginReq.Email";
+            string recname = $"{loginReq.Frist_Name + "" + loginReq.Last_Name}";
+            string subject = "test";
+            string message = $"Your OTP is {GenerateVerificationCode()}";
+            var senderMailService = new SenderMail(configuration);
+            senderMailService.sendmail(SenderEmail , SenderName , recmail , recname , subject , message);
+
+
             return StatusCode(200);
         }
+        //[HttpPost("register")]
+        //public async Task<IActionResult> Register (LoginReqDto loginReq)
+        //{
+        //    if ( loginReq.UserName == null || loginReq.Password == null )
+        //    {
+        //        apiError.Error_Code = BadRequest().StatusCode;
+        //        apiError.Error_Messages = "User name or password can not be blank";
+        //        return BadRequest(apiError);
+        //    }
+        //    if ( await uow.UserRepository.UserAlreadyExists(loginReq.UserName , loginReq.Email) )
+        //    {
+        //        apiError.Error_Code = BadRequest().StatusCode;
+        //        apiError.Error_Messages = "User already exists, please try different user name";
+        //        return BadRequest(apiError);
+        //    }
+        //    uow.UserRepository.Register(loginReq.UserName , loginReq.Frist_Name , loginReq.Last_Name , loginReq.Email , loginReq.Password , loginReq.ComfirmPassword , loginReq.Role);
+
+        //    string recmail = loginReq.Email; // Removed quotes to use the actual email value
+        //    string recname = $"{loginReq.Frist_Name} {loginReq.Last_Name}"; // Fixed string concatenation
+        //    string subject = "test";
+        //    string message = $"Your OTP is {GenerateVerificationCode()}";
+        //    var senderMailService = new SenderMail(configuration);
+        //    senderMailService.sendmail(SenderEmail , SenderName , recmail , recname , subject , message);
+
+        //    return StatusCode(200);
+        //}
+
         // Post: api/Accounts/BusinessAccount
         [HttpPost("BusinessAccount")]
         public async Task<IActionResult> BusinessAccount (LoginReqDto loginReq)
