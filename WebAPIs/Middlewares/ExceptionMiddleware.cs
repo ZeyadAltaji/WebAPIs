@@ -1,20 +1,17 @@
-﻿using Azure;
-using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Http;
-using System.Net;
+﻿using System.Net;
 using WebAPIs.Errors;
 
 namespace WebAPIs.Middlewares
 {
-    public  class ExceptionMiddleware
+    public class ExceptionMiddleware
     {
         //authorized
         private readonly RequestDelegate next;
         private readonly ILogger<ExceptionMiddleware> logger;
         private readonly IHostEnvironment env;
 
-        public ExceptionMiddleware(RequestDelegate next,
-                                    ILogger<ExceptionMiddleware> logger,
+        public ExceptionMiddleware (RequestDelegate next ,
+                                    ILogger<ExceptionMiddleware> logger ,
                                     IHostEnvironment env)
         {
             this.env = env;
@@ -22,20 +19,20 @@ namespace WebAPIs.Middlewares
             this.logger = logger;
         }
 
-        public async Task Invoke(HttpContext context)
+        public async Task Invoke (HttpContext context)
         {
             try
             {
                 await next(context);
             }
-            catch (Exception ex)
+            catch ( Exception ex )
             {
                 ErrorsAPIs response;
                 HttpStatusCode statusCode = HttpStatusCode.InternalServerError;
                 String message;
                 var exceptionType = ex.GetType();
 
-                if (exceptionType == typeof(UnauthorizedAccessException))
+                if ( exceptionType == typeof(UnauthorizedAccessException) )
                 {
                     statusCode = HttpStatusCode.Forbidden;
                     message = "You are not authorized";
@@ -46,17 +43,17 @@ namespace WebAPIs.Middlewares
                     message = "Some unknown error occoured";
                 }
 
-                if (env.IsDevelopment())
+                if ( env.IsDevelopment() )
                 {
-                    response = new ErrorsAPIs((int)statusCode, ex.Message, ex.StackTrace.ToString());
+                    response = new ErrorsAPIs((int) statusCode , ex.Message , ex.StackTrace.ToString());
                 }
                 else
                 {
-                    response = new ErrorsAPIs((int)statusCode, message);
+                    response = new ErrorsAPIs((int) statusCode , message);
                 }
 
-                logger.LogError(ex, ex.Message);
-                context.Response.StatusCode = (int)statusCode;
+                logger.LogError(ex , ex.Message);
+                context.Response.StatusCode = (int) statusCode;
                 context.Response.ContentType = "application/json";
                 await context.Response.WriteAsync(response.ToString());
             }
